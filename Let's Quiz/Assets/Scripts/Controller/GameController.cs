@@ -11,14 +11,18 @@ namespace Controller
     public class GameController : MonoBehaviour
     {
         [Header("Component")]
-        public Text QuestionDisplayText;
+        public Text questionDisplayText;
 
-        public Text ScoreDisplayText;
-        public Text TimeRemainingDisplayText;
-        public SimpleObjectPool AnswerButtonObjectPool;
-        public Transform AnswerButtonParent;
-        public GameObject QuestionDisplay;
-        public GameObject RoundEndDisplay;
+        public Text scoreDisplayText;
+        public Slider timerBar;
+        public Image timerImage;
+        public Color timerColorMax;
+        public Color timerColorMid;
+        public Color timerColorMin;
+        public SimpleObjectPool answerButtonObjectPool;
+        public Transform answerButtonParent;
+        public GameObject questionDisplay;
+        public GameObject roundEndDisplay;
 
         [Header("Setting")]
         public int MenuSceneIndex = 1;
@@ -31,19 +35,19 @@ namespace Controller
         private float _timeRemaining;
         private int _questionIndex;
         private int _playerScore;
-        private readonly List<GameObject> _answerButtonGameObjects = new List<GameObject>();
+        public List<GameObject> _answerButtonGameObjects = new List<GameObject>();
 
         private void Start()
         {
-            if (!_dataController)
-            {
-                Debug.LogError("Data Controller Instance cannot be null. Attempting to find data controller object.");
-                _dataController = FindObjectOfType<DataController>();
-            }
+            _dataController = FindObjectOfType<DataController>();
 
             _currentRoundData = _dataController.GetCurrentRoundData();
-            _questionPool = _currentRoundData.Questions;
-            _timeRemaining = _currentRoundData.TimeLimitSeconds;
+            _questionPool = _currentRoundData.questions;
+            _timeRemaining = _currentRoundData.timeLimitSeconds;
+
+            timerBar.maxValue = _currentRoundData.timeLimitSeconds;
+            timerBar.value = _timeRemaining;
+            timerImage.color = timerColorMax;
 
             UpdateTimeRemainingDisplay();
 
@@ -59,13 +63,13 @@ namespace Controller
             RemoveAnswerButton();
 
             var questionData = _questionPool[_questionIndex];
-            QuestionDisplayText.text = questionData.QuestionText;
+            questionDisplayText.text = questionData.questionText;
 
-            foreach (var answer in questionData.Answers)
+            foreach (var answer in questionData.answers)
             {
-                var answerButtonGameObject = AnswerButtonObjectPool.GetObject();
+                var answerButtonGameObject = answerButtonObjectPool.GetObject();
                 _answerButtonGameObjects.Add(answerButtonGameObject);
-                answerButtonGameObject.transform.SetParent(AnswerButtonParent);
+                answerButtonGameObject.transform.SetParent(answerButtonParent);
 
                 var answerButton = answerButtonGameObject.GetComponent<AnswerButtonHelper>();
                 answerButton.Setup(answer);
@@ -76,7 +80,7 @@ namespace Controller
         {
             while (_answerButtonGameObjects.Count > 0)
             {
-                AnswerButtonObjectPool.ReturnObject(_answerButtonGameObjects[0]);
+                answerButtonObjectPool.ReturnObject(_answerButtonGameObjects[0]);
                 _answerButtonGameObjects.RemoveAt(0);
             }
         }
@@ -85,8 +89,8 @@ namespace Controller
         {
             if (isCorrect)
             {
-                _playerScore += _currentRoundData.CorrectAnswerPoints;
-                ScoreDisplayText.text = "Score: " + _playerScore.ToString();
+                _playerScore += _currentRoundData.correctAnswerPoints;
+                scoreDisplayText.text = _playerScore.ToString();
             }
 
             if (_questionPool.Length > _questionIndex + 1)
@@ -104,28 +108,37 @@ namespace Controller
         {
             _isRoundActive = false;
 
-            QuestionDisplay.SetActive(false);
-            RoundEndDisplay.SetActive(true);
+            questionDisplay.SetActive(false);
+            roundEndDisplay.SetActive(true);
         }
 
         public void ReturnToMenu()
         {
-            SceneManager.LoadScene(MenuSceneIndex);
+            SceneManager.LoadScene(MenuSceneIndex, LoadSceneMode.Single);
         }
 
         private void UpdateTimeRemainingDisplay()
         {
-            TimeRemainingDisplayText.text = "Time: " + Mathf.Round(_timeRemaining).ToString();
+            timerBar.value = Mathf.Round(_timeRemaining);
+
+            if (timerBar.value > 20)
+                timerImage.color = timerColorMax;
+
+            if (timerBar.value < 21 && timerBar.value > 9)
+                timerImage.color = timerColorMid;
+            else if (timerBar.value <= 9)
+                timerImage.color = timerColorMin;
         }
 
         private void Update()
         {
-            if (!_isRoundActive) return;
+            if (!_isRoundActive)
+                return;
 
             _timeRemaining -= Time.deltaTime;
             UpdateTimeRemainingDisplay();
 
-            if (_timeRemaining <= 0f)
+            if (_timeRemaining <= 0.0f)
             {
                 EndRound();
             }

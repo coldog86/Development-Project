@@ -6,11 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_LetsQuiz/Scenes/Persistent.unity
+    path: Assets/Scenes/Persistent.unity
     guid: 539f10f353ed2ce41a26a2006343e05e
   - enabled: 1
-    path: Assets/_LetsQuiz/Scenes/Menu.unity
+    path: Assets/Scenes/Menu.unity
     guid: 56c2d29826920ae4e9b377a06f2bd1f2
   - enabled: 1
-    path: Assets/_LetsQuiz/Scenes/Game.unity
+    path: Assets/Scenes/Game.unity
     guid: 94797db64ed327d47843cc984de6d554

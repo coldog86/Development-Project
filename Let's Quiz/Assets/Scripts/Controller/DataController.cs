@@ -7,20 +7,20 @@ namespace Controller
     public class DataController : MonoBehaviour
     {
         [Header("Component")]
-        public RoundData[] AllRoundData;
+        public RoundData[] allRoundData;
 
         [Header("Setting")]
-        public int MenuSceneIndex = 1;
+        public int menuSceneIndex = 1;
 
         private void Start()
         {
             DontDestroyOnLoad(gameObject);
-            SceneManager.LoadScene(MenuSceneIndex);
+            SceneManager.LoadScene(menuSceneIndex, LoadSceneMode.Single);
         }
 
         public RoundData GetCurrentRoundData()
         {
-            return AllRoundData[0];
+            return allRoundData[0];
         }
     }
 }

@@ -140,18 +140,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea1c49dae9bdbdd4b83194c808947385, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AllRoundData:
-  - Name: Round 1
-    TimeLimitSeconds: 30
-    CorrectAnswerPoints: 10
-    Questions:
-    - QuestionText: 
-      Answers: []
-    - QuestionText: 
-      Answers: []
-    - QuestionText: 
-      Answers: []
-  MenuSceneIndex: 1
+  allRoundData:
+  - name: Round 1
+    timeLimitSeconds: 30
+    correctAnswerPoints: 10
+    questions:
+    - questionText: Lions are carnivores.
+      answers:
+      - answerText: True
+        isCorrect: 1
+      - answerText: False
+        isCorrect: 0
+    - questionText: Where do mice live?
+      answers:
+      - answerText: On the moon
+        isCorrect: 0
+      - answerText: On land
+        isCorrect: 1
+    - questionText: What do frogs eat?
+      answers:
+      - answerText: Pizzas
+        isCorrect: 0
+      - answerText: Flies
+        isCorrect: 1
+  menuSceneIndex: 1
 --- !u!4 &1323636408
 Transform:
   m_ObjectHideFlags: 0

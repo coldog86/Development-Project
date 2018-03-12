@@ -6,16 +6,16 @@ namespace Object
     // Identifies the pool that a GameObject came from
     public class PooledObject : MonoBehaviour
     {
-        public SimpleObjectPool ObjectPool;
+        public SimpleObjectPool objectPool;
     }
 
     // Simple object pooling class
     public class SimpleObjectPool : MonoBehaviour
     {
         [Header("Component")]
-        public GameObject Prefab = null;
+        public GameObject answerButtonPrefab;
 
-        private readonly Stack<GameObject> _inactivePrefabInstances = new Stack<GameObject>();
+        private Stack<GameObject> _inactivePrefabInstances = new Stack<GameObject>();
 
         // Return an instance of the prefab
         public GameObject GetObject()
@@ -26,10 +26,10 @@ namespace Object
                 spawnedGameObject = _inactivePrefabInstances.Pop();
             else
             {
-                spawnedGameObject = Instantiate(Prefab);
+                spawnedGameObject = Instantiate(answerButtonPrefab);
 
-                var pooledObject = spawnedGameObject.AddComponent<PooledObject>();
-                pooledObject.ObjectPool = this;
+                PooledObject pooledObject = spawnedGameObject.AddComponent<PooledObject>();
+                pooledObject.objectPool = this;
             }
 
             spawnedGameObject.SetActive(true);
@@ -40,9 +40,9 @@ namespace Object
         // Return an instance of the prefab to the pool
         public void ReturnObject(GameObject gameObjectToReturn)
         {
-            var pooledObject = gameObjectToReturn.GetComponent<PooledObject>();
+            PooledObject pooledObject = gameObjectToReturn.GetComponent<PooledObject>();
 
-            if (pooledObject && pooledObject.ObjectPool == this)
+            if (pooledObject && pooledObject.objectPool == this)
             {
                 gameObjectToReturn.SetActive(false);
                 _inactivePrefabInstances.Push(gameObjectToReturn);
