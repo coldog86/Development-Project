@@ -1,11 +1,6 @@
-﻿using UnityEngine;
-
-namespace Data
+﻿[System.Serializable]
+public class QuestionData
 {
-    [System.Serializable]
-    public class QuestionData
-    {
-        public string questionText;
-        public AnswerData[] answers;
-    }
+    public string questionText;
+    public AnswerData[] answers;
 }

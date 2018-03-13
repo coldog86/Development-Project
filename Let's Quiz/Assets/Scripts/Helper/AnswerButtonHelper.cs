@@ -1,33 +1,33 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using Controller;
-using Data;
+using System.Collections;
 
-namespace Helper
+//TODO: FIND WAY TO GIVE REAL TIME FEEDBACK ON ANSWER CORRECTNESS
+
+public class AnswerButtonHelper : MonoBehaviour
 {
-    public class AnswerButtonHelper : MonoBehaviour
+    [Header("Component")]
+    public Text answerText;
+
+    private GameController gameController;
+    private AnswerData answerData;
+    private RectTransform _transform;
+
+    void Start()
     {
-        [Header("Component")]
-        public Text AnswerText;
+        gameController = FindObjectOfType<GameController>();
+        _transform = GetComponent<RectTransform>();
+        _transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+    }
 
-        private GameController _gameController;
-        private AnswerData _answerData;
-        
+    public void SetUp(AnswerData data)
+    {
+        answerData = data;
+        answerText.text = answerData.answerText;
+    }
 
-        private void Start()
-        {
-           _gameController = FindObjectOfType<GameController>();
-        }
-
-        public void Setup(AnswerData data)
-        {
-            _answerData = data;
-            AnswerText.text = _answerData.answerText;
-        }
-
-        public void HandleClick()
-        {
-            _gameController.AnswerButtonClicked(_answerData.isCorrect);
-        }
+    public void HandleClick()
+    {
+        gameController.AnswerButtonClicked(answerData.isCorrect);
     }
 }
