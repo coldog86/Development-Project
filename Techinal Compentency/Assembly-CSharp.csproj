@@ -51,9 +51,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Alert.cs" />
      <Compile Include="Assets\Scripts\DataController.cs" />
-     <None Include="Assets\Fonts\empty.txt" />
      <None Include="Assets\Prefabs\empty.txt" />
+     <None Include="Assets\Fonts\empty.txt" />
      <None Include="Assets\Art\empty.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Programming/Tools/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
