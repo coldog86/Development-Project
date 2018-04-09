@@ -1,0 +1,14 @@
+
+Minimum requirments for users: 
+
+IOS:
+Android:
+
+Minimum requirments for developers:
+
+Unity 3d:
+Facebook SKD: 
+Google Play SKD: 
+OneFlare API: 
+
+
