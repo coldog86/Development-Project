@@ -2,8 +2,6 @@
 using UnityEngine.UI;
 using System.Collections;
 
-//TODO: FIND WAY TO GIVE REAL TIME FEEDBACK ON ANSWER CORRECTNESS
-
 namespace _Tutorial
 {
     public class AnswerButtonHelper : MonoBehaviour

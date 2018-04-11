@@ -1,20 +1,26 @@
 Assets/
 	|-- _Game/
-		|-- Art/
-			|-- Audio
-			|-- Sprite
-		|-- Editor
-		|-- Font
-		|-- Prefabs
-		|-- Scenes
-		|-- Scripts/
+		|--Animation/
 			|-- Controller
-			|-- Data
-			|-- Helper
-			|-- Integration
-			|-- Object
-			|-- Player
-		|-- StreamingAssets
+			|-- Clip
+		|-- Art/
+			|-- Sprite
+		|--Audio/
+			|-- Mixer
+			|-- Clip
+		|-- Editor
+		|-- Font//
+			|-- font folder/
+		|-- Prefabs
+		|-- Scenes/
+		|-- Scripts/
+			|-- Controller/
+			|-- Data/
+			|-- Helper/
+				|-- Feedback/
+			|-- Integration/
+			|-- Object/
+			|-- Player/
 	|-- third-party asset folder/
 		|-- Contents
 	|-- third-party asset folder/

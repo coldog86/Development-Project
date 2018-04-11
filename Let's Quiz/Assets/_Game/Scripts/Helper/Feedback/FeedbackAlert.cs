@@ -4,14 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-namespace _Game.Scripts.Helper.Feedback
+namespace _LetsQuiz
 {
     public class FeedbackAlert : MonoBehaviour
     {
-        [SerializeField]
         [Header("Component")]
         public GameObject prefab;
+
         private Text _message;
+
+        private void Start()
+        {
+            DontDestroyOnLoad(gameObject);
+        }
 
         public void Show(string message, float time = 2.5f)
         {

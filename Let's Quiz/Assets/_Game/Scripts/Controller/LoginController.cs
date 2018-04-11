@@ -4,9 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-using _Game.Scripts.Helper.Feedback;
-
-namespace _Game.Scripts.Controller
+namespace _LetsQuiz
 {
     public class LoginController : MonoBehaviour
     {
@@ -16,18 +14,19 @@ namespace _Game.Scripts.Controller
         public InputField usernameInput;
         public InputField passwordInput;
 
-        [Header("Feedback")]
-        [SerializeField]
-        private FeedbackAlert _alert;
-        [SerializeField]
-        private FeedbackModal _modal;
-
         [Header("Setting")]
         public int menuIndex = 2;
 
         [Header("Debug")]
         public string testUsername = "test@email.com";
         public string testPassword = "123456";
+
+        [SerializeField]
+        private FeedbackAlert _alert;
+        [SerializeField]
+        private FeedbackClick _click;
+        [SerializeField]
+        private FeedbackModal _modal;
 
         private void Start()
         {
@@ -36,22 +35,29 @@ namespace _Game.Scripts.Controller
             if (!passwordInput)
                 Debug.LogError(TAG + " Password Input field is null");
 
-            if (!_alert)
-                _alert = GetComponent<FeedbackAlert>();
+            _alert = FindObjectOfType<FeedbackAlert>();
+            _click = FindObjectOfType<FeedbackClick>();
+            _modal = FindObjectOfType<FeedbackModal>();
+        }
 
-            if (!_modal)
-                _modal = GetComponent<FeedbackModal>();
+        public void SkipLogin()
+        {
+            _click.HandleClick();
+            _modal.Show(false, "Warning!", "Logging in as a guest limits what you can do.", null, "Cancel", "Login");
+            _modal.positiveButton.onClick.AddListener(LoadMenu);
         }
 
         public void EmailLogin()
         {
+            _click.HandleClick();
+
             var username = usernameInput.text;
             var password = passwordInput.text;
 
             if (string.IsNullOrEmpty(username))
-                _alert.Show("Username cannot be empty.", 2.5f);
+                _alert.Show("Username cannot be empty.");
             else if (string.IsNullOrEmpty(password))
-                _alert.Show("Password cannot be empty.", 2.5f);
+                _alert.Show("Password cannot be empty.");
             else if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
                 if (ValidateLogin(username, password))
@@ -79,21 +85,24 @@ namespace _Game.Scripts.Controller
             return false;
         }
 
-        // Placeholder for Michelle
+        // TASK : PLACEHOLDER FOR MICHELLE
         public void FacebookLogin()
         {
-            _alert.Show("Not implemented yet.", 2.5f);
+            _click.HandleClick();
+            _alert.Show("Not implemented yet...");
         }
 
-        // Placeholder for Michelle
+        // TASK : PLACEHOLDER FOR MICHELLE
         public void GoogleLogin()
         {
-            _alert.Show("Not implemented yet.", 2.5f);
+            _click.HandleClick();
+            _alert.Show("Not implemented yet...");
         }
 
         public void ForgotPassword()
         {
-            _alert.Show("Forgot Password", 1.0f);
+            _click.HandleClick();
+            _alert.Show("Forgot Password...");
         }
 
         private void LoadMenu()

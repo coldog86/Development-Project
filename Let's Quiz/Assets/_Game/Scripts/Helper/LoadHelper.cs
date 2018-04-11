@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace _Game.Scripts.Helper
+// TODO : FINISH LOADASYNC
+
+namespace _LetsQuiz
 {
     public class LoadHelper : MonoBehaviour
     {
@@ -28,4 +30,3 @@ namespace _Game.Scripts.Helper
         }
     }
 }
-

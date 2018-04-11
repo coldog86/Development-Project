@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-using _Game.Scripts.Helper.Feedback;
-using _Game.Scripts.Helper;
+using UnityEngine.Audio;
 
-namespace _Game.Scripts.Controller
+namespace _LetsQuiz
 {
     public class DataController : MonoBehaviour
     {
@@ -29,8 +28,7 @@ namespace _Game.Scripts.Controller
             DontDestroyOnLoad(gameObject);
             StartCoroutine(ConnectToServer());
 
-            if (!_alert)
-                _alert = GetComponent<FeedbackAlert>();
+            _alert = FindObjectOfType<FeedbackAlert>();
 
             if (!_loadHelper)
                 _loadHelper = GetComponent<LoadHelper>();
@@ -38,6 +36,7 @@ namespace _Game.Scripts.Controller
 
         private IEnumerator RetryConnection()
         {
+            _alert.Show("Retrying connection...");
             yield return new WaitForSecondsRealtime(3.0f);
             StartCoroutine(ConnectToServer());
         }
@@ -51,14 +50,14 @@ namespace _Game.Scripts.Controller
                 _connectionTimer += Time.deltaTime;
                 if (_connectionTimer > connectionTimeLimit)
                 {
-                    _alert.Show("Server timeout. Attempting to try again.", 2.5f);
+                    _alert.Show("Server timeout. Attempting to try again.");
                     StartCoroutine(RetryConnection());
                 }
                 yield return null;
             }
             if (!open.isDone || open.error != null)
             {
-                _alert.Show("Server error. Attempting to try again.", 2.5f);
+                _alert.Show("Server error. Attempting to try again.");
                 StartCoroutine(RetryConnection());
                 yield return null;
             }
@@ -66,7 +65,6 @@ namespace _Game.Scripts.Controller
             {
                 yield return open;
                 _loadHelper.Load(loginIndex);
-                Destroy(_alert);
                 Destroy(_loadHelper);
             }
         }
