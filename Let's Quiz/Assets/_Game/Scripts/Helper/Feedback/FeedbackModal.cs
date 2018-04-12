@@ -45,7 +45,7 @@ namespace _LetsQuiz
                 actionButton = GameObject.FindGameObjectWithTag("Modal_Action").GetComponentInChildren<Button>();
                 _action = actionButton.GetComponentInChildren<Text>();
                 actionButton.onClick.AddListener(Hide);
-                actionButton.onClick.AddListener(_click.HandleClick);
+                actionButton.onClick.AddListener(_click.Play);
             }
             else
             {
@@ -55,11 +55,11 @@ namespace _LetsQuiz
                 negativeButton = GameObject.FindGameObjectWithTag("Modal_Negative").GetComponentInChildren<Button>();
                 _negative = negativeButton.GetComponentInChildren<Text>();
                 negativeButton.onClick.AddListener(Hide);
-                negativeButton.onClick.AddListener(_click.HandleClick);
+                negativeButton.onClick.AddListener(_click.Play);
                 positiveButton = GameObject.FindGameObjectWithTag("Modal_Positive").GetComponentInChildren<Button>();
                 _positive = positiveButton.GetComponentInChildren<Text>();
                 positiveButton.onClick.AddListener(Hide);
-                positiveButton.onClick.AddListener(_click.HandleClick);
+                positiveButton.onClick.AddListener(_click.Play);
             }
         }
 

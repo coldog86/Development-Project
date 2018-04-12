@@ -40,16 +40,18 @@ namespace _LetsQuiz
             _modal = FindObjectOfType<FeedbackModal>();
         }
 
+        // TASK : PLACEHOLDER COL
         public void SkipLogin()
         {
-            _click.HandleClick();
+            _click.Play();
             _modal.Show(false, "Warning!", "Logging in as a guest limits what you can do.", null, "Cancel", "Login");
             _modal.positiveButton.onClick.AddListener(LoadMenu);
         }
 
+        // TASK : PLACEHOLDER COL
         public void EmailLogin()
         {
-            _click.HandleClick();
+            _click.Play();
 
             var username = usernameInput.text;
             var password = passwordInput.text;
@@ -65,6 +67,7 @@ namespace _LetsQuiz
             }
         }
 
+        // TASK : PLACEHOLDER COL
         private bool ValidateLogin(string username, string password)
         {
             if (username == testUsername && password == testPassword)
@@ -88,20 +91,21 @@ namespace _LetsQuiz
         // TASK : PLACEHOLDER FOR MICHELLE
         public void FacebookLogin()
         {
-            _click.HandleClick();
+            _click.Play();
             _alert.Show("Not implemented yet...");
         }
 
         // TASK : PLACEHOLDER FOR MICHELLE
         public void GoogleLogin()
         {
-            _click.HandleClick();
+            _click.Play();
             _alert.Show("Not implemented yet...");
         }
 
+        // NOTE : UNSURE IF REQUIRED, PUT THERE TO COVER ALL BASES
         public void ForgotPassword()
         {
-            _click.HandleClick();
+            _click.Play();
             _alert.Show("Forgot Password...");
         }
 

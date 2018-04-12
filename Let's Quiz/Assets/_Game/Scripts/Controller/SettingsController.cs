@@ -42,7 +42,7 @@ namespace _LetsQuiz
 
         public void BackToMenu()
         {
-            _click.HandleClick();
+            _click.Play();
             SceneManager.LoadScene(menuIndex, LoadSceneMode.Single);
         }
 

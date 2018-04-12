@@ -11,7 +11,7 @@ public class FeedbackClick : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void HandleClick()
+    public void Play()
     {
         source.Play();
     }

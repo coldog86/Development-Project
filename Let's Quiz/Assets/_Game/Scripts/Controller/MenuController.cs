@@ -39,19 +39,19 @@ namespace _LetsQuiz
 
         public void OpenAccount()
         {
-            _click.HandleClick();
+            _click.Play();
             SceneManager.LoadScene(accountIndex, LoadSceneMode.Single);
         }
 
         public void OpenLeaderboard()
         {
-            _click.HandleClick();
+            _click.Play();
             SceneManager.LoadScene(leaderboardIndex, LoadSceneMode.Single);
         }
 
         public void OpenSetting()
         {
-            _click.HandleClick();
+            _click.Play();
             SceneManager.LoadScene(settingIndex, LoadSceneMode.Single);
         }
 
@@ -63,13 +63,13 @@ namespace _LetsQuiz
 
         private void OpenLogin()
         {
-            _click.HandleClick();
+            _click.Play();
             SceneManager.LoadScene(loginIndex, LoadSceneMode.Single);
         }
 
         public void Quit()
         {
-            _click.HandleClick();
+            _click.Play();
 
             _modal.Show(false, "Are you sure?", "Are you sure you want to quit?", null, "No", "Yes");
             _modal.positiveButton.onClick.AddListener(Quit);
