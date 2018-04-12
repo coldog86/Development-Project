@@ -13,6 +13,9 @@ TagManager:
   - MaterialText
   - MaterialRadioButton
   - Button_Back
+  - Toggle_Sound
+  - Toggle_Background
+  - Toggle_Notification
   layers:
   - Default
   - TransparentFX

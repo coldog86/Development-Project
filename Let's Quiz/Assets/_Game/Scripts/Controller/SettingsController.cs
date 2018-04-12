@@ -17,27 +17,51 @@ namespace _LetsQuiz
 
         [Header("Componenets")]
         public AudioMixer masterMixer;
-        public Toggle soundEffectSwitch;
-        public Toggle backgroundMusicSwitch;
-        public Toggle notificationSwitch;
+        private Toggle _soundEffectSwitch;
+        private Toggle _backgroundMusicSwitch;
+        private Toggle _notificationSwitch;
 
-        private int _active = 1;
-        private int _inactive = 0;
+        // PlayerPref keys
         private string _effectVolumeKey = "SoundEffectVolume";
         private string _effectToggleKey = "SoundEffectToggle";
         private string _musicVolumeKey = "BackgroundMusicVolume";
         private string _musicToggleKey = "BackgroundMusicToggle";
-        private string _notificationToggleKey = "BackgroundMusicToggle";
+        private string _notificationToggleKey = "NotificationToggle";
 
+        // int declartions of bools
+        private int _active = 1;
+        private int _inactive = 0;
+
+        private int _settingsIndex = 6;
         private PlayerSettings _playerSettings;
+
         private FeedbackAlert _alert;
         private FeedbackClick _click;
         private FeedbackModal _modal;
 
         private void Awake()
         {
-            LoadPlayerSettings();
+            if (SceneManager.GetActiveScene().buildIndex == _settingsIndex)
+            {
+                _soundEffectSwitch = GameObject.FindGameObjectWithTag("Toggle_Sound").GetComponent<Toggle>();
+                _backgroundMusicSwitch = GameObject.FindGameObjectWithTag("Toggle_Background").GetComponent<Toggle>();
+                _notificationSwitch = GameObject.FindGameObjectWithTag("Toggle_Notification").GetComponent<Toggle>();
+            }
             _click = FindObjectOfType<FeedbackClick>();
+        }
+
+        private void Start()
+        {
+            LoadPlayerSettings();
+
+            if (_soundEffectSwitch)
+                _soundEffectSwitch.isOn = GetSoundEffectToggle();
+
+            if (_backgroundMusicSwitch)
+                _backgroundMusicSwitch.isOn = GetBackgroundMusicToggle();
+
+            if (_notificationSwitch)
+                _notificationSwitch.isOn = GetNotificationToggle();
         }
 
         public void BackToMenu()
@@ -48,27 +72,27 @@ namespace _LetsQuiz
 
         public void ToggleSoundEffect()
         {
-            if (soundEffectSwitch.isOn)
+            if (_soundEffectSwitch.isOn)
                 SetSoundEffectVolume(unmutedVolume);
             else
                 SetSoundEffectVolume(mutedVolume);
             
-            SetSoundEffectToggle(soundEffectSwitch.isOn);
+            SetSoundEffectToggle(_soundEffectSwitch.isOn);
         }
 
         public void ToggleBackgroundMusic()
         {
-            if (backgroundMusicSwitch.isOn)
+            if (_backgroundMusicSwitch.isOn)
                 SetBackgroundMusicVolume(unmutedVolume);
             else
                 SetBackgroundMusicVolume(mutedVolume);
             
-            SetBackgroundMusicToggle(backgroundMusicSwitch.isOn);
+            SetBackgroundMusicToggle(_backgroundMusicSwitch.isOn);
         }
 
         public void ToggleNotification()
         {
-            SetNotificationToggle(notificationSwitch.isOn); 
+            SetNotificationToggle(_notificationSwitch.isOn);
         }
 
         #region SOUND EFFECT
@@ -112,10 +136,8 @@ namespace _LetsQuiz
 
         public bool GetSoundEffectToggle()
         {
-            if (_playerSettings.soundEffectToggled != _active)
-                return false;
-            else
-                return true;
+            var status = _playerSettings.soundEffectToggled == _active ? true : false;
+            return status;
         }
 
         private void SaveSoundEffectToggle()
@@ -168,10 +190,8 @@ namespace _LetsQuiz
 
         public bool GetBackgroundMusicToggle()
         {
-            if (_playerSettings.backgroundMusicToggled != _active)
-                return false;
-            else
-                return true;
+            var status = _playerSettings.backgroundMusicToggled == _active ? true : false;
+            return status;
         }
 
         private void SaveBackgroundMusicToggle()
@@ -198,10 +218,8 @@ namespace _LetsQuiz
 
         public bool GetNotificationToggle()
         {
-            if (_playerSettings.notificationsToggled != _active)
-                return false;
-            else
-                return true;
+            var status = _playerSettings.notificationsToggled == _active ? true : false;
+            return status;
         }
 
         private void SaveNotificationToggle()
@@ -228,29 +246,14 @@ namespace _LetsQuiz
             }
 
             if (PlayerPrefs.HasKey(_effectToggleKey))
-            {
                 _playerSettings.soundEffectToggled = PlayerPrefs.GetInt(_effectToggleKey);
-
-                if (soundEffectSwitch)
-                    soundEffectSwitch.isOn = GetSoundEffectToggle();
-            }
            
 
             if (PlayerPrefs.HasKey(_musicToggleKey))
-            {
                 _playerSettings.backgroundMusicToggled = PlayerPrefs.GetInt(_musicToggleKey);
 
-                if (backgroundMusicSwitch)
-                    backgroundMusicSwitch.isOn = GetBackgroundMusicToggle();
-            }
-
             if (PlayerPrefs.HasKey(_notificationToggleKey))
-            {
                 _playerSettings.notificationsToggled = PlayerPrefs.GetInt(_notificationToggleKey);
-
-                if (notificationSwitch)
-                    notificationSwitch.isOn = GetNotificationToggle();
-            } 
         }
     }
 }

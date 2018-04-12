@@ -15,6 +15,8 @@ namespace _LetsQuiz
         public int leaderboardIndex = 5;
         public int settingIndex = 6;
 
+        [Header("Component")]
+        public GameObject navBar;
        
         private FeedbackAlert _alert;
         private FeedbackClick _click;
@@ -25,6 +27,8 @@ namespace _LetsQuiz
             _alert = FindObjectOfType<FeedbackAlert>();
             _click = FindObjectOfType<FeedbackClick>();
             _modal = FindObjectOfType<FeedbackModal>();
+
+            navBar.SetActive(false);
         }
 
         // TASK : TO BE COMPLETED
@@ -35,6 +39,16 @@ namespace _LetsQuiz
         // TASK : TO BE COMPLETED
         public void ContinueGame()
         {
+        }
+
+        public void OpenNavDrawer()
+        {
+            navBar.SetActive(true);
+        }
+
+        public void CloseNavDrawer()
+        {
+            navBar.SetActive(false);
         }
 
         public void OpenAccount()
@@ -72,13 +86,13 @@ namespace _LetsQuiz
             _click.Play();
 
             _modal.Show(false, "Are you sure?", "Are you sure you want to quit?", null, "No", "Yes");
-            _modal.positiveButton.onClick.AddListener(Quit);
+            _modal.positiveButton.onClick.AddListener(QuitGame);
 
             #if PLATFORM_ANDROID 
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 _modal.Show(false, "Are you sure?", "Are you sure you want to quit?", null, "No", "Yes");
-                _modal.positiveButton.onClick.AddListener(Quit);
+                _modal.positiveButton.onClick.AddListener(QuitGame);
             }  
             #endif
 
