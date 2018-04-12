@@ -26,7 +26,6 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            DontDestroyOnLoad(gameObject);
             StartCoroutine(ConnectToServer());
 
             _alert = FindObjectOfType<FeedbackAlert>();

@@ -43,11 +43,13 @@ namespace _LetsQuiz
 
         public void OpenNavDrawer()
         {
+            _click.Play();
             navBar.SetActive(true);
         }
 
         public void CloseNavDrawer()
         {
+            _click.Play();
             navBar.SetActive(false);
         }
 
@@ -69,8 +71,11 @@ namespace _LetsQuiz
             SceneManager.LoadScene(settingIndex, LoadSceneMode.Single);
         }
 
+        // NOTE : debug purposes only
+        // TASK : TO BE COMPLETED
         public void Logout()
         {
+            _click.Play();
             _modal.Show(false, "Are you sure?", "Are you sure you want to logout?", null, "No", "Yes");
             _modal.positiveButton.onClick.AddListener(OpenLogin);
         }
@@ -84,27 +89,18 @@ namespace _LetsQuiz
         public void Quit()
         {
             _click.Play();
-
             _modal.Show(false, "Are you sure?", "Are you sure you want to quit?", null, "No", "Yes");
             _modal.positiveButton.onClick.AddListener(QuitGame);
-
-            #if PLATFORM_ANDROID 
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                _modal.Show(false, "Are you sure?", "Are you sure you want to quit?", null, "No", "Yes");
-                _modal.positiveButton.onClick.AddListener(QuitGame);
-            }  
-            #endif
-
-            // Debug purposes only
-            #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-            #endif
         }
 
         private void QuitGame()
         {
             Application.Quit();
+
+            #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            #endif
+
         }
     }
 }
