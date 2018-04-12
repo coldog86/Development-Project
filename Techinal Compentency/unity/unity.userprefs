@@ -1,0 +1,16 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Alert.cs">
+    <Files>
+      <File FileName="Assets\Editor\TestDownload.cs" Line="14" Column="9" />
+      <File FileName="Assets\Editor\TestDelete.cs" Line="14" Column="6" />
+      <File FileName="Assets\Editor\TestUpload.cs" Line="15" Column="1" />
+      <File FileName="Assets\Scripts\DataController.cs" Line="172" Column="33" />
+      <File FileName="Assets\Scripts\Alert.cs" Line="12" Column="61" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
