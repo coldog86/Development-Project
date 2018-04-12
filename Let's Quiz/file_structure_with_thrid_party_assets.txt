@@ -9,8 +9,9 @@ Assets/
 			|-- Mixer
 			|-- Clip
 		|-- Editor
-		|-- Font//
+		|-- Font/
 			|-- font folder/
+				|-- Contents
 		|-- Prefabs
 		|-- Scenes/
 		|-- Scripts/
@@ -19,6 +20,8 @@ Assets/
 			|-- Helper/
 				|-- Feedback/
 			|-- Integration/
+				|-- Facebook/
+				|-- Google/ 
 			|-- Object/
 			|-- Player/
 	|-- third-party asset folder/
