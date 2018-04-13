@@ -384,26 +384,14 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 424547281}
-  - component: {fileID: 424547280}
+  - component: {fileID: 424547282}
   m_Layer: 0
-  m_Name: SettingsController
+  m_Name: LeaderboardController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &424547280
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 424547279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab091ffdff661b047ab4d11c73e5d25e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  menuIndex: 2
 --- !u!4 &424547281
 Transform:
   m_ObjectHideFlags: 0
@@ -417,6 +405,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &424547282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 424547279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0bab5d690425924cac3e4f47c9f46a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &510984241
 GameObject:
   m_ObjectHideFlags: 0
@@ -900,7 +899,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 424547280}
+      - m_Target: {fileID: 424547282}
         m_MethodName: BackToMenu
         m_Mode: 1
         m_Arguments:
@@ -910,7 +909,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 1
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1010410436

@@ -8,23 +8,16 @@ namespace _LetsQuiz
 {
     public class MenuController : MonoBehaviour
     {
-        [Header("Setting")]
-        public int loginIndex = 1;
-        public int gameIndex = 3;
-        public int accountIndex = 4;
-        public int leaderboardIndex = 5;
-        public int settingIndex = 6;
-
         [Header("Component")]
         public GameObject navBar;
        
-        private FeedbackAlert _alert;
+        // private FeedbackAlert _alert;
         private FeedbackClick _click;
         private FeedbackModal _modal;
 
         private void Start()
         {
-            _alert = FindObjectOfType<FeedbackAlert>();
+            // _alert = FindObjectOfType<FeedbackAlert>();
             _click = FindObjectOfType<FeedbackClick>();
             _modal = FindObjectOfType<FeedbackModal>();
 
@@ -56,22 +49,22 @@ namespace _LetsQuiz
         public void OpenAccount()
         {
             _click.Play();
-            SceneManager.LoadScene(accountIndex, LoadSceneMode.Single);
+            SceneManager.LoadScene(BuildIndexHelper.Account, LoadSceneMode.Single);
         }
 
         public void OpenLeaderboard()
         {
             _click.Play();
-            SceneManager.LoadScene(leaderboardIndex, LoadSceneMode.Single);
+            SceneManager.LoadScene(BuildIndexHelper.Leaderboard, LoadSceneMode.Single);
         }
 
         public void OpenSetting()
         {
             _click.Play();
-            SceneManager.LoadScene(settingIndex, LoadSceneMode.Single);
+            SceneManager.LoadScene(BuildIndexHelper.Settings, LoadSceneMode.Single);
         }
 
-        // NOTE : debug purposes only
+        // NOTE : DEBUG PURPOSES ONLY
         // TASK : TO BE COMPLETED
         public void Logout()
         {
@@ -83,7 +76,7 @@ namespace _LetsQuiz
         private void OpenLogin()
         {
             _click.Play();
-            SceneManager.LoadScene(loginIndex, LoadSceneMode.Single);
+            SceneManager.LoadScene(BuildIndexHelper.Login, LoadSceneMode.Single);
         }
 
         public void Quit()

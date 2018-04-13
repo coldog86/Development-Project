@@ -11,7 +11,6 @@ namespace _LetsQuiz
     public class SettingsController : MonoBehaviour
     {
         [Header("Settings")]
-        public int menuIndex = 2;
         public float unmutedVolume = -10.0f;
         public float mutedVolume = -80.0f;
 
@@ -32,7 +31,6 @@ namespace _LetsQuiz
         private int _active = 1;
         private int _inactive = 0;
 
-        private int _settingsIndex = 6;
         private PlayerSettings _playerSettings;
 
         private FeedbackAlert _alert;
@@ -41,7 +39,7 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            if (SceneManager.GetActiveScene().buildIndex == _settingsIndex)
+            if (SceneManager.GetActiveScene().buildIndex == BuildIndexHelper.Settings)
             {
                 _soundEffectSwitch = GameObject.FindGameObjectWithTag("Toggle_Sound").GetComponent<Toggle>();
                 _backgroundMusicSwitch = GameObject.FindGameObjectWithTag("Toggle_Background").GetComponent<Toggle>();
@@ -67,7 +65,7 @@ namespace _LetsQuiz
         public void BackToMenu()
         {
             _click.Play();
-            SceneManager.LoadScene(menuIndex, LoadSceneMode.Single);
+            SceneManager.LoadScene(BuildIndexHelper.Menu, LoadSceneMode.Single);
         }
 
         public void ToggleSoundEffect()
@@ -247,7 +245,6 @@ namespace _LetsQuiz
 
             if (PlayerPrefs.HasKey(_effectToggleKey))
                 _playerSettings.soundEffectToggled = PlayerPrefs.GetInt(_effectToggleKey);
-           
 
             if (PlayerPrefs.HasKey(_musicToggleKey))
                 _playerSettings.backgroundMusicToggled = PlayerPrefs.GetInt(_musicToggleKey);
