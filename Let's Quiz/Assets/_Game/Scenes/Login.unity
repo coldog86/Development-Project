@@ -2131,11 +2131,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   usernameInput: {fileID: 28642150}
   passwordInput: {fileID: 2095960597}
-  _alert: {fileID: 0}
-  _modal: {fileID: 0}
   menuIndex: 2
   testUsername: test@email.com
   testPassword: 123456
+  _alert: {fileID: 0}
+  _click: {fileID: 0}
+  _modal: {fileID: 0}
 --- !u!1 &1780048057
 GameObject:
   m_ObjectHideFlags: 0
@@ -2696,7 +2697,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.12941177, g: 0.12941177, b: 0.12941177, a: 0.33333334}
+  m_Color: {r: 0.12941177, g: 0.12941177, b: 0.12941177, a: 0.29411766}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
