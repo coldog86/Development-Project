@@ -723,7 +723,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hostURL: http://charnesnell.000webhostapp.com/letsquiz/
-  connectionFile: connected.php
+  connectionFile: download.php
   loginIndex: 1
   connectionTimeLimit: 10000
 --- !u!4 &1511502299

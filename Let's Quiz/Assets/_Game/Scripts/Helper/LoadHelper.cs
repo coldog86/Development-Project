@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // TODO : FINISH LOADASYNC
-// NOTE : COMPLETE
 
 namespace _LetsQuiz
 {
@@ -25,8 +24,7 @@ namespace _LetsQuiz
 
             while (!operation.isDone)
             {
-                float progress = Mathf.Clamp01(operation.progress / 0.9f);
-                slider.value = progress;
+                slider.value = operation.progress;
                 yield return null;
             }
         }
