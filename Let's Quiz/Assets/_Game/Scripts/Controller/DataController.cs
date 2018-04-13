@@ -12,13 +12,12 @@ namespace _LetsQuiz
     {
         [Header("Server")]
         public string hostURL = "";
-        public string connectionFile = "connected.php";
+        public string connectionFile = "download.php";
 
         [Header("Setting")]
-        public int loginIndex = 1;
         public float connectionTimeLimit = 10000.0f;
 
-        [Header("Component")]
+        private FeedbackModal _modal;
         private FeedbackAlert _alert;
         private LoadHelper _loadHelper;
 
@@ -26,18 +25,34 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            StartCoroutine(ConnectToServer());
-
             _alert = FindObjectOfType<FeedbackAlert>();
-
-            if (!_loadHelper)
-                _loadHelper = GetComponent<LoadHelper>();
+            _modal = FindObjectOfType<FeedbackModal>();
+            _loadHelper = GetComponent<LoadHelper>();
+            StartCoroutine(ConnectToServer());
         }
 
-        private IEnumerator RetryConnection()
+        private void ShowModal()
+        {
+            _modal.Show(false, "Error!", "There was a timeout error on attempting to connect to the server. Do you wish to retry?", null, "No", "Yes");
+            _modal.positiveButton.onClick.AddListener(RetryConnection);
+            _modal.negativeButton.onClick.AddListener(Quit);
+
+        }
+
+        // NOTE : DEBUG PURPOSES ONLY
+        private void Quit()
+        {
+            Application.Quit();
+
+            #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            #endif
+
+        }
+
+        private void RetryConnection()
         {
             _alert.Show("Retrying connection...");
-            yield return new WaitForSecondsRealtime(3.0f);
             StartCoroutine(ConnectToServer());
         }
 
@@ -49,23 +64,18 @@ namespace _LetsQuiz
             {
                 _connectionTimer += Time.deltaTime;
                 if (_connectionTimer > connectionTimeLimit)
-                {
-                    _alert.Show("Server timeout. Attempting to try again.");
-                    StartCoroutine(RetryConnection());
-                }
+                    ShowModal();
                 yield return null;
             }
             if (!open.isDone || open.error != null)
             {
-                _alert.Show("Server error. Attempting to try again.");
-                StartCoroutine(RetryConnection());
+                ShowModal();
                 yield return null;
             }
             else
             {
                 yield return open;
-                _loadHelper.Load(loginIndex);
-                Destroy(_loadHelper);
+                _loadHelper.Load(BuildIndexHelper.Login);
             }
         }
     }
