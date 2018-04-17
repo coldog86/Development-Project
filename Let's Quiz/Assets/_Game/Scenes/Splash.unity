@@ -214,7 +214,7 @@ RectTransform:
   - {fileID: 789986538}
   - {fileID: 1707502892}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -724,7 +724,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hostURL: http://charnesnell.000webhostapp.com/letsquiz/
   connectionFile: download.php
-  loginIndex: 1
   connectionTimeLimit: 10000
 --- !u!4 &1511502299
 Transform:
@@ -737,7 +736,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1511502301
 MonoBehaviour:
@@ -779,7 +778,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1590513621
 MonoBehaviour:
@@ -792,7 +791,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab091ffdff661b047ab4d11c73e5d25e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuIndex: 2
   unmutedVolume: -10
   mutedVolume: -80
   masterMixer: {fileID: 24100000, guid: bbedf9fbfe2254949967ae5b6be8b81a, type: 2}
@@ -818,10 +816,11 @@ GameObject:
   - component: {fileID: 1661182034}
   - component: {fileID: 1661182040}
   - component: {fileID: 1661182039}
-  - component: {fileID: 1661182036}
   - component: {fileID: 1661182038}
-  - component: {fileID: 1661182035}
   - component: {fileID: 1661182037}
+  - component: {fileID: 1661182041}
+  - component: {fileID: 1661182036}
+  - component: {fileID: 1661182035}
   m_Layer: 0
   m_Name: FeedbackController
   m_TagString: Untagged
@@ -840,7 +839,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1661182035
 MonoBehaviour:
@@ -850,16 +849,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1661182033}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eb106464d06f6d4b90eb670307eea94, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d7d099cc456e23458f1757357e16f71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  oneButtonPrefab: {fileID: 1212175687074788, guid: dd66cbe5f092f254f85b75a089d1af11,
-    type: 2}
-  twoButtonPrefab: {fileID: 1532608342395032, guid: 97b4b26a5af85234db7bd6f986e65c03,
-    type: 2}
-  actionButton: {fileID: 0}
-  negativeButton: {fileID: 0}
-  positiveButton: {fileID: 0}
+  prefab: {fileID: 1532608342395032, guid: 97b4b26a5af85234db7bd6f986e65c03, type: 2}
 --- !u!114 &1661182036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -868,10 +861,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1661182033}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 414ff6526a46b784a81e5f50b6b3dd8b, type: 3}
+  m_Script: {fileID: 11500000, guid: ed496025cedb5dd40ace9886a06e32ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 1180868013793926, guid: bf40093c29d723740b874dbeb107bd90, type: 2}
+  prefab: {fileID: 1212175687074788, guid: dd66cbe5f092f254f85b75a089d1af11, type: 2}
 --- !u!114 &1661182037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1060,6 +1053,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &1661182041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1661182033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 414ff6526a46b784a81e5f50b6b3dd8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1180868013793926, guid: bf40093c29d723740b874dbeb107bd90, type: 2}
 --- !u!1 &1707502891
 GameObject:
   m_ObjectHideFlags: 0

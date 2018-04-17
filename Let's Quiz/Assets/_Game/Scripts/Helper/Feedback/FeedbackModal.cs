@@ -43,7 +43,7 @@ namespace _LetsQuiz
             if (oneButton)
             {
                 // instantiate the modal
-                _modal = (GameObject)Instantiate(oneButtonPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity);
+                _modal = Instantiate(oneButtonPrefab);
 
                 // find the required components
                 _heading = GameObject.FindGameObjectWithTag("Modal_Heading").GetComponent<Text>();
@@ -58,7 +58,7 @@ namespace _LetsQuiz
             else
             {
                 // instantiate the modal
-                _modal = (GameObject)Instantiate(twoButtonPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity);
+                _modal = Instantiate(twoButtonPrefab);
 
                 // find the required components
                 _heading = GameObject.FindGameObjectWithTag("Modal_Heading").GetComponent<Text>();

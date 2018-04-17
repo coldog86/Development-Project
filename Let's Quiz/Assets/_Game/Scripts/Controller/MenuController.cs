@@ -11,15 +11,11 @@ namespace _LetsQuiz
         [Header("Component")]
         public GameObject navBar;
        
-        // private FeedbackAlert _alert;
         private FeedbackClick _click;
-        private FeedbackModal _modal;
 
         private void Start()
         {
-            // _alert = FindObjectOfType<FeedbackAlert>();
             _click = FindObjectOfType<FeedbackClick>();
-            _modal = FindObjectOfType<FeedbackModal>();
 
             navBar.SetActive(false);
         }
@@ -68,9 +64,9 @@ namespace _LetsQuiz
         // TASK : TO BE COMPLETED
         public void Logout()
         {
+            CloseNavDrawer();
             _click.Play();
-            _modal.Show(false, "Are you sure?", "Are you sure you want to logout?", null, "No", "Yes");
-            _modal.positiveButton.onClick.AddListener(OpenLogin);
+            FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
         }
 
         private void OpenLogin()
@@ -81,9 +77,9 @@ namespace _LetsQuiz
 
         public void Quit()
         {
+            CloseNavDrawer();
             _click.Play();
-            _modal.Show(false, "Are you sure?", "Are you sure you want to quit?", null, "No", "Yes");
-            _modal.positiveButton.onClick.AddListener(QuitGame);
+            FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
         }
 
         private void QuitGame()

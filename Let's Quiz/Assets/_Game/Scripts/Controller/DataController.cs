@@ -17,33 +17,26 @@ namespace _LetsQuiz
         [Header("Setting")]
         public float connectionTimeLimit = 10000.0f;
 
-        private FeedbackModal _modal;
-        private FeedbackAlert _alert;
         private LoadHelper _loadHelper;
 
         private float _connectionTimer = 0.0f;
 
         private void Start()
         {
-            _alert = FindObjectOfType<FeedbackAlert>();
-            _modal = FindObjectOfType<FeedbackModal>();
             _loadHelper = GetComponent<LoadHelper>();
             StartCoroutine(ConnectToServer());
         }
 
         private void ShowModal()
         {
-            _modal.Show(false, "Error!", "There was a timeout error on attempting to connect to the server. Do you wish to retry?", null, "No", "Yes");
-            _modal.positiveButton.onClick.AddListener(RetryConnection);
-            _modal.negativeButton.onClick.AddListener(Quit);
-
+            FeedbackTwoButtonModal.Show("Error!", "There was a timeout error on attempting to connect to the server. Do you wish to retry?", "Yes", "No", RetryConnection, Quit);
         }
 
-        // NOTE : DEBUG PURPOSES ONLY
         private void Quit()
         {
             Application.Quit();
 
+            // NOTE : DEBUG PURPOSES ONLY
             #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
             #endif
@@ -52,7 +45,7 @@ namespace _LetsQuiz
 
         private void RetryConnection()
         {
-            _alert.Show("Retrying connection...");
+            FeedbackAlert.Show("Retrying connection...");
             StartCoroutine(ConnectToServer());
         }
 

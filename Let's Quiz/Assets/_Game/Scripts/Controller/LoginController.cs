@@ -21,12 +21,7 @@ namespace _LetsQuiz
         public string testUsername = "test@email.com";
         public string testPassword = "123456";
 
-        [SerializeField]
-        private FeedbackAlert _alert;
-        [SerializeField]
         private FeedbackClick _click;
-        [SerializeField]
-        private FeedbackModal _modal;
 
         private void Start()
         {
@@ -35,20 +30,17 @@ namespace _LetsQuiz
             if (!passwordInput)
                 Debug.LogError(TAG + " Password Input field is null");
 
-            _alert = FindObjectOfType<FeedbackAlert>();
             _click = FindObjectOfType<FeedbackClick>();
-            _modal = FindObjectOfType<FeedbackModal>();
         }
 
-        // TASK : PLACEHOLDER COL
+        // TASK : PLACEHOLDER FOR COL
         public void SkipLogin()
         {
             _click.Play();
-            _modal.Show(false, "Warning!", "Logging in as a guest limits what you can do.", null, "Cancel", "Login");
-            _modal.positiveButton.onClick.AddListener(LoadMenu);
+            FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guests limits what you can do.", "Login", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
         }
 
-        // TASK : PLACEHOLDER COL
+        // TASK : PLACEHOLDER FOR COL
         public void EmailLogin()
         {
             _click.Play();
@@ -57,9 +49,9 @@ namespace _LetsQuiz
             var password = passwordInput.text;
 
             if (string.IsNullOrEmpty(username))
-                _alert.Show("Username cannot be empty.");
+                FeedbackAlert.Show("Username cannont be empty.");
             else if (string.IsNullOrEmpty(password))
-                _alert.Show("Password cannot be empty.");
+                FeedbackAlert.Show("Password cannont be empty.");
             else if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
                 if (ValidateLogin(username, password))
@@ -67,22 +59,22 @@ namespace _LetsQuiz
             }
         }
 
-        // TASK : PLACEHOLDER COL
+        // TASK : PLACEHOLDER FOR COL
         private bool ValidateLogin(string username, string password)
         {
             if (username == testUsername && password == testPassword)
             {
-                _alert.Show("Logging in...", 1.0f);
+                FeedbackAlert.Show("Logging in...", 1.0f);
                 return true;
             }
             else if (username != testUsername)
             {
-                _alert.Show("Username provided is incorrect.", 2.5f);
+                FeedbackAlert.Show("Username provided is incorrect.", 2.5f);
                 return false;
             }
             else if (password != testPassword)
             {
-                _alert.Show("Password provided is incorrect.", 2.5f);
+                FeedbackAlert.Show("Password provided is incorrect.", 2.5f);
                 return false;
             }
             return false;
@@ -92,24 +84,24 @@ namespace _LetsQuiz
         public void FacebookLogin()
         {
             _click.Play();
-            _alert.Show("Not implemented yet...");
+            FeedbackAlert.Show("Not implemented yet...");
         }
 
         // TASK : PLACEHOLDER FOR MICHELLE
         public void GoogleLogin()
         {
             _click.Play();
-            _alert.Show("Not implemented yet...");
+            FeedbackAlert.Show("Not implemented yet...");
         }
 
         // NOTE : UNSURE IF REQUIRED, PUT THERE TO COVER ALL BASES
         public void ForgotPassword()
         {
             _click.Play();
-            _alert.Show("Forgot Password...");
+            FeedbackAlert.Show("Forgot Password...");
         }
 
-        private void LoadMenu()
+        public void LoadMenu()
         {
             SceneManager.LoadScene(menuIndex, LoadSceneMode.Single);
         }

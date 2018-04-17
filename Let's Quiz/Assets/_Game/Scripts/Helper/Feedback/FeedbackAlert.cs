@@ -11,56 +11,39 @@ namespace _LetsQuiz
         [Header("Component")]
         public GameObject prefab;
 
+        public static FeedbackAlert instance;
         private GameObject _alert;
-        private Text _message;
 
-        private void Start()
+        private static Text _message;
+
+        private void Awake()
         {
-            // keeps object around so that alert can be called whenever
+            _alert = Instantiate(prefab);
             DontDestroyOnLoad(gameObject);
-        }
-
-        public void Show(string message, float time = 2.5f)
-        {
-            // instantiate the alert
-            _alert = (GameObject)Instantiate(prefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity);
-
-            // find the required components
+            DontDestroyOnLoad(_alert);
             _message = _alert.GetComponentInChildren<Text>();
+            instance = this;
+            instance._alert.SetActive(false);
+        }
 
-            // set the message
+        public static void Show(string message, float time = 2.5f)
+        {
             _message.text = message;
+            instance._alert.SetActive(true);
 
-            // activate the alert
-            _alert.SetActive(true);
-
-            // start coroutine to hide the alert
-            if (time > 0.0f)
-                StartCoroutine(Hide(time));
+            if (time > 0)
+                instance.StartCoroutine(Hide(time));
         }
 
-        private IEnumerator Hide(float time)
+        public static void Hide()
         {
-            // wait for x amount of time before hiding alert
+            instance._alert.SetActive(false);
+        }
+
+        private static IEnumerator Hide(float time)
+        {
             yield return new WaitForSeconds(time);
-
-            // deactivate the alert
-            _alert.SetActive(false);
-
-            // destroy the prefab
-            if (!_alert.activeSelf)
-                Destroy(_alert);
-        }
-
-        // override method incase alert has a display time of 0
-        public void Hide()
-        {
-            // deactivate the alert
-            _alert.SetActive(false);
-
-            // destroy the prefab
-            if (!_alert.activeSelf)
-                Destroy(_alert);
+            instance._alert.SetActive(false);
         }
     }
 }
