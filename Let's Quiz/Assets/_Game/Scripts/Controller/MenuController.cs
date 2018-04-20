@@ -23,6 +23,8 @@ namespace _LetsQuiz
         // TASK : TO BE COMPLETED
         public void StartGame()
         {
+            _click.Play();
+            SceneManager.LoadScene(BuildIndexHelper.Game, LoadSceneMode.Single);
         }
 
         // TASK : TO BE COMPLETED
