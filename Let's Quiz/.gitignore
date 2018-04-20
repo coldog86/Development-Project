@@ -42,7 +42,8 @@ Thumbs.dbb
 *.obj
 *.blend
 
-!background.jpg
+!Art/
+
 
 #=== Third Party Assets ===#
 MaterialUI/
