@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _LetsQuiz
 {
-    public static class BuildIndexHelper
+    public static class BuildIndex
     {
         public static int Splash = 0;
         public static int Login = 1;
@@ -14,7 +14,8 @@ namespace _LetsQuiz
         public static int Lose = 5;
         public static int Account = 6;
         public static int Leaderboard = 7;
-        public static int Settings = 8;
+        public static int SubmitQuestion = 8;
+        public static int Settings = 9;
     }
 }
 
