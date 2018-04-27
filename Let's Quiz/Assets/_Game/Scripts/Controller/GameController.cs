@@ -6,6 +6,12 @@ namespace _LetsQuiz
 {
     public class GameController : MonoBehaviour
     {
+        #region variables
+
+        #endregion
+
+        #region methods
+
         // NOTE : PLACEHOLDER
         public void ReportQuestion()
         {
@@ -17,6 +23,8 @@ namespace _LetsQuiz
         {
             FeedbackAlert.Show("Like question");
         }
+
+        #endregion
     }
 }
 

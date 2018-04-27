@@ -16,6 +16,7 @@ TagManager:
   - Toggle_Sound
   - Toggle_Background
   - Toggle_Notification
+  - Warning_Text
   layers:
   - Default
   - TransparentFX

@@ -4,11 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
 namespace _LetsQuiz
 {
-    public class AccountController : MonoBehaviour
+    public class SubmitController : MonoBehaviour
     {
+
         #region variables
 
         private FeedbackClick _click;
