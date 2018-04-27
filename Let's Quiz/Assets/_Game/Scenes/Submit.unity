@@ -326,7 +326,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Guest's don't cannot submit new questions.
+  m_Text: Guest's cannot submit new questions.
 --- !u!222 &286387028
 CanvasRenderer:
   m_ObjectHideFlags: 0
