@@ -428,7 +428,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: bdb3c2fa2edce14428c2588d923d9431, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1380,7 +1380,7 @@ GameObject:
   m_Component:
   - component: {fileID: 696921903}
   m_Layer: 5
-  m_Name: Button - Flat (2)
+  m_Name: Button - Flat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1394,7 +1394,7 @@ RectTransform:
   m_GameObject: {fileID: 696921902}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000023, y: 1.0000023, z: 1.0000023}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1834243829}
   m_Father: {fileID: 1004739501}
@@ -1815,6 +1815,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a377974b0ede3c94aad1784504de17fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roundTime: 20
+  timerBar: {fileID: 2126944772}
+  timerImage: {fileID: 1511719764}
+  timerText: {fileID: 646417070}
+  timerColorMax: {r: 0.29803923, g: 0.6862745, b: 0.3137255, a: 1}
+  timerColorMid: {r: 1, g: 0.34117648, b: 0.13333334, a: 1}
+  timerColorMin: {r: 0.95686275, g: 0.2627451, b: 0.21176471, a: 1}
 --- !u!4 &931041870
 Transform:
   m_ObjectHideFlags: 0
@@ -2829,7 +2836,7 @@ GameObject:
   - component: {fileID: 1484857780}
   m_Layer: 5
   m_Name: Text
-  m_TagString: Untagged
+  m_TagString: Username_Text
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2849,8 +2856,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 76, y: 0}
-  m_SizeDelta: {x: -152, y: 136}
+  m_AnchoredPosition: {x: 60, y: 0}
+  m_SizeDelta: {x: -184, y: 136}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1484857780
 MonoBehaviour:
@@ -3329,7 +3336,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1853510494}
   m_Layer: 5
-  m_Name: Button - Flat (1)
+  m_Name: Button - Flat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3343,7 +3350,7 @@ RectTransform:
   m_GameObject: {fileID: 1853510493}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000023, y: 1.0000023, z: 1.0000023}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 559301238}
   m_Father: {fileID: 1004739501}
@@ -3457,7 +3464,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1940728698}
   m_Layer: 5
-  m_Name: Button - Flat (3)
+  m_Name: Button - Flat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3471,7 +3478,7 @@ RectTransform:
   m_GameObject: {fileID: 1940728697}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000023, y: 1.0000023, z: 1.0000023}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 283811359}
   m_Father: {fileID: 1004739501}
