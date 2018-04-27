@@ -13,7 +13,9 @@ namespace _LetsQuiz
         [Header("Component")]
         public GameObject navigationDrawer;
        
+        private Text _usernameText;
         private FeedbackClick _click;
+        private SettingsController _settingsController;
         private LoadHelper _loadHelper;
 
         #endregion
@@ -22,8 +24,20 @@ namespace _LetsQuiz
 
         #region unity
 
+        private void Awake()
+        {
+            _usernameText = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
+            _settingsController = FindObjectOfType<SettingsController>();
+
+            if (_settingsController.GetPlayerType() == PlayerStatus.Guest)
+                _usernameText.text = "Guest";
+            else
+                _usernameText.text = "Test";
+        }
+
         private void Start()
         {
+           
             navigationDrawer.SetActive(false);
             _click = FindObjectOfType<FeedbackClick>();
             _loadHelper = FindObjectOfType<LoadHelper>();
@@ -99,7 +113,6 @@ namespace _LetsQuiz
         // TASK : TO BE COMPLETED
         public void Logout()
         {
-            CloseNavDrawer();
             _click.Play();
             FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
         }
@@ -112,7 +125,6 @@ namespace _LetsQuiz
 
         public void Quit()
         {
-            CloseNavDrawer();
             _click.Play();
             FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
         }
