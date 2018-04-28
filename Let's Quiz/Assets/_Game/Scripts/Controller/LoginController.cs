@@ -8,39 +8,51 @@ namespace _LetsQuiz
 {
     public class LoginController : MonoBehaviour
     {
-        private const string TAG = "LoginController";
+        #region variables
 
         [Header("Component")]
         public InputField usernameInput;
         public InputField passwordInput;
-
-        [Header("Setting")]
-        public int menuIndex = 2;
 
         [Header("Debug")]
         public string testUsername = "test@email.com";
         public string testPassword = "123456";
 
         private FeedbackClick _click;
+        private SettingsController _settingsController;
+        private LoadHelper _loadHelper;
+
+        #endregion
+
+        #region methods
+
+        #region unity
 
         private void Start()
         {
             if (!usernameInput)
-                Debug.LogError(TAG + " Username Input field is null");
+                Debug.LogError("Username Input field is null");
             if (!passwordInput)
-                Debug.LogError(TAG + " Password Input field is null");
+                Debug.LogError("Password Input field is null");
 
+            _settingsController = FindObjectOfType<SettingsController>();
             _click = FindObjectOfType<FeedbackClick>();
+            _loadHelper = FindObjectOfType<LoadHelper>();
+            Destroy(_loadHelper);
         }
 
-        // TASK : PLACEHOLDER FOR COL
+        #endregion
+
+        // TASK : PLACEHOLDER
         public void SkipLogin()
         {
             _click.Play();
-            FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guests limits what you can do.", "Login", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
+            FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guests limits what you can do.", "Login", "Cancel", LoadMenuAsGuest, FeedbackTwoButtonModal.Hide);
         }
 
-        // TASK : PLACEHOLDER FOR COL
+        #region email specific
+
+        // TASK : PLACEHOLDER FOR CHARNES
         public void EmailLogin()
         {
             _click.Play();
@@ -59,7 +71,7 @@ namespace _LetsQuiz
             }
         }
 
-        // TASK : PLACEHOLDER FOR COL
+        // TASK : PLACEHOLDER FOR CHARNES
         private bool ValidateLogin(string username, string password)
         {
             if (username == testUsername && password == testPassword)
@@ -80,6 +92,10 @@ namespace _LetsQuiz
             return false;
         }
 
+        #endregion
+
+        #region social media specific
+
         // TASK : PLACEHOLDER FOR MICHELLE
         public void FacebookLogin()
         {
@@ -94,17 +110,25 @@ namespace _LetsQuiz
             FeedbackAlert.Show("Not implemented yet...");
         }
 
-        // NOTE : UNSURE IF REQUIRED, PUT THERE TO COVER ALL BASES
-        public void ForgotPassword()
-        {
-            _click.Play();
-            FeedbackAlert.Show("Forgot Password...");
-        }
+        #endregion
+
+        #region navigation specific
 
         public void LoadMenu()
         {
-            SceneManager.LoadScene(menuIndex, LoadSceneMode.Single);
+            _settingsController.SetPlayerType(PlayerStatus.Existing);
+            SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
+
+        public void LoadMenuAsGuest()
+        {
+            _settingsController.SetPlayerType(PlayerStatus.Guest);
+            SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
+        }
+
+        #endregion
+
+        #endregion
     }
 }
 

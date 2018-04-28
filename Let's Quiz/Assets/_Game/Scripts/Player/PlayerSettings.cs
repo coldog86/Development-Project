@@ -16,5 +16,8 @@ namespace _LetsQuiz
 
         [Header("Notifications")]
         public int notificationsToggled = 1;
+
+        [Header("Player Status")]
+        public int playerType = 0;
     }
 }

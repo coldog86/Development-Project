@@ -4,29 +4,53 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// TODO : FINISH LOADASYNC
-
 namespace _LetsQuiz
 {
     public class LoadHelper : MonoBehaviour
     {
-        [Header("Component")]
-        public Slider slider;
+        #region variables
 
+        private Slider _slider;
+
+        #endregion
+
+        #region methods
+
+        #region unity
+
+        private void Awake()
+        {
+            // get required component
+            _slider = FindObjectOfType<Slider>();
+        }
+
+        #endregion
+
+        #region load specific
+
+        // used from external sources
         public void Load(int buildIndex)
         {
+            // call corotuine
             StartCoroutine(LoadAsync(buildIndex));
         }
 
+        // updates slider values and loads scene
         private IEnumerator LoadAsync(int buildIndex)
         {
+            // loads scene via async operation
             AsyncOperation operation = SceneManager.LoadSceneAsync(buildIndex);
 
+            // updates slider value with progress of operation
             while (!operation.isDone)
             {
-                slider.value = operation.progress;
+                _slider.value = operation.progress;
                 yield return null;
             }
         }
+
+        #endregion
+
+        #endregion
     }
 }

@@ -3,33 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
+using System.Configuration;
 
 namespace _LetsQuiz
 {
-
     // NOTE : PLACEHOLDER CODE TO TEST NAVIGATION
     public class DataController : MonoBehaviour
     {
+        #region variables
+
         [Header("Server")]
         public string hostURL = "";
-        public string connectionFile = "download.php";
+        public string connectionFile = "";
 
         [Header("Setting")]
         public float connectionTimeLimit = 10000.0f;
 
+        private SettingsController _settingsController;
         private LoadHelper _loadHelper;
-
         private float _connectionTimer = 0.0f;
+
+        #endregion
+
+        #region methods
+
+        #region unity
 
         private void Start()
         {
             _loadHelper = GetComponent<LoadHelper>();
+            _settingsController = GetComponent<SettingsController>();
+            _settingsController.LoadPlayerSettings();
             StartCoroutine(ConnectToServer());
-        }
-
-        private void ShowModal()
-        {
-            FeedbackTwoButtonModal.Show("Error!", "There was a timeout error on attempting to connect to the server. Do you wish to retry?", "Yes", "No", RetryConnection, Quit);
+            DontDestroyOnLoad(gameObject);
         }
 
         private void Quit()
@@ -43,9 +49,13 @@ namespace _LetsQuiz
 
         }
 
+        #endregion
+
+        #region server specific
+
         private void RetryConnection()
         {
-            FeedbackAlert.Show("Retrying connection...");
+            FeedbackAlert.Show("Retrying connection...", 1.0f);
             StartCoroutine(ConnectToServer());
         }
 
@@ -57,19 +67,38 @@ namespace _LetsQuiz
             {
                 _connectionTimer += Time.deltaTime;
                 if (_connectionTimer > connectionTimeLimit)
-                    ShowModal();
+                    ShowModal("There was a timeout error connecting to the server.");
                 yield return null;
             }
             if (!open.isDone || open.error != null)
             {
-                ShowModal();
+                ShowModal("There was an error connecting to the server.");
                 yield return null;
             }
             else
             {
                 yield return open;
-                _loadHelper.Load(BuildIndexHelper.Login);
+
+                var playerType = _settingsController.GetPlayerType();
+
+                if (playerType == PlayerStatus.New)
+                    _loadHelper.Load(BuildIndex.Login);
+                else if (playerType == PlayerStatus.Existing || playerType == PlayerStatus.Guest)
+                    _loadHelper.Load(BuildIndex.Menu);
             }
         }
+
+        #endregion
+
+        #region feedback specific
+
+        private void ShowModal(string message)
+        {
+            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryConnection, Quit);
+        }
+
+        #endregion
+
+        #endregion
     }
 }

@@ -4,15 +4,17 @@ using UnityEngine;
 
 namespace _LetsQuiz
 {
-    public static class BuildIndexHelper
+    public static class BuildIndex
     {
         public static int Splash = 0;
         public static int Login = 1;
         public static int Menu = 2;
         public static int Game = 3;
-        public static int Account = 4;
-        public static int Leaderboard = 5;
-        public static int Settings = 6;
+        public static int Result = 4;
+        public static int Account = 5;
+        public static int Leaderboard = 6;
+        public static int SubmitQuestion = 7;
+        public static int Settings = 8;
     }
 }
 
