@@ -35,6 +35,9 @@ namespace _LetsQuiz
         {
             _timeRemaining -= Time.deltaTime;
             UpdateTimeRemainingDisplay();
+
+            if (_timeRemaining <= 0)
+                EndGame();
         }
 
         #endregion
