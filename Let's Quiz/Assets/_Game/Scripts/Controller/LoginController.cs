@@ -39,18 +39,20 @@ namespace _LetsQuiz
             _click = FindObjectOfType<FeedbackClick>();
             _loadHelper = FindObjectOfType<LoadHelper>();
             Destroy(_loadHelper);
+
+            Quit();
         }
 
         #endregion
 
-        // TASK : PLACEHOLDER
+        #region email specific
+
+        // TASK : PLACEHOLDER FOR CHARNES
         public void SkipLogin()
         {
             _click.Play();
-            FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guests limits what you can do.", "Login", "Cancel", LoadMenuAsGuest, FeedbackTwoButtonModal.Hide);
+            FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guest limits what you can do.", "Login", "Cancel", LoadMenuAsGuest, FeedbackTwoButtonModal.Hide);
         }
-
-        #region email specific
 
         // TASK : PLACEHOLDER FOR CHARNES
         public void EmailLogin()
@@ -96,14 +98,14 @@ namespace _LetsQuiz
 
         #region social media specific
 
-        // TASK : PLACEHOLDER FOR MICHELLE
+        // TASK : PLACEHOLDER
         public void FacebookLogin()
         {
             _click.Play();
             FeedbackAlert.Show("Not implemented yet...");
         }
 
-        // TASK : PLACEHOLDER FOR MICHELLE
+        // TASK : PLACEHOLDER
         public void GoogleLogin()
         {
             _click.Play();
@@ -124,6 +126,12 @@ namespace _LetsQuiz
         {
             _settingsController.SetPlayerType(PlayerStatus.Guest);
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
+        }
+
+        public void Quit()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+                Application.Quit();
         }
 
         #endregion

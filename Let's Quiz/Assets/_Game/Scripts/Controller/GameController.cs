@@ -67,7 +67,7 @@ namespace _LetsQuiz
                 timerImage.color = timerColorMax;
                 timerText.color = timerColorMax;
             }
-            else if (timerBar.value < 16 && timerBar.value > 5)
+            else if (timerBar.value < 16 && timerBar.value > 6)
             {
                 timerImage.color = timerColorMid;
                 timerText.color = timerColorMid;

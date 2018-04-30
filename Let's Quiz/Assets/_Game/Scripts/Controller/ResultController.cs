@@ -30,7 +30,7 @@ namespace _LetsQuiz
 
         public void ShareResults()
         {
-            FeedbackAlert.Show("Share Results...");
+            FeedbackAlert.Show("Share results");
         }
 
         public void BackToMenu()

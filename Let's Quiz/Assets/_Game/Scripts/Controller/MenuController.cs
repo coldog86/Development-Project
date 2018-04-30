@@ -120,6 +120,8 @@ namespace _LetsQuiz
         private void OpenLogin()
         {
             _click.Play();
+            // NOTE : DEBUG PURPOSES ONLY
+            _settingsController.SetPlayerType(PlayerStatus.New);
             SceneManager.LoadScene(BuildIndex.Login, LoadSceneMode.Single);
         }
 
