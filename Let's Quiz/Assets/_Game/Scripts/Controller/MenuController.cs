@@ -15,6 +15,7 @@ namespace _LetsQuiz
        
         private Text _usernameText;
         private FeedbackClick _click;
+        private FeedbackMusic _music;
         private SettingsController _settingsController;
         private LoadHelper _loadHelper;
 
@@ -40,6 +41,7 @@ namespace _LetsQuiz
            
             navigationDrawer.SetActive(false);
             _click = FindObjectOfType<FeedbackClick>();
+            _music = FindObjectOfType<FeedbackMusic>();
             _loadHelper = FindObjectOfType<LoadHelper>();
             Destroy(_loadHelper);
         }
@@ -52,6 +54,7 @@ namespace _LetsQuiz
         public void StartGame()
         {
             _click.Play();
+            _music.PlayGameMusic();
             SceneManager.LoadScene(BuildIndex.Game, LoadSceneMode.Single);
         }
 
@@ -120,6 +123,7 @@ namespace _LetsQuiz
         private void OpenLogin()
         {
             _click.Play();
+
             // NOTE : DEBUG PURPOSES ONLY
             _settingsController.SetPlayerType(PlayerStatus.New);
             SceneManager.LoadScene(BuildIndex.Login, LoadSceneMode.Single);
@@ -128,6 +132,12 @@ namespace _LetsQuiz
         public void Quit()
         {
             _click.Play();
+
+            #if PLATFORM_ANDROID
+            if (Input.GetKeyDown(KeyCode.Escape))
+                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
+            #endif
+            
             FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
         }
 
@@ -135,10 +145,10 @@ namespace _LetsQuiz
         {
             Application.Quit();
 
+            // NOTE : DEBUG PURPOSES ONLY
             #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
             #endif
-
         }
 
         #endregion

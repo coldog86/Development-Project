@@ -13,11 +13,20 @@ namespace _LetsQuiz
         [Header("Components")]
         public Image backgroundEffect;
 
+        private FeedbackClick _click;
+        private FeedbackMusic _music;
+
         #endregion
 
         #region methods
 
         #region unity
+
+        private void Start()
+        {
+            _click = FindObjectOfType<FeedbackClick>();
+            _music = FindObjectOfType<FeedbackMusic>();
+        }
 
         private void Update()
         {
@@ -30,11 +39,14 @@ namespace _LetsQuiz
 
         public void ShareResults()
         {
+            _click.Play();
             FeedbackAlert.Show("Share results");
         }
 
         public void BackToMenu()
         {
+            _click.Play();
+            _music.PlayBackgroundMusic();
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 

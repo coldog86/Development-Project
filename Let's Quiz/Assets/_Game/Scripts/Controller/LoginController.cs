@@ -130,8 +130,15 @@ namespace _LetsQuiz
 
         public void Quit()
         {
+            #if PLATFORM_ANDROID
             if (Input.GetKeyDown(KeyCode.Escape))
-                Application.Quit();
+                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
+            #endif
+        }
+
+        private void QuitGame()
+        {
+            Application.Quit();
         }
 
         #endregion

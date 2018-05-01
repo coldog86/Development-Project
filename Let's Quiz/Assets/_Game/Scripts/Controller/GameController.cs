@@ -11,14 +11,19 @@ namespace _LetsQuiz
     {
         #region variables
 
-        [Header("Components")]
+        [Header("Timer")]
         public Slider timerBar;
         public Image timerImage;
-        public Text timerText;
         public Color timerColorMax;
         public Color timerColorMid;
         public Color timerColorMin;
 
+        [Header("Question")]
+        public Text questionText;
+        public Text scoreText;
+
+        private FeedbackClick _click;
+        private FeedbackMusic _music;
         private float _timeRemaining = 20;
 
         #endregion
@@ -29,6 +34,8 @@ namespace _LetsQuiz
 
         private void Start()
         {
+            _click = FindObjectOfType<FeedbackClick>();
+            _music = FindObjectOfType<FeedbackMusic>();
         }
 
         private void Update()
@@ -45,12 +52,14 @@ namespace _LetsQuiz
         // NOTE : PLACEHOLDER
         public void ReportQuestion()
         {
+            _click.Play();
             FeedbackAlert.Show("Report question");
         }
 
         // NOTE : PLACEHOLDER
         public void LikeQuestion()
         {
+            _click.Play();
             FeedbackAlert.Show("Like question");
         }
 
@@ -60,29 +69,20 @@ namespace _LetsQuiz
         {
             var timeRemaining = Mathf.Round(_timeRemaining);
             timerBar.value = timeRemaining;
-            timerText.text = timeRemaining.ToString();
 
             if (timerBar.value > 15)
-            {
                 timerImage.color = timerColorMax;
-                timerText.color = timerColorMax;
-            }
             else if (timerBar.value < 16 && timerBar.value > 6)
-            {
                 timerImage.color = timerColorMid;
-                timerText.color = timerColorMid;
-            }
             else if (timerBar.value <= 5)
-            {
                 timerImage.color = timerColorMin;
-                timerText.color = timerColorMin;
-            }
         }
 
         #endregion
 
         public void EndGame()
         {
+            _music.Stop();
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
         }
 
