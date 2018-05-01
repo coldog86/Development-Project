@@ -30,6 +30,7 @@ namespace _LetsQuiz
             _usernameText = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
             _settingsController = FindObjectOfType<SettingsController>();
 
+            // NOTE : PLACEHOLDER
             if (_settingsController.GetPlayerType() == PlayerStatus.Guest)
                 _usernameText.text = "Guest";
             else
@@ -46,6 +47,14 @@ namespace _LetsQuiz
             Destroy(_loadHelper);
         }
 
+        private void Update()
+        {
+            #if PLATFORM_ANDROID
+            if (Input.GetKeyDown(KeyCode.Escape))
+                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
+            #endif
+        }
+
         #endregion
 
         #region game specific
@@ -58,7 +67,7 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Game, LoadSceneMode.Single);
         }
 
-        // NOTE : PLACEHOLDER
+        // NOTE : TO BE COMPLETED
         public void LoadActiveGames()
         {
         }
@@ -132,12 +141,6 @@ namespace _LetsQuiz
         public void Quit()
         {
             _click.Play();
-
-            #if PLATFORM_ANDROID
-            if (Input.GetKeyDown(KeyCode.Escape))
-                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
-            #endif
-            
             FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
         }
 

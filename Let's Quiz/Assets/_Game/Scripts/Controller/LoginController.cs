@@ -39,21 +39,30 @@ namespace _LetsQuiz
             _click = FindObjectOfType<FeedbackClick>();
             _loadHelper = FindObjectOfType<LoadHelper>();
             Destroy(_loadHelper);
+        }
 
-            Quit();
+        private void Update()
+        {
+            #if PLATFORM_ANDROID
+            if (Input.GetKeyDown(KeyCode.Escape))
+                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
+            #endif
         }
 
         #endregion
 
         #region email specific
 
+        // NOTE : ELABORATION 1
         // TASK : PLACEHOLDER FOR CHARNES
         public void SkipLogin()
         {
             _click.Play();
-            FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guest limits what you can do.", "Login", "Cancel", LoadMenuAsGuest, FeedbackTwoButtonModal.Hide);
+            _settingsController.SetPlayerType(PlayerStatus.Guest);
+            FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guest limits what you can do.", "Login", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
         }
 
+        // NOTE : ELABORATION 1
         // TASK : PLACEHOLDER FOR CHARNES
         public void EmailLogin()
         {
@@ -69,16 +78,20 @@ namespace _LetsQuiz
             else if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
                 if (ValidateLogin(username, password))
+                {
+                    _settingsController.SetPlayerType(PlayerStatus.Existing);
                     LoadMenu();
+                }     
             }
         }
 
+        // NOTE : ELABORATION 1
         // TASK : PLACEHOLDER FOR CHARNES
         private bool ValidateLogin(string username, string password)
         {
             if (username == testUsername && password == testPassword)
             {
-                FeedbackAlert.Show("Logging in...", 1.0f);
+                FeedbackAlert.Show("Logging in.", 1.0f);
                 return true;
             }
             else if (username != testUsername)
@@ -102,14 +115,14 @@ namespace _LetsQuiz
         public void FacebookLogin()
         {
             _click.Play();
-            FeedbackAlert.Show("Not implemented yet...");
+            FeedbackAlert.Show("Not implemented yet.");
         }
 
         // TASK : PLACEHOLDER
         public void GoogleLogin()
         {
             _click.Play();
-            FeedbackAlert.Show("Not implemented yet...");
+            FeedbackAlert.Show("Not implemented yet.");
         }
 
         #endregion
@@ -118,27 +131,17 @@ namespace _LetsQuiz
 
         public void LoadMenu()
         {
-            _settingsController.SetPlayerType(PlayerStatus.Existing);
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
-        }
-
-        public void LoadMenuAsGuest()
-        {
-            _settingsController.SetPlayerType(PlayerStatus.Guest);
-            SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
-        }
-
-        public void Quit()
-        {
-            #if PLATFORM_ANDROID
-            if (Input.GetKeyDown(KeyCode.Escape))
-                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
-            #endif
         }
 
         private void QuitGame()
         {
             Application.Quit();
+
+            // NOTE : DEBUG PURPOSES ONLY
+            #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            #endif
         }
 
         #endregion
