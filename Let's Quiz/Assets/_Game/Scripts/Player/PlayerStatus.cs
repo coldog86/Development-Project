@@ -8,7 +8,8 @@ namespace _LetsQuiz
     {
         public static int Guest = -1;
         public static int New = 0;
-        public static int Existing = 1;
+        public static int LoggedIn = 1;
+        public static int LoggedOut = 2;
     }
 }
 

@@ -12,7 +12,7 @@ namespace _LetsQuiz
         #region variables
 
         private FeedbackClick _click;
-        private SettingsController _settingsController;
+        private PlayerController _playerController;
         private Text _warningText;
 
         #endregion
@@ -22,15 +22,15 @@ namespace _LetsQuiz
         private void Awake()
         {
             _click = FindObjectOfType<FeedbackClick>();
-            _settingsController = FindObjectOfType<SettingsController>();
-            _settingsController.LoadPlayerSettings();
+            _playerController = FindObjectOfType<PlayerController>();
+            _playerController.LoadPlayer();
             _warningText = GameObject.FindGameObjectWithTag("Warning_Text").GetComponent<Text>();
             _warningText.enabled = false;
         }
 
         private void Start()
         {
-            if (_settingsController.GetPlayerType() == PlayerStatus.Guest)
+            if (_playerController.GetPlayerType() == PlayerStatus.Guest)
                 _warningText.enabled = true;
             else
                 _warningText.enabled = false;

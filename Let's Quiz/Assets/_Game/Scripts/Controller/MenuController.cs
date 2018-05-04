@@ -16,7 +16,7 @@ namespace _LetsQuiz
         private Text _usernameText;
         private FeedbackClick _click;
         private FeedbackMusic _music;
-        private SettingsController _settingsController;
+        private PlayerController _playerController;
         private LoadHelper _loadHelper;
 
         #endregion
@@ -28,18 +28,15 @@ namespace _LetsQuiz
         private void Awake()
         {
             _usernameText = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
-            _settingsController = FindObjectOfType<SettingsController>();
+            _playerController = FindObjectOfType<PlayerController>();
 
-            // NOTE : PLACEHOLDER
-            if (_settingsController.GetPlayerType() == PlayerStatus.Guest)
-                _usernameText.text = "Guest";
-            else
-                _usernameText.text = "Test";
+            if (PlayerPrefs.HasKey(_playerController.usernameKey))
+                _usernameText.text = _playerController.GetUsername();
+                
         }
 
         private void Start()
         {
-           
             navigationDrawer.SetActive(false);
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
@@ -134,7 +131,7 @@ namespace _LetsQuiz
             _click.Play();
 
             // NOTE : DEBUG PURPOSES ONLY
-            _settingsController.SetPlayerType(PlayerStatus.New);
+            _playerController.SetPlayerType(PlayerStatus.LoggedOut);
             SceneManager.LoadScene(BuildIndex.Login, LoadSceneMode.Single);
         }
 
