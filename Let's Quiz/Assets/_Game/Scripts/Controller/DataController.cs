@@ -1,11 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
-using System.Configuration;
-using UnityEditor.MemoryProfiler;
-using System;
 
 namespace _LetsQuiz
 {
@@ -21,9 +19,8 @@ namespace _LetsQuiz
         private float _connectionTimeLimit = 1000000.0f;
         private float _connectionTimer = 0.0f;
 
-        [SerializeField]
+        [Header("Validation Tests")]
         private string _username = "u";
-        [SerializeField]
         private string _password = "p";
 
         private GetAllQuestions _questionDownload;
@@ -73,7 +70,7 @@ namespace _LetsQuiz
         {
             Application.Quit();
 
-            // NOTE : DEBUG PURPOSES ONLY
+            // NOTE : debug purposes only
             #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
             #endif
@@ -89,7 +86,6 @@ namespace _LetsQuiz
             {
                 if (_username != "u" && _password != "p")
                 {
-                    FeedbackAlert.Show("Welcome back " + _username);
                     StartCoroutine(Login(_username, _password));
                 }
                 else
@@ -112,7 +108,7 @@ namespace _LetsQuiz
             form.AddField("usernamePost", username);
             form.AddField("passwordPost", password);
 
-            WWW loginRequest = new WWW(_hostUrl + _connectionFile, form);
+            WWW loginRequest = new WWW(ServerHelper.Host + ServerHelper.Login, form);
 
             while (!loginRequest.isDone)
             {
@@ -144,6 +140,7 @@ namespace _LetsQuiz
                 }
                 else
                 {
+                    FeedbackAlert.Show("Welcome back " + _username);
                     _loadHelper.Load(BuildIndex.Menu);
                     yield return loginRequest;
                 }
@@ -201,7 +198,7 @@ namespace _LetsQuiz
             StartCoroutine(ConnectToServer());
         }
 
-        [Obsolete("ShowModal is deprecated, please use DisplayErorModal instead.")]
+        [Obsolete("ShowModal is deprecated, please use DisplayErrorModal instead.")]
         private void ShowModal(string message)
         {
             FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryConnection, Quit);

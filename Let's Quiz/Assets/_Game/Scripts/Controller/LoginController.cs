@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System;
+using System.Runtime.Serialization.Formatters;
 
 namespace _LetsQuiz
 {
@@ -31,14 +32,6 @@ namespace _LetsQuiz
         [Header("Debug")]
         public string testUsername = "test@email.com";
         public string testPassword = "123456";
-
-        [Header("Server")]
-        [SerializeField]
-        private string _hostUrl = "www.41melquizgame.xyz/LQ/";
-        [SerializeField]
-        private string _loginUserFile = "loginExistingUserWithEmail.php";
-        [SerializeField]
-        private string _addUserFile = "addUser.php";
 
         [Header("Connection")]
         [SerializeField]
@@ -151,6 +144,7 @@ namespace _LetsQuiz
                 {
                     _playerController.SetUsername(username);
                     _playerController.SetPassword(password);
+                    _playerController.SetPlayerEmail(email);
                     _playerController.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }      
@@ -163,7 +157,7 @@ namespace _LetsQuiz
             form.AddField("usernamePost", username);
             form.AddField("emailPost", email);
             form.AddField("passwordPost", password);
-            WWW createRequest = new WWW(_hostUrl + _addUserFile, form);
+            WWW createRequest = new WWW(ServerHelper.Host + ServerHelper.Register, form);
 
             while (!createRequest.isDone)
             { 
@@ -206,8 +200,13 @@ namespace _LetsQuiz
         public void SkipLogin()
         {
             _click.Play();
+
             _playerController.SetPlayerType(PlayerStatus.Guest);
-            FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guest limits what you can do.", "Login", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
+
+            if (newUserPanel.activeInHierarchy)
+                FeedbackTwoButtonModal.Show("Warning!", "Registering in as a guest limits what you can do.", "Register", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
+            else if (existingUserPanel.activeInHierarchy)
+                FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guest limits what you can do.", "Login", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
         }
 
         // NOTE : ELABORATION 1
@@ -245,7 +244,7 @@ namespace _LetsQuiz
             form.AddField("usernamePost", username);
             form.AddField("passwordPost", password);
 
-            WWW loginRequest = new WWW(_hostUrl + _loginUserFile, form);
+            WWW loginRequest = new WWW(ServerHelper.Host + ServerHelper.Login, form);
           
             while (!loginRequest.isDone)
             {

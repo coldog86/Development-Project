@@ -1,19 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Configuration;
 
 namespace _LetsQuiz
 {
     public class GetAllQuestions : MonoBehaviour
     {
         #region variables
-
-        [Header("Server")]
-        [SerializeField]
-        private string _hostURL = "http://41melquizgame.xyz/LQ/";
-        [SerializeField]
-        private string _questionFile = "pullAllQuestions.php";
 
         private float _downloadTimer = 5.0f;
 
@@ -38,7 +31,7 @@ namespace _LetsQuiz
 
         public IEnumerator PullAllQuestionsFromServer()
         {
-            WWW download = new WWW(_hostURL + _questionFile);
+            WWW download = new WWW(ServerHelper.Host + ServerHelper.DownloadQuestion);
             while (!download.isDone)
             {
                 if (_downloadTimer < 0)
@@ -65,9 +58,12 @@ namespace _LetsQuiz
                 // we got the string from the server, it is every question in JSON format
                 Debug.Log("Vox transmition recieved");
                 Debug.Log(download.text);
+
                 _dataController.serverConnected = true;
                 _dataController.allQuestionJSON = download.text;
+
                 yield return download;
+
                 _playerController.SetQuestionData(download.text);
                 _dataController.Init();
             } 
