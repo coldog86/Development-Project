@@ -704,9 +704,9 @@ GameObject:
   - component: {fileID: 1511502299}
   - component: {fileID: 1511502298}
   - component: {fileID: 1511502302}
-  - component: {fileID: 1511502300}
   - component: {fileID: 1511502301}
   - component: {fileID: 1511502303}
+  - component: {fileID: 1511502300}
   m_Layer: 0
   m_Name: DataController
   m_TagString: Untagged
@@ -725,10 +725,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8255fcf0b3a30a4c8ee76accdaf34f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _connectionTimeLimit: 1000000
-  _connectionTimer: 0
-  _username: 
-  _password: 
 --- !u!4 &1511502299
 Transform:
   m_ObjectHideFlags: 0
@@ -778,8 +774,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a80f58f4e202e14abdd11b0a30feb84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hostURL: http://41melquizgame.xyz/LQ/
-  _questionFile: pullAllQuestions.php
 --- !u!114 &1511502303
 MonoBehaviour:
   m_ObjectHideFlags: 0
