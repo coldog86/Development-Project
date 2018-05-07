@@ -49,14 +49,14 @@ namespace _LetsQuiz
 
         #endregion
 
-        // NOTE : PLACEHOLDER
+        // NOTE : placeholder
         public void ReportQuestion()
         {
             _click.Play();
             FeedbackAlert.Show("Report question");
         }
 
-        // NOTE : PLACEHOLDER
+        // NOTE : placeholder
         public void LikeQuestion()
         {
             _click.Play();

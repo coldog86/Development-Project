@@ -46,6 +46,7 @@ namespace _LetsQuiz
 
         private void Update()
         {
+            // NOTE : android platform only
             #if PLATFORM_ANDROID
             if (Input.GetKeyDown(KeyCode.Escape))
                 FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
@@ -118,8 +119,6 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Settings, LoadSceneMode.Single);
         }
 
-        // NOTE : DEBUG PURPOSES ONLY
-        // TASK : TO BE COMPLETED
         public void Logout()
         {
             _click.Play();
@@ -129,8 +128,6 @@ namespace _LetsQuiz
         private void OpenLogin()
         {
             _click.Play();
-
-            // NOTE : DEBUG PURPOSES ONLY
             _playerController.SetPlayerType(PlayerStatus.LoggedOut);
             SceneManager.LoadScene(BuildIndex.Login, LoadSceneMode.Single);
         }
@@ -145,7 +142,7 @@ namespace _LetsQuiz
         {
             Application.Quit();
 
-            // NOTE : DEBUG PURPOSES ONLY
+            // NOTE : debug purposes only
             #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
             #endif
