@@ -11,8 +11,10 @@ namespace _LetsQuiz
         private string _typeKey = "PlayerType";
         private string _usernameKey = "PlayerUsername";
         private string _passwordKey = "PlayerPassword";
+        private string _emailKey = "PlayerEmail";
         private string _questionDataKey = "PlayerQuestionData";
 
+        [SerializeField]
         private Player _player;
 
         #endregion
@@ -24,6 +26,8 @@ namespace _LetsQuiz
         public string usernameKey { get { return _usernameKey; } }
 
         public string passwordKey { get { return _passwordKey; } }
+
+        public string emailKey { get { return _emailKey; } }
 
         public string questionDataKey { get { return _questionDataKey; } }
 
@@ -110,6 +114,33 @@ namespace _LetsQuiz
 
         #endregion
 
+        #region player email
+
+        // set the player email value
+        public void SetPlayerEmail(string email)
+        {
+            if (email != _player.email)
+            {
+                _player.email = email;
+                SavePlayerEmail();
+            }
+        }
+
+        // get the player email value
+        public string GetPlayerEmail()
+        {
+            return _player.email;
+        }
+
+        // save the player email value in playerprefs
+        private void SavePlayerEmail()
+        {
+            PlayerPrefs.SetString(_emailKey, _player.email);
+            PlayerPrefs.Save();
+        }
+
+        #endregion
+
         #region player question data
 
         // set the player question data
@@ -146,6 +177,10 @@ namespace _LetsQuiz
             // load player username
             if (PlayerPrefs.HasKey(_passwordKey))
                 _player.password = PlayerPrefs.GetString(_passwordKey);
+            
+            // load player email
+            if (PlayerPrefs.HasKey(_emailKey))
+                _player.email = PlayerPrefs.GetString(_emailKey);
         }
     }
 }
