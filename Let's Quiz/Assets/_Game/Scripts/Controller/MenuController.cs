@@ -18,6 +18,7 @@ namespace _LetsQuiz
         private FeedbackMusic _music;
         private PlayerController _playerController;
         private LoadHelper _loadHelper;
+        private GetAllQuestions _questionDownload;
 
         #endregion
 
@@ -38,10 +39,15 @@ namespace _LetsQuiz
         private void Start()
         {
             navigationDrawer.SetActive(false);
+
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
+
             _loadHelper = FindObjectOfType<LoadHelper>();
+            _questionDownload = FindObjectOfType<GetAllQuestions>();
+
             Destroy(_loadHelper);
+            Destroy(_questionDownload);
         }
 
         private void Update()
