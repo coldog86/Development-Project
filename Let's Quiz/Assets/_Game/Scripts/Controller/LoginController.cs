@@ -13,9 +13,13 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Components")]
+        public GameObject entryPanel;
         public GameObject existingUserPanel;
         public GameObject newUserPanel;
         public GameObject skipButton;
+        public GameObject buttonPanel;
+        public GameObject googleButton;
+        public GameObject facebookButton;
 
         [Header("Existing User")]
         public InputField existingUsernameInput;
@@ -39,6 +43,11 @@ namespace _LetsQuiz
         [SerializeField]
         private float _connectionTimer = 0.0f;
 
+        [Header("Player")]
+        private Player player;
+        private string playerString = "";
+
+        [Header("Components")]
         private FeedbackClick _click;
         private PlayerController _playerController;
         private SettingsController _settingsController;
@@ -76,28 +85,28 @@ namespace _LetsQuiz
             if (!skipButton)
                 Debug.LogError("Skip button is null");
 
+            entryPanel.SetActive(true);
             existingUserPanel.SetActive(false);
             newUserPanel.SetActive(false);
             loginButton.SetActive(false);
             skipButton.SetActive(false);
             registerUserButton.SetActive(false);
+            buttonPanel.SetActive(false);
+            googleButton.SetActive(false);
+            facebookButton.SetActive(false);
         }
 
         private void Start()
         {
             _settingsController = FindObjectOfType<SettingsController>();
-            _settingsController.LoadPlayerSettings();
+            _settingsController.Load();
 
             _playerController = FindObjectOfType<PlayerController>();
-            _playerController.LoadPlayer();
-
-            if (_playerController.GetPlayerType() == PlayerStatus.LoggedOut)
-                ExistingMember();
-            else
-                RegisterMember();
+            _playerController.Load();
 
             _click = FindObjectOfType<FeedbackClick>();
             _loadHelper = FindObjectOfType<LoadHelper>();
+
             Destroy(_loadHelper);
         }
 
@@ -111,9 +120,9 @@ namespace _LetsQuiz
 
         #endregion
 
-        #region create specific
+        #region register specific
 
-        public void Create()
+        public void Register()
         {
             _click.Play();
 
@@ -140,23 +149,25 @@ namespace _LetsQuiz
             
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(confirmPassword))
             {
-                if (ValidCreate(username, email, password))
+                if (ValidRegister(username, email, password))
                 {
                     _playerController.SetUsername(username);
                     _playerController.SetPassword(password);
-                    _playerController.SetPlayerEmail(email);
+                    _playerController.SetEmail(email);
                     _playerController.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }      
             }
         }
 
-        private bool ValidCreate(string username, string email, string password)
+        private bool ValidRegister(string username, string email, string password)
         {
             WWWForm form = new WWWForm();
+
             form.AddField("usernamePost", username);
             form.AddField("emailPost", email);
             form.AddField("passwordPost", password);
+
             WWW createRequest = new WWW(ServerHelper.Host + ServerHelper.Register, form);
 
             while (!createRequest.isDone)
@@ -171,7 +182,6 @@ namespace _LetsQuiz
                     Debug.Log(createRequest.text);
                     return false;
                 }
-
             }
 
             if (createRequest.error != null)
@@ -183,11 +193,10 @@ namespace _LetsQuiz
 
             if (createRequest.isDone)
             {
+                Debug.Log(createRequest.text);
                 FeedbackAlert.Show("Welcome " + username);
-                Debug.Log("Welcome " + username);
                 return true;
             }
-
             return false;
         }
 
@@ -229,8 +238,6 @@ namespace _LetsQuiz
             {
                 if (ValidLogin(username, password))
                 {
-                    _playerController.SetUsername(username);
-                    _playerController.SetPassword(password);
                     _playerController.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }
@@ -277,6 +284,16 @@ namespace _LetsQuiz
                 }
                 else
                 {
+                    Debug.Log(loginRequest.text);
+
+                    playerString = loginRequest.text;
+                    player = PlayerJsonHelper.LoadPlayerFromServer(playerString);
+
+                    if (player != null)
+                        _playerController.Save(player.ID, player.username, player.email, player.password, player.DOB, player.questionsSubmitted, 
+                            player.numQuestionsSubmitted, player.numGamesPlayed, player.highestScore, 
+                            player.numCorrectAnswers, player.totalQuestionsAnswered);
+                    
                     FeedbackAlert.Show("Welcome back " + username);
                     return true;
                 }
@@ -306,22 +323,30 @@ namespace _LetsQuiz
 
         #region navigation specific
 
-        private void ExistingMember()
+        public void ToggleLoginPanel()
         {
+            entryPanel.SetActive(false);
             existingUserPanel.SetActive(true);
             newUserPanel.SetActive(false);
+            buttonPanel.SetActive(true);
             loginButton.SetActive(true);
             skipButton.SetActive(true);
             registerUserButton.SetActive(false);
+            googleButton.SetActive(true);
+            facebookButton.SetActive(true);
         }
 
-        private void RegisterMember()
+        public void ToggleRegisterPanel()
         {
+            entryPanel.SetActive(false);
             existingUserPanel.SetActive(false);
             newUserPanel.SetActive(true);
+            buttonPanel.SetActive(true);
             loginButton.SetActive(false);
             skipButton.SetActive(true);
             registerUserButton.SetActive(true);
+            googleButton.SetActive(true);
+            facebookButton.SetActive(true);
         }
 
         public void LoadMenu()
@@ -337,31 +362,6 @@ namespace _LetsQuiz
             #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
             #endif
-        }
-
-        #endregion
-
-        #region obsolete - only keeping for historical purposes
-
-        [Obsolete("ValidateLogin is deprecated, please use ValidLogin instead.", true)]
-        private bool ValidateLogin(string username, string password)
-        {
-            if (username == testUsername && password == testPassword)
-            {
-                FeedbackAlert.Show("Logging in.", 1.0f);
-                return true;
-            }
-            else if (username != testUsername)
-            {
-                FeedbackAlert.Show("Username provided is incorrect.", 2.5f);
-                return false;
-            }
-            else if (password != testPassword)
-            {
-                FeedbackAlert.Show("Password provided is incorrect.", 2.5f);
-                return false;
-            }
-            return false;
         }
 
         #endregion

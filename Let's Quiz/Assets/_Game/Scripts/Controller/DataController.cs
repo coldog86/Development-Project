@@ -11,9 +11,16 @@ namespace _LetsQuiz
     {
         #region variables
 
-        [Header("Server")]
-        private string _hostUrl = "www.41melquizgame.xyz/LQ/";
-        private string _connectionFile = "loginExistingUserWithEmail.php";
+        [Header("Components")]
+        private GetAllQuestions _questionDownload;
+        private PlayerController _playerController;
+        private SettingsController _settingsController;
+        private LoadHelper _loadHelper;
+
+        [Header("Player")]
+        private Player player;
+        private string playerString = "";
+
 
         [Header("Connection")]
         private float _connectionTimeLimit = 1000000.0f;
@@ -22,11 +29,6 @@ namespace _LetsQuiz
         [Header("Validation Tests")]
         private string _username = "u";
         private string _password = "p";
-
-        private GetAllQuestions _questionDownload;
-        private PlayerController _playerController;
-        private SettingsController _settingsController;
-        private LoadHelper _loadHelper;
 
         #endregion
 
@@ -49,21 +51,19 @@ namespace _LetsQuiz
             _loadHelper = GetComponent<LoadHelper>();
 
             _settingsController = GetComponent<SettingsController>();
-            _settingsController.LoadPlayerSettings();
+            _settingsController.Load();
 
             _playerController = GetComponent<PlayerController>();
-            _playerController.LoadPlayer();
+            _playerController.Load();
 
-            if (PlayerPrefs.HasKey(_playerController.usernameKey) && PlayerPrefs.HasKey(_playerController.passwordKey))
+            _questionDownload = FindObjectOfType<GetAllQuestions>();
+            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+
+            if (PlayerPrefs.HasKey(_playerController.idKey))
             {
                 _username = _playerController.GetUsername();
                 _password = _playerController.GetPassword();
             }
-
-            // StartCoroutine(ConnectToServer());
-
-            _questionDownload = FindObjectOfType<GetAllQuestions>();
-            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
         }
 
         private void Quit()
@@ -85,9 +85,7 @@ namespace _LetsQuiz
             if (serverConnected)
             {
                 if (_username != "u" && _password != "p")
-                {
                     StartCoroutine(Login(_username, _password));
-                }
                 else
                     _loadHelper.Load(BuildIndex.Login);
             }
@@ -140,6 +138,14 @@ namespace _LetsQuiz
                 }
                 else
                 {
+                    playerString = loginRequest.text;
+                    player = PlayerJsonHelper.LoadPlayerFromServer(playerString);
+
+                    if (player != null)
+                        _playerController.Save(player.ID, player.username, player.email, player.password, player.DOB, player.questionsSubmitted, 
+                            player.numQuestionsSubmitted, player.numGamesPlayed, player.highestScore, 
+                            player.numCorrectAnswers, player.totalQuestionsAnswered);
+                    
                     FeedbackAlert.Show("Welcome back " + _username);
                     _loadHelper.Load(BuildIndex.Menu);
                     yield return loginRequest;
@@ -154,54 +160,6 @@ namespace _LetsQuiz
         private void DisplayErrorModal(string message)
         {
             FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Quit);
-        }
-
-        #endregion
-
-        #region obsolete - only keeping for historical purposes
-
-        [Obsolete("ConnectToServer is deprecated, please use _questionDownload.PullAllQuestionsFromServer instead.")]
-        private IEnumerator ConnectToServer()
-        {
-            WWW open = new WWW(_hostUrl + _connectionFile);
-
-            while (!open.isDone)
-            {
-                _connectionTimer += Time.deltaTime;
-                if (_connectionTimer > _connectionTimeLimit)
-                    ShowModal("Timeout Error.");
-                yield return null;
-            }
-
-            if (open.error != null)
-            {
-                ShowModal("Connection Error.");
-                yield return null;
-            }
-            else
-            {
-                yield return open;
-
-                var playerType = _playerController.GetPlayerType();
-
-                if (playerType != PlayerStatus.New)
-                    _loadHelper.Load(BuildIndex.Menu);
-                else
-                    _loadHelper.Load(BuildIndex.Login);
-            }
-        }
-
-        [Obsolete("RetryConnection is deprecated, please use RetryPullData instead.")]
-        private void RetryConnection()
-        {
-            FeedbackAlert.Show("Retrying connection...", 1.0f);
-            StartCoroutine(ConnectToServer());
-        }
-
-        [Obsolete("ShowModal is deprecated, please use DisplayErrorModal instead.")]
-        private void ShowModal(string message)
-        {
-            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryConnection, Quit);
         }
 
         #endregion
