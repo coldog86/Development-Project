@@ -82,7 +82,7 @@ namespace _LetsQuiz
         private void Start()
         {
             // load the player settings
-            LoadPlayerSettings();
+            Load();
 
             // set the toggle status if there are toggles to set
             if (_soundEffectSwitch)
@@ -294,7 +294,7 @@ namespace _LetsQuiz
         #region load settings
 
         // load player settings from playerprefs
-        public void LoadPlayerSettings()
+        public void Load()
         {
             _playerSettings = new PlayerSettings();
 

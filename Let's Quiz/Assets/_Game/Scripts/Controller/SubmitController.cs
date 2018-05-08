@@ -28,7 +28,7 @@ namespace _LetsQuiz
 
             _playerController = FindObjectOfType<PlayerController>();
 
-            _playerController.LoadPlayer();
+            _playerController.Load();
 
             _warningPanel = GameObject.FindGameObjectWithTag("Panel_Warning");
             _warningPanel.SetActive(false);

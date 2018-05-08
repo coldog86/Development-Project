@@ -32,7 +32,7 @@ namespace _LetsQuiz
             _click = FindObjectOfType<FeedbackClick>();
 
             _playerController = FindObjectOfType<PlayerController>();
-            _playerController.LoadPlayer();
+            _playerController.Load();
 
             _warningPanel = GameObject.FindGameObjectWithTag("Panel_Warning");
             _warningPanel.SetActive(false);
@@ -58,7 +58,7 @@ namespace _LetsQuiz
                 _warningPanel.SetActive(false);
                 _userPanel.SetActive(true);
                 username.text = _playerController.GetUsername();
-                email.text = _playerController.GetPlayerEmail();
+                email.text = _playerController.GetEmail();
             }  
         }
 
