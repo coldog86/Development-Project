@@ -277,6 +277,49 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1871055818}
+    - target: {fileID: 1490611965421828, guid: 2488bf582fca50e41b3b610809525d73, type: 2}
+      propertyPath: m_Name
+      value: WarningPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 224710247452938862, guid: 2488bf582fca50e41b3b610809525d73,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 280.60858
+      objectReference: {fileID: 0}
+    - target: {fileID: 224710247452938862, guid: 2488bf582fca50e41b3b610809525d73,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 49.106503
+      objectReference: {fileID: 0}
+    - target: {fileID: 224839607236033506, guid: 2488bf582fca50e41b3b610809525d73,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: -71.87828
+      objectReference: {fileID: 0}
+    - target: {fileID: 224850820612113946, guid: 2488bf582fca50e41b3b610809525d73,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: -71.87828
+      objectReference: {fileID: 0}
+    - target: {fileID: 224885811201103678, guid: 2488bf582fca50e41b3b610809525d73,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: -71.87828
+      objectReference: {fileID: 0}
+    - target: {fileID: 224590032268595264, guid: 2488bf582fca50e41b3b610809525d73,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: -71.87828
+      objectReference: {fileID: 0}
+    - target: {fileID: 224997991566935114, guid: 2488bf582fca50e41b3b610809525d73,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: -71.87828
+      objectReference: {fileID: 0}
+    - target: {fileID: 1565641516633044, guid: 2488bf582fca50e41b3b610809525d73, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2488bf582fca50e41b3b610809525d73, type: 2}
   m_IsPrefabParent: 0
@@ -388,6 +431,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d354a1fe7124f468dc1a906cb93d0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  questionInput: {fileID: 0}
+  correctInput: {fileID: 0}
+  wrong1Input: {fileID: 0}
+  wrong2Input: {fileID: 0}
+  wrong3Input: {fileID: 0}
 --- !u!4 &1871055819
 Transform:
   m_ObjectHideFlags: 0
