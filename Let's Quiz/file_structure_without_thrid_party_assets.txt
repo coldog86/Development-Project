@@ -1,16 +1,25 @@
 Assets/
-	|-- Art/
-		|-- Audio
-		|-- Sprite
-	|-- Editor
-	|-- Font
-	|-- Prefabs
-	|-- Scenes
-	|-- Scripts/
+	|--Animation/
 		|-- Controller
-		|-- Data
-		|-- Helper
-		|-- Integration
-		|-- Object
-		|-- Player
-	|-- StreamingAssets
+		|-- Clip
+	|-- Art/
+		|-- Sprite
+	|--Audio/
+		|-- Mixer
+		|-- Clip
+	|-- Editor
+	|-- Font/
+		|-- font folder/
+			|-- Contents
+	|-- Prefabs
+	|-- Scenes/
+	|-- Scripts/
+		|-- Controller/
+		|-- Data/
+		|-- Helper/
+			|-- Feedback/
+		|-- Integration/
+			|-- Facebook/
+			|-- Google/ 
+		|-- Object/
+		|-- Player/

@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{C4492735-221C-D5DA-C29C-D49CBDA408E6}</ProjectGuid>
+    <ProjectGuid>{C3DA89E1-70C6-7D6C-993E-C8F831D35880}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -53,9 +53,6 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Alert.cs" />
      <Compile Include="Assets\Scripts\DataController.cs" />
-     <None Include="Assets\Prefabs\empty.txt" />
-     <None Include="Assets\Fonts\empty.txt" />
-     <None Include="Assets\Art\empty.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Programming/Tools/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

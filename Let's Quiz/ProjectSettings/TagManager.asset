@@ -3,7 +3,23 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Modal_Heading
+  - Modal_Message
+  - Modal_Action
+  - Modal_Positive
+  - Modal_Negative
+  - MaterialButtonLayer
+  - MaterialText
+  - MaterialRadioButton
+  - Button_Back
+  - Toggle_Sound
+  - Toggle_Background
+  - Toggle_Notification
+  - Username_Text
+  - Panel_Submit
+  - Panel_Warning
+  - Panel_User
   layers:
   - Default
   - TransparentFX
