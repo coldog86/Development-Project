@@ -16,8 +16,10 @@ TagManager:
   - Toggle_Sound
   - Toggle_Background
   - Toggle_Notification
-  - Warning_Text
   - Username_Text
+  - Panel_Submit
+  - Panel_Warning
+  - Panel_User
   layers:
   - Default
   - TransparentFX

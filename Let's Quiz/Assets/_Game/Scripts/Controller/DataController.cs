@@ -1,27 +1,43 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
-using System.Configuration;
 
 namespace _LetsQuiz
 {
-    // NOTE : PLACEHOLDER CODE TO TEST NAVIGATION
     public class DataController : MonoBehaviour
     {
         #region variables
 
-        [Header("Server")]
-        public string hostURL = "";
-        public string connectionFile = "";
-
-        [Header("Setting")]
-        public float connectionTimeLimit = 10000.0f;
-
+        [Header("Components")]
+        private GetAllQuestions _questionDownload;
+        private PlayerController _playerController;
         private SettingsController _settingsController;
         private LoadHelper _loadHelper;
+		private QuestionController _questionController;
+
+        [Header("Player")]
+        private Player player;
+        private string playerString = "";
+
+
+        [Header("Connection")]
+        private float _connectionTimeLimit = 1000000.0f;
         private float _connectionTimer = 0.0f;
+
+        [Header("Validation Tests")]
+        private string _username = "u";
+        private string _password = "p";
+
+        #endregion
+
+        #region properties
+
+        public bool serverConnected { get; set; }
+
+        public string allQuestionJSON { get; set; }
 
         #endregion
 
@@ -31,60 +47,119 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            _loadHelper = GetComponent<LoadHelper>();
-            _settingsController = GetComponent<SettingsController>();
-            _settingsController.LoadPlayerSettings();
-            StartCoroutine(ConnectToServer());
             DontDestroyOnLoad(gameObject);
+
+            _loadHelper = GetComponent<LoadHelper>();
+
+            _settingsController = GetComponent<SettingsController>();
+            _settingsController.Load();
+
+            _playerController = GetComponent<PlayerController>();
+            _playerController.Load();
+
+            _questionDownload = FindObjectOfType<GetAllQuestions>();
+            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+
+			_questionController = GetComponent<QuestionController> ();
+			_questionController.Load ();
+
+            if (PlayerPrefs.HasKey(_playerController.idKey))
+            {
+                _username = _playerController.GetUsername();
+                _password = _playerController.GetPassword();
+            }
         }
+
+
 
         private void Quit()
         {
             Application.Quit();
 
-            // NOTE : DEBUG PURPOSES ONLY
+            // NOTE : debug purposes only
             #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
             #endif
-
         }
 
         #endregion
 
         #region server specific
 
-        private void RetryConnection()
-        {
-            FeedbackAlert.Show("Retrying connection...", 1.0f);
-            StartCoroutine(ConnectToServer());
-        }
+        public void Init()
 
-        private IEnumerator ConnectToServer()
-        {
-            WWW open = new WWW(hostURL + connectionFile);
 
-            while (!open.isDone)
+
+
+        {
+            if (serverConnected)
             {
-                _connectionTimer += Time.deltaTime;
-                if (_connectionTimer > connectionTimeLimit)
-                    ShowModal("There was a timeout error connecting to the server.");
-                yield return null;
-            }
-            if (!open.isDone || open.error != null)
-            {
-                ShowModal("There was an error connecting to the server.");
-                yield return null;
+                if (_username != "u" && _password != "p")
+                    StartCoroutine(Login(_username, _password));
+                else
+                    _loadHelper.Load(BuildIndex.Login);
             }
             else
+                DisplayErrorModal("There was an error connection to the server.");
+        }
+
+        private void RetryPullData()
+        {
+            FeedbackAlert.Show("Retrying connection...", 1.0f);
+            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+        }
+
+        private IEnumerator Login(string username, string password)
+        {
+            WWWForm form = new WWWForm();
+
+            form.AddField("usernamePost", username);
+            form.AddField("passwordPost", password);
+
+            WWW loginRequest = new WWW(ServerHelper.Host + ServerHelper.Login, form);
+
+            while (!loginRequest.isDone)
             {
-                yield return open;
+                _connectionTimer += Time.deltaTime;
 
-                var playerType = _settingsController.GetPlayerType();
+                if (_connectionTimer > _connectionTimeLimit)
+                {
+                    FeedbackAlert.Show("Server time out.");
+                    Debug.LogError("Server time out.");
+                    Debug.LogError(loginRequest.error);
+                    yield return null;
+                }
 
-                if (playerType == PlayerStatus.New)
+                // extra check just to ensure a stream error doesn't come up
+                if (_connectionTimer > _connectionTimeLimit || loginRequest.error != null)
+                {
+                    FeedbackAlert.Show("Server error.");
+                    Debug.LogError(loginRequest.error);
+                    yield return null;
+                }    
+            }
+
+            if (loginRequest.isDone)
+            {
+                if (!loginRequest.text.Contains("ID"))
+                {
                     _loadHelper.Load(BuildIndex.Login);
-                else if (playerType == PlayerStatus.Existing || playerType == PlayerStatus.Guest)
+                    yield return null;
+                }
+                else
+                {
+                    playerString = loginRequest.text;
+                    player = PlayerJsonHelper.LoadPlayerFromServer(playerString);
+
+                    if (player != null)
+                        _playerController.Save(player.ID, player.username, player.email, player.password, player.DOB, player.questionsSubmitted, 
+                            player.numQuestionsSubmitted, player.numGamesPlayed, player.highestScore, 
+                            player.numCorrectAnswers, player.totalQuestionsAnswered);
+                    
+                    FeedbackAlert.Show("Welcome back " + _username);
                     _loadHelper.Load(BuildIndex.Menu);
+                    yield return loginRequest;
+                }
             }
         }
 
@@ -92,9 +167,9 @@ namespace _LetsQuiz
 
         #region feedback specific
 
-        private void ShowModal(string message)
+        private void DisplayErrorModal(string message)
         {
-            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryConnection, Quit);
+            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Quit);
         }
 
         #endregion

@@ -15,8 +15,10 @@ namespace _LetsQuiz
        
         private Text _usernameText;
         private FeedbackClick _click;
-        private SettingsController _settingsController;
+        private FeedbackMusic _music;
+        private PlayerController _playerController;
         private LoadHelper _loadHelper;
+        private GetAllQuestions _questionDownload;
 
         #endregion
 
@@ -27,21 +29,34 @@ namespace _LetsQuiz
         private void Awake()
         {
             _usernameText = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
-            _settingsController = FindObjectOfType<SettingsController>();
+            _playerController = FindObjectOfType<PlayerController>();
 
-            if (_settingsController.GetPlayerType() == PlayerStatus.Guest)
-                _usernameText.text = "Guest";
-            else
-                _usernameText.text = "Test";
+            if (PlayerPrefs.HasKey(_playerController.usernameKey))
+                _usernameText.text = _playerController.GetUsername();
+                
         }
 
         private void Start()
         {
-           
             navigationDrawer.SetActive(false);
+
             _click = FindObjectOfType<FeedbackClick>();
+            _music = FindObjectOfType<FeedbackMusic>();
+
             _loadHelper = FindObjectOfType<LoadHelper>();
+            _questionDownload = FindObjectOfType<GetAllQuestions>();
+
             Destroy(_loadHelper);
+            Destroy(_questionDownload);
+        }
+
+        private void Update()
+        {
+            // NOTE : android platform only
+            #if PLATFORM_ANDROID
+            if (Input.GetKeyDown(KeyCode.Escape))
+                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
+            #endif
         }
 
         #endregion
@@ -52,10 +67,11 @@ namespace _LetsQuiz
         public void StartGame()
         {
             _click.Play();
+            _music.PlayGameMusic();
             SceneManager.LoadScene(BuildIndex.Game, LoadSceneMode.Single);
         }
 
-        // NOTE : PLACEHOLDER
+        // NOTE : TO BE COMPLETED
         public void LoadActiveGames()
         {
         }
@@ -109,8 +125,6 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Settings, LoadSceneMode.Single);
         }
 
-        // NOTE : DEBUG PURPOSES ONLY
-        // TASK : TO BE COMPLETED
         public void Logout()
         {
             _click.Play();
@@ -120,6 +134,7 @@ namespace _LetsQuiz
         private void OpenLogin()
         {
             _click.Play();
+            _playerController.SetPlayerType(PlayerStatus.LoggedOut);
             SceneManager.LoadScene(BuildIndex.Login, LoadSceneMode.Single);
         }
 
@@ -133,10 +148,10 @@ namespace _LetsQuiz
         {
             Application.Quit();
 
+            // NOTE : debug purposes only
             #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
             #endif
-
         }
 
         #endregion
