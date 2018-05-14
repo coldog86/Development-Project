@@ -13,8 +13,9 @@ namespace _LetsQuiz
 		private AllQ allQuestions;
 
 		public void Load() {
-			_playerController = FindObjectOfType<PlayerController>();
 
+			Debug.Log ("Load");
+			_playerController = FindObjectOfType<PlayerController>();
 			questionData = _playerController.GetQuestionData();
 
 			allQuestions = extractQuestions ();
@@ -24,10 +25,16 @@ namespace _LetsQuiz
 		public AllQ extractQuestions() {
 
 			AllQ allQ = JsonUtility.FromJson<AllQ> (questionData);
-			Debug.Log (allQ.categories);
+			Debug.Log (allQ.categories.Capacity);
+			Debug.Log ("extractQuestion called");
 			return allQ;
 		}
-			
+
+		public AllQ getAllQuestions() {
+
+			return allQuestions;
+		}
+
 
 	}
 }

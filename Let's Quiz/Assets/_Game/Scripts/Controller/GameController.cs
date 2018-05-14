@@ -77,7 +77,7 @@ namespace _LetsQuiz
 			_questionIndex = 0;
 
 			currentQuestion = questionPool.categories [0].categoryQuestions [_questionIndex];
-			Debug.Log (currentQuestion.questionText);
+			Debug.Log ("Current question" + currentQuestion.questionText);
 
 			ShowQuestion ();
 
@@ -125,7 +125,6 @@ namespace _LetsQuiz
 			if (selectedAnswer.isCorrect) {
 				FeedbackAlert.Show ("correct");
 				//add points
-
 
 
 			} else {
