@@ -35,6 +35,8 @@ namespace _LetsQuiz
         [SerializeField]
         private string _questionData = "";
 
+
+
         #endregion
 
         #region properties
@@ -458,7 +460,12 @@ namespace _LetsQuiz
             // load player question data
             if (PlayerPrefs.HasKey(_questionDataKey))
                 _questionData = PlayerPrefs.GetString(_questionDataKey);
+
         }
-    }
+
+		//method to take raw question data and create local pool of questions inside the playercontroller. 
+
+	}
+			
 }
 

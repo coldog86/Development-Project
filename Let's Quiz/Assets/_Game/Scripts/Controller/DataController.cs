@@ -16,6 +16,7 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private SettingsController _settingsController;
         private LoadHelper _loadHelper;
+		private QuestionController _questionController;
 
         [Header("Player")]
         private Player player;
@@ -59,12 +60,17 @@ namespace _LetsQuiz
             _questionDownload = FindObjectOfType<GetAllQuestions>();
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
 
+			_questionController = GetComponent<QuestionController> ();
+			_questionController.Load ();
+
             if (PlayerPrefs.HasKey(_playerController.idKey))
             {
                 _username = _playerController.GetUsername();
                 _password = _playerController.GetPassword();
             }
         }
+
+
 
         private void Quit()
         {
@@ -81,6 +87,10 @@ namespace _LetsQuiz
         #region server specific
 
         public void Init()
+
+
+
+
         {
             if (serverConnected)
             {

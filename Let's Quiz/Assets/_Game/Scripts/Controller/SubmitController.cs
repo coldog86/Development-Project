@@ -11,13 +11,6 @@ namespace _LetsQuiz
 
         #region variables
 
-		[Header("Components")]
-		public InputField questionInput;
-		public InputField correctInput;
-		public InputField wrong1Input;
-		public InputField wrong2Input;
-		public InputField wrong3Input;
-
         private FeedbackClick _click;
         private PlayerController _playerController;
         private GameObject _warningPanel;
@@ -26,72 +19,6 @@ namespace _LetsQuiz
         #endregion
 
         #region methods
-
-        private void checkInputs()
-        {
-
-        //charnes can you do your val
-	        bool _inputsOK = false;
-			_inputsOK = true;
-	        if(_inputsOK)
-	        	handleData();
-	        else
-	        {
-	        	Debug.LogError("your data sucks and so do you, feel bad");
-	        }
-        }
-
-
-        private bool handleData()
-        {
-			float _connectionTimer =0;
-			float _connectionTimeLimit = 10000.0f;
-			WWWForm form = new WWWForm();
-
-			form.AddField("usernamePost", _playerController.GetUsername());
-            form.AddField("idPost", _playerController.GetId());
-            form.AddField("questionPost", questionInput.text);
-			form.AddField("correctPost", correctInput.text);
-			form.AddField("correctPost", wrong1Input.text);
-			form.AddField("correctPost", wrong2Input.text);
-			form.AddField("correctPost", wrong3Input.text);
-			form.AddField("catagoryPost", "User Submitted Question")
-
-            WWW submitQuestion = new WWW(ServerHelper.Host + ServerHelper.Register, form);
-
-            while (!submitQuestion.isDone)
-            { 
-                _connectionTimer += Time.deltaTime;
-                FeedbackAlert.Show("Attempting to submit question.");
-
-                if (_connectionTimer > _connectionTimeLimit)
-                {
-                    FeedbackAlert.Show("Time out error. Please try again.");
-                    Debug.LogError(submitQuestion.error);
-                    Debug.Log(submitQuestion.text);
-                    return false;
-                }
-            }
-
-            if (submitQuestion.error != null)
-            {
-                FeedbackAlert.Show("Connection error. Please try again.");
-                Debug.Log(submitQuestion.error);
-                return false;
-            }
-
-            if (submitQuestion.isDone)
-            {
-                Debug.Log(submitQuestion.text);
-
-                return true;
-            }
-            return false;
-        
-        }
-
-
-		#endregion
 
         #region unity
 
@@ -136,7 +63,6 @@ namespace _LetsQuiz
 
         #endregion
 
-       
-
+        #endregion
     }
 }
