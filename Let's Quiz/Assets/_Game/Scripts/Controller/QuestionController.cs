@@ -10,30 +10,22 @@ namespace _LetsQuiz
 		[Header("Components")]
 		private PlayerController _playerController;
 		private string questionData;
-
-		public string QuestionText = "empty question";
-		public string CorrectAns = "Correct Answer";
-		public string WrongAns1 = "Wrong Answer";
-		public string WrongAns2 = "Wrong Answer";
-		public string WrongAns3 = "Wrong Answer";
+		private AllQ allQuestions;
 
 		public void Load() {
 			_playerController = FindObjectOfType<PlayerController>();
 
 			questionData = _playerController.GetQuestionData();
 
+			allQuestions = extractQuestions ();
 
-			string rawQ = extractQuestions ();
 		}
 
-		public string extractQuestions() {
+		public AllQ extractQuestions() {
 
-			string rawQuestions = null;
-
-			RawQuestion raw = JsonUtility.FromJson<RawQuestion>(questionData);
-			Debug.Log(raw);
-
-			return rawQuestions;
+			AllQ allQ = JsonUtility.FromJson<AllQ> (questionData);
+			Debug.Log (allQ.categories);
+			return allQ;
 		}
 			
 

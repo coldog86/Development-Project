@@ -41,8 +41,9 @@ namespace _LetsQuiz
 
 		private DataController _dataController;
 		private RoundData _currentRoundData;
-		private QuestionData[] questionPool;
+		private AllQ questionPool;
 		public QuestionData currentQuestion;
+		private QuestionController questionController;
 
 		private bool _isRoundActive;
 		private int _questionIndex;
@@ -66,15 +67,17 @@ namespace _LetsQuiz
         {
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
+			questionController = FindObjectOfType<QuestionController>();
 
-			allQuestions.SetUp ();
+			//allQuestions.SetUp();
 
-			questionPool = allQuestions.getAllQuestions();
+			questionPool = questionController.extractQuestions ();
 			//_questionPool = _currentRoundData.questions;
 
 			_questionIndex = 0;
 
-			currentQuestion = questionPool [_questionIndex];
+			currentQuestion = questionPool.categories [0].categoryQuestions [_questionIndex];
+			Debug.Log (currentQuestion.questionText);
 
 			ShowQuestion ();
 
@@ -155,7 +158,7 @@ namespace _LetsQuiz
 		private void ShowQuestion()
 		{
 			//retrieve next question
-			currentQuestion = questionPool [_questionIndex];
+			currentQuestion = questionPool.categories [0].categoryQuestions [_questionIndex];
 
 			//update UI
 			questionData.answers = currentQuestion.answers;
