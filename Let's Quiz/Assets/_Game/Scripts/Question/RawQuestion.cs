@@ -11,7 +11,13 @@ namespace _LetsQuiz
 
 		public List<CategoryQuestions> categories;
 
+		public int count() {
+
+			return categories.Count;
+		}
+
 	}
+
 	[System.Serializable]
 	public class CategoryQuestions{
 

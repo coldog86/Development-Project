@@ -73,10 +73,11 @@ namespace _LetsQuiz
 
 			questionPool = questionController.extractQuestions ();
 			//_questionPool = _currentRoundData.questions;
+			Debug.Log(questionPool.count());
 
 			_questionIndex = 0;
 
-			currentQuestion = questionPool.categories [0].categoryQuestions [_questionIndex];
+			currentQuestion = questionPool.categories[1].categoryQuestions[1];
 			Debug.Log ("Current question" + currentQuestion.questionText);
 
 			ShowQuestion ();
