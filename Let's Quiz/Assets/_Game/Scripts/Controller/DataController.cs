@@ -58,10 +58,10 @@ namespace _LetsQuiz
             _playerController.Load();
 
             _questionDownload = FindObjectOfType<GetAllQuestions>();
-            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+           StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
 
-			_questionController = GetComponent<QuestionController> ();
-			_questionController.Load ();
+			_questionController = GetComponent<QuestionController>();
+
 
             if (PlayerPrefs.HasKey(_playerController.idKey))
             {

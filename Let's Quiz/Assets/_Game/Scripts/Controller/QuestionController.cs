@@ -10,7 +10,7 @@ namespace _LetsQuiz
 		[Header("Components")]
 		private PlayerController _playerController;
 		private string questionData;
-		private AllQ allQuestions;
+		private AllQuestionData allQuestions;
 
 		public void Load() {
 
@@ -22,13 +22,13 @@ namespace _LetsQuiz
 
 		}
 
-		public AllQ extractQuestions() {
+		public AllQuestionData extractQuestions() {
 
-			AllQ allQ = JsonUtility.FromJson<AllQ>(questionData);
+			AllQuestionData allQ = JsonUtility.FromJson<AllQuestionData>(questionData);
 			return allQ;
 		}
 
-		public AllQ getAllQuestions() {
+		public AllQuestionData getAllQuestions() {
 
 			return allQuestions;
 		}

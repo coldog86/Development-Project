@@ -706,8 +706,8 @@ GameObject:
   - component: {fileID: 1511502302}
   - component: {fileID: 1511502301}
   - component: {fileID: 1511502303}
-  - component: {fileID: 1511502304}
   - component: {fileID: 1511502300}
+  - component: {fileID: 1511502304}
   m_Layer: 0
   m_Name: DataController
   m_TagString: Untagged
@@ -811,11 +811,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7546d2eb54a014fc591fa129b6c54a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  QuestionText: empty question
-  CorrectAns: Correct Answer
-  WrongAns1: Wrong Answer
-  WrongAns2: Wrong Answer
-  WrongAns3: Wrong Answer
 --- !u!1 &1661182033
 GameObject:
   m_ObjectHideFlags: 0

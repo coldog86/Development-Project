@@ -41,7 +41,7 @@ namespace _LetsQuiz
 
 		private DataController _dataController;
 		private RoundData _currentRoundData;
-		private AllQ questionPool;
+		private AllQuestionData questionPool;
 		public QuestionData currentQuestion;
 		private QuestionController questionController;
 
@@ -71,13 +71,15 @@ namespace _LetsQuiz
 
 			//allQuestions.SetUp();
 
+			questionController.Load ();
 			questionPool = questionController.extractQuestions ();
 			//_questionPool = _currentRoundData.questions;
-			Debug.Log(questionPool.count());
 
 			_questionIndex = 0;
 
-			currentQuestion = questionPool.categories[1].categoryQuestions[1];
+			Debug.Log (questionPool.allRoundData [1].name); //retrieve the name of category
+			Debug.Log (questionPool.allRoundData [1].questions[0].questionText); //retrieve questionText but returns null
+			currentQuestion = questionPool.allRoundData [0].questions [_questionIndex];
 			Debug.Log ("Current question" + currentQuestion.questionText);
 
 			ShowQuestion ();
@@ -158,7 +160,7 @@ namespace _LetsQuiz
 		private void ShowQuestion()
 		{
 			//retrieve next question
-			currentQuestion = questionPool.categories [0].categoryQuestions [_questionIndex];
+			currentQuestion = questionPool.allRoundData[0].questions[_questionIndex];
 
 			//update UI
 			questionData.answers = currentQuestion.answers;

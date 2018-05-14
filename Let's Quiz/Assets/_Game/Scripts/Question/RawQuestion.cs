@@ -6,22 +6,20 @@ using System;
 
 namespace _LetsQuiz
 {
+
 	[System.Serializable]
-	public class AllQ {
+	public class AllQuestionData {
 
-		public List<CategoryQuestions> categories;
-
-		public int count() {
-
-			return categories.Count;
-		}
+		public List<CategoryQuestions> allRoundData;
 
 	}
+
 
 	[System.Serializable]
 	public class CategoryQuestions{
 
-		public List<QuestionData> categoryQuestions;
+		public List<QuestionData> questions;
+		public string name;
 
 	}
 }
