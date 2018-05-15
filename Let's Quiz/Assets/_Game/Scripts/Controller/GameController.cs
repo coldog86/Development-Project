@@ -72,18 +72,23 @@ namespace _LetsQuiz
 			//allQuestions.SetUp();
 
 			questionController.Load ();
-			questionPool = questionController.extractQuestions ();
+		questionPool = questionController.extractQuestions ();
 			//_questionPool = _currentRoundData.questions;
 
 			_questionIndex = 0;
 
-			Debug.Log (questionPool.allRoundData [1].name); //retrieve the name of category
-			Debug.Log (questionPool.allRoundData [1].questions[0].questionText); //retrieve questionText but returns null
+			for(int i = 0; i<questionPool.allRoundData.Length; i++ )
+				Debug.Log (questionPool.allRoundData [i].name); //retrieve the name of category
+
+			Debug.Log("length is....");
+			Debug.Log (questionPool.allRoundData[0].questions.Length);
+
+
+			Debug.Log (questionPool.allRoundData [0].questions[0].questionText); //retrieve questionText but returns null
 			currentQuestion = questionPool.allRoundData [0].questions [_questionIndex];
 			Debug.Log ("Current question" + currentQuestion.questionText);
 
 			ShowQuestion ();
-
 
 
 
