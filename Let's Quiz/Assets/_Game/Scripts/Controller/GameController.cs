@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -70,6 +70,7 @@ namespace _LetsQuiz
         private float _timeRemaining = 20;
 
 		int numberOfQuestionsAsked;
+		Button correctAnswer;
 
 
 
@@ -194,24 +195,25 @@ namespace _LetsQuiz
 				for(int i =0; i<_currentQuestion.answers.Length; i++)
 				{
 					answers.Add(_currentQuestion.answers[i].answerText);
+					Debug.Log(answers[i]);
 				}
 
 				//this would be better if we were using the object pool to create the answer buttons
 
 				randomNumber = Random.Range (0, answers.Count);
-				answerText1.text = _currentQuestion.answers[randomNumber].answerText;
+				answerText1.text = answers[randomNumber];
 				answers.RemoveAt(randomNumber);
 
 				randomNumber = Random.Range (0, answers.Count);
-				answerText2.text = _currentQuestion.answers[randomNumber].answerText;
+				answerText2.text = answers[randomNumber];
 				answers.RemoveAt(randomNumber);
 
 				randomNumber = Random.Range (0, answers.Count);
-				answerText3.text = _currentQuestion.answers[randomNumber].answerText;
+				answerText3.text = answers[randomNumber];
 				answers.RemoveAt(randomNumber);
 
 				randomNumber = Random.Range (0, answers.Count);
-				answerText4.text = _currentQuestion.answers[randomNumber].answerText;
+				answerText4.text = answers[randomNumber];
 				answers.RemoveAt(randomNumber);
 
 			
@@ -250,4 +252,3 @@ namespace _LetsQuiz
         #endregion
     }
 }
-
