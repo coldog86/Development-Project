@@ -1,9 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Threading;
+using System.Collections.Generic;
+using Random = UnityEngine.Random;
+
+using UnityEngine;
+using System.Collections;
+using System.IO;
+using UnityEngine.UI;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using System;
+
 
 namespace _LetsQuiz
 {
@@ -41,9 +53,9 @@ namespace _LetsQuiz
 
 		private DataController _dataController;
 		private RoundData _currentRoundData;
-		private AllQuestionData questionPool;
-		public QuestionData currentQuestion;
-		private QuestionController questionController;
+		private QuestionData[] questionPool;
+		public QuestionData _currentQuestion;
+		private QuestionController _questionController;
 
 		private bool _isRoundActive;
 		private int _questionIndex;
@@ -57,6 +69,10 @@ namespace _LetsQuiz
         private FeedbackMusic _music;
         private float _timeRemaining = 20;
 
+		int numberOfQuestionsAsked;
+
+
+
         #endregion
 
         #region methods
@@ -67,28 +83,20 @@ namespace _LetsQuiz
         {
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
-			questionController = FindObjectOfType<QuestionController>();
+			_questionController = FindObjectOfType<QuestionController>();
 
 			//allQuestions.SetUp();
 
-			questionController.Load ();
-		questionPool = questionController.extractQuestions ();
+			_questionController.Load ();
+			//questionPool = _questionController.extractQuestions ();
 			//_questionPool = _currentRoundData.questions;
-
-			_questionIndex = 0;
-
-			for(int i = 0; i<questionPool.allRoundData.Length; i++ )
-				Debug.Log (questionPool.allRoundData [i].name); //retrieve the name of category
-
-			Debug.Log("length is....");
-			Debug.Log (questionPool.allRoundData[0].questions.Length);
+			questionPool = _questionController.getAllQuestionsAllCatagories();
 
 
-			Debug.Log (questionPool.allRoundData [0].questions[0].questionText); //retrieve questionText but returns null
-			currentQuestion = questionPool.allRoundData [0].questions [_questionIndex];
-			Debug.Log ("Current question" + currentQuestion.questionText);
+
 
 			ShowQuestion ();
+
 
 
 
@@ -151,31 +159,70 @@ namespace _LetsQuiz
 
 			for (int i = 0; i <= 3; i++) {
 				
-				if (AnswerText.text == currentQuestion.answers[i].answerText) {
+				if (AnswerText.text == _currentQuestion.answers[i].answerText) {
 
-					return currentQuestion.answers[i];
+					return _currentQuestion.answers[i];
 				}
 
 
 			}
-			return currentQuestion.answers[0];
+			return _currentQuestion.answers[0];
 		}
 			
 
-		private void ShowQuestion()
+		private void ShowQuestion ()
 		{
 			//retrieve next question
-			currentQuestion = questionPool.allRoundData[0].questions[_questionIndex];
+
 
 			//update UI
-			questionData.answers = currentQuestion.answers;
-			answerText1.text = questionData.answers [0].answerText;
-			answerText2.text = questionData.answers [1].answerText;
-			answerText3.text = questionData.answers [2].answerText;
-			answerText4.text = questionData.answers [3].answerText;
-			questionText.text = currentQuestion.questionText;
-		}
+			if (questionPool.Length <= numberOfQuestionsAsked) { //if all questions are asked, end round
+				Debug.Log ("out of questions");
+				//TODO call somesort of endRound()
+			} else {
+
+				int randomNumber = Random.Range (0, questionPool.Length - 1); //gets random number between 0 and total number of questions
+
+
+
+				_currentQuestion = questionPool [randomNumber];// Get the QuestionData for the current question
+				questionText.text = _currentQuestion.questionText;  // Update questionText with the correct text
+				_questionController.addAskedQuestionToAskedQuestions (_currentQuestion);//keep track of the questions we asked so we can repeat it for the oppoent player
+				_questionController.removeFromAllQuestionsLeft (_currentQuestion);
+
+				List<string> answers = new List<string>();
+				for(int i =0; i<_currentQuestion.answers.Length; i++)
+				{
+					answers.Add(_currentQuestion.answers[i].answerText);
+				}
+
+				//this would be better if we were using the object pool to create the answer buttons
+
+				randomNumber = Random.Range (0, answers.Count);
+				answerText1.text = _currentQuestion.answers[randomNumber].answerText;
+				answers.RemoveAt(randomNumber);
+
+				randomNumber = Random.Range (0, answers.Count);
+				answerText2.text = _currentQuestion.answers[randomNumber].answerText;
+				answers.RemoveAt(randomNumber);
+
+				randomNumber = Random.Range (0, answers.Count);
+				answerText3.text = _currentQuestion.answers[randomNumber].answerText;
+				answers.RemoveAt(randomNumber);
+
+				randomNumber = Random.Range (0, answers.Count);
+				answerText4.text = _currentQuestion.answers[randomNumber].answerText;
+				answers.RemoveAt(randomNumber);
+
 			
+
+				numberOfQuestionsAsked++;
+				questionPool = _questionController.removeQuestion(questionPool, randomNumber);
+			}
+		}
+
+
+
 
         #region timer specific
 
