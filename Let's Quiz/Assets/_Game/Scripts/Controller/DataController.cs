@@ -30,6 +30,7 @@ namespace _LetsQuiz
         [Header("Validation Tests")]
         private string _username = "u";
         private string _password = "p";
+        private int _status = -2;
 
         #endregion
 
@@ -64,6 +65,7 @@ namespace _LetsQuiz
             // retrive player username and password from PlayerPrefs if they have an id
             if (PlayerPrefs.HasKey(_playerController.idKey))
             {
+                _status = _playerController.GetPlayerType();
                 _username = _playerController.GetUsername();
                 _password = _playerController.GetPassword();
             }
@@ -89,7 +91,7 @@ namespace _LetsQuiz
             {
                 // check if username and password are stored in PlayerPrefs
                 // if it is login, otherwise load login scene
-                if (_username != "u" && _password != "p")
+                if (_username != "u" && _password != "p" && _status == PlayerStatus.LoggedIn)
                     StartCoroutine(Login(_username, _password));
                 else
                     SceneManager.LoadScene(BuildIndex.Login);
@@ -115,8 +117,7 @@ namespace _LetsQuiz
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("Server time out.");
-                    Debug.LogError(loginRequest.error);
+                    Debug.LogError("DataController : Login() : " + loginRequest.error);
                     yield return null;
                 }
 
@@ -124,9 +125,16 @@ namespace _LetsQuiz
                 if (_connectionTimer > _connectionTimeLimit || loginRequest.error != null)
                 {
                     FeedbackAlert.Show("Server error.");
-                    Debug.LogError(loginRequest.error);
+                    Debug.LogError("DataController : Login() : " + loginRequest.error);
                     yield return null;
                 }    
+            }
+
+            if (loginRequest.error != null)
+            {
+                FeedbackAlert.Show("Connection error. Please try again.");
+                Debug.Log("DataController : Login() : " + loginRequest.error);
+                yield return null;
             }
 
             if (loginRequest.isDone)
@@ -135,6 +143,7 @@ namespace _LetsQuiz
                 if (!String.IsNullOrEmpty(loginRequest.text))
                 {
                     _playerString = loginRequest.text;
+                    Debug.Log(_playerString);
 
                     // if the retrieved login text doesn't have "ID" load login scene
                     if (!_playerString.Contains("ID"))

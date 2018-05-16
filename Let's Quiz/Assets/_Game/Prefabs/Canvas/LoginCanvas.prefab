@@ -488,7 +488,7 @@ GameObject:
   - component: {fileID: 225132903789452402}
   - component: {fileID: 114294917723333218}
   m_Layer: 5
-  m_Name: Login
+  m_Name: ToggleLoginPanel
   m_TagString: MaterialButtonLayer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -737,7 +737,7 @@ GameObject:
   - component: {fileID: 225064798353551588}
   - component: {fileID: 114819454618740576}
   m_Layer: 5
-  m_Name: Register
+  m_Name: ToggleRegisterPanel
   m_TagString: MaterialButtonLayer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1819,7 +1819,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_MethodName: SkipLogin
+        m_MethodName: Skip
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
