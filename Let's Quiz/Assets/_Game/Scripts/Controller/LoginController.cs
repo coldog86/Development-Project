@@ -51,7 +51,6 @@ namespace _LetsQuiz
         private FeedbackClick _click;
         private PlayerController _playerController;
         private SettingsController _settingsController;
-        private LoadHelper _loadHelper;
 
         #endregion
 
@@ -105,9 +104,6 @@ namespace _LetsQuiz
             _playerController.Load();
 
             _click = FindObjectOfType<FeedbackClick>();
-            _loadHelper = FindObjectOfType<LoadHelper>();
-
-            Destroy(_loadHelper);
         }
 
         private void Update()

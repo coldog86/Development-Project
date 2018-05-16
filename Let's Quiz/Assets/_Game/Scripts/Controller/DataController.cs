@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
+using UnityEngine.Events;
 
 namespace _LetsQuiz
 {
@@ -15,12 +16,11 @@ namespace _LetsQuiz
         private GetAllQuestions _questionDownload;
         private PlayerController _playerController;
         private SettingsController _settingsController;
-        private LoadHelper _loadHelper;
-		private QuestionController _questionController;
+        private QuestionController _questionController;
 
         [Header("Player")]
-        private Player player;
-        private string playerString = "";
+        private Player _player;
+        private string _playerString = "";
 
 
         [Header("Connection")]
@@ -49,8 +49,6 @@ namespace _LetsQuiz
         {
             DontDestroyOnLoad(gameObject);
 
-            _loadHelper = GetComponent<LoadHelper>();
-
             _settingsController = GetComponent<SettingsController>();
             _settingsController.Load();
 
@@ -60,17 +58,16 @@ namespace _LetsQuiz
             _questionDownload = FindObjectOfType<GetAllQuestions>();
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
 
-			_questionController = GetComponent<QuestionController> ();
-			_questionController.Load ();
+            _questionController = GetComponent<QuestionController>();
+            _questionController.Load();
 
+            // retrive player username and password from PlayerPrefs if they have an id
             if (PlayerPrefs.HasKey(_playerController.idKey))
             {
                 _username = _playerController.GetUsername();
                 _password = _playerController.GetPassword();
             }
         }
-
-
 
         private void Quit()
         {
@@ -87,26 +84,19 @@ namespace _LetsQuiz
         #region server specific
 
         public void Init()
-
-
-
-
         {
             if (serverConnected)
             {
+                // check if username and password are stored in PlayerPrefs
+                // if it is login, otherwise load login scene
                 if (_username != "u" && _password != "p")
                     StartCoroutine(Login(_username, _password));
                 else
-                    _loadHelper.Load(BuildIndex.Login);
+                    SceneManager.LoadScene(BuildIndex.Login);
             }
+            // prompt user if they wish to retry
             else
-                DisplayErrorModal("There was an error connection to the server.");
-        }
-
-        private void RetryPullData()
-        {
-            FeedbackAlert.Show("Retrying connection...", 1.0f);
-            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+                DisplayErrorModal("Error connecting to the server.");
         }
 
         private IEnumerator Login(string username, string password)
@@ -141,32 +131,47 @@ namespace _LetsQuiz
 
             if (loginRequest.isDone)
             {
-                if (!loginRequest.text.Contains("ID"))
+                // check that the login request returned something
+                if (!String.IsNullOrEmpty(loginRequest.text))
                 {
-                    _loadHelper.Load(BuildIndex.Login);
-                    yield return null;
-                }
-                else
-                {
-                    playerString = loginRequest.text;
-                    player = PlayerJsonHelper.LoadPlayerFromServer(playerString);
+                    _playerString = loginRequest.text;
 
-                    if (player != null)
-                        _playerController.Save(player.ID, player.username, player.email, player.password, player.DOB, player.questionsSubmitted, 
-                            player.numQuestionsSubmitted, player.numGamesPlayed, player.highestScore, 
-                            player.numCorrectAnswers, player.totalQuestionsAnswered);
-                    
-                    FeedbackAlert.Show("Welcome back " + _username);
-                    _loadHelper.Load(BuildIndex.Menu);
-                    yield return loginRequest;
+                    // if the retrieved login text doesn't have "ID" load login scene
+                    if (!_playerString.Contains("ID"))
+                    {
+                        SceneManager.LoadScene(BuildIndex.Login);
+                        yield return null;
+                    }
+                    // otherwise save the player information to PlayerPrefs and load menu scene
+                    else
+                    {
+                        _player = PlayerJsonHelper.LoadPlayerFromServer(_playerString);
+
+                        if (_player != null)
+                            _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted, 
+                                _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.highestScore, 
+                                _player.numCorrectAnswers, _player.totalQuestionsAnswered);
+
+                        FeedbackAlert.Show("Welcome back " + _username);
+                        SceneManager.LoadScene(BuildIndex.Menu);
+                        yield return loginRequest;
+                    }
                 }
             }
+        }
+
+        private void RetryPullData()
+        {
+            FeedbackAlert.Show("Retrying connection...", 1.0f);
+            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
         }
 
         #endregion
 
         #region feedback specific
 
+        // positive action - retry question download
+        // negative action - quit application
         private void DisplayErrorModal(string message)
         {
             FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Quit);

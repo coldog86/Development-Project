@@ -17,7 +17,6 @@ namespace _LetsQuiz
         private FeedbackClick _click;
         private FeedbackMusic _music;
         private PlayerController _playerController;
-        private LoadHelper _loadHelper;
         private GetAllQuestions _questionDownload;
 
         #endregion
@@ -43,10 +42,8 @@ namespace _LetsQuiz
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
 
-            _loadHelper = FindObjectOfType<LoadHelper>();
             _questionDownload = FindObjectOfType<GetAllQuestions>();
 
-            Destroy(_loadHelper);
             Destroy(_questionDownload);
         }
 
