@@ -1,17 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Threading;
+using System.Collections.Generic;
+using Random = UnityEngine.Random;
+using System;
+
 
 namespace _LetsQuiz
 {
     public class GameController : MonoBehaviour
     {
         #region variables
-
-        [Header("Timer")]
+		[Header("Timer")]
         public Slider timerBar;
         public Image timerImage;
         public Color timerColorMax;
@@ -20,41 +24,46 @@ namespace _LetsQuiz
 
         [Header("Question")]
         public Text questionText;
+		public GameObject questionDisplay;
+		public QuestionData questionData;
+
         public Text scoreText;
-        public PlayerController player;
-        public AllQuestions allQuestions;
-        public QuestionData questionData;
-        public Text answerText1;
-        public Text answerText2;
-        public Text answerText3;
-        public Text answerText4;
-
-        [Header("Answer Buttons")]
-        public Button answerButton1;
-        public Button answerButton2;
-        public Button answerButton3;
-        public Button answerButton4;
-
-        public Transform answerButtonParent;
-        public GameObject questionDisplay;
-        public GameObject roundEndDisplay;
-
-        private DataController _dataController;
-        private RoundData _currentRoundData;
-        private QuestionData[] questionPool;
-        public QuestionData currentQuestion;
-
-        private bool _isRoundActive;
-        private int _questionIndex;
-        private int _playerScore;
+		public PlayerController player;
 
 
-        private Button theButton;
-        private ColorBlock theColor;
+		[Header("Answers")]
+		public SimpleObjectPool answerButtonObjectPool;
+		public Transform answerButtonParent;
+
+		public GameObject roundEndDisplay;
+
+		[Header ("Controllers")]
+		private DataController _dataController;
+		private RoundData _currentRoundData;
+		private QuestionController _questionController;
+
+		private bool _isRoundActive;
+		private int _questionIndex;
+		private int _playerScore;
 
         private FeedbackClick _click;
         private FeedbackMusic _music;
+
+
         private float _timeRemaining = 20;
+		private QuestionData[] questionPool;
+		public QuestionData _currentQuestion;
+
+		private int numberOfQuestionsAsked;
+		public bool clicked {get; set;}
+		bool isCorrect = false;
+		AnswerButton correctAnswerButton;
+		AnswerData correctAnswerData;
+
+		private List<GameObject> answerButtonGameObjects = new List<GameObject>();
+		AnswerButton userSelection;
+
+
 
         #endregion
 
@@ -66,21 +75,13 @@ namespace _LetsQuiz
         {
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
+			_questionController = FindObjectOfType<QuestionController>();
+			//allQuestions.SetUp();
 
-            allQuestions.SetUp();
+			_questionController.Load ();
+			questionPool = _questionController.getAllQuestionsAllCatagories(); 
 
-            questionPool = allQuestions.getAllQuestions();
-            //_questionPool = _currentRoundData.questions;
-
-            _questionIndex = 0;
-
-            currentQuestion = questionPool[_questionIndex];
-
-            ShowQuestion();
-
-
-
-
+			ShowQuestion ();
         }
 
         private void Update()
@@ -89,11 +90,75 @@ namespace _LetsQuiz
             UpdateTimeRemainingDisplay();
 
             if (_timeRemaining <= 0)
-                EndGame();
+                EndRound();
         }
 
         #endregion
+        #region display question & answers
 
+		public void ShowQuestion ()
+		{	
+			clicked = false;
+			RemoveAnswerButtons ();
+			QuestionData currentQuestionData = null;
+			if (questionPool.Length <= numberOfQuestionsAsked) { //if all questions are asked, end round
+				Debug.Log ("out of questions");
+				EndRound ();
+			} else {
+				int randomNumber = Random.Range (0, questionPool.Length - 1); //gets random number between 0 and total number of questions
+				currentQuestionData = questionPool [randomNumber];// Get the QuestionData for the current question
+				questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
+				_questionController.addAskedQuestionToAskedQuestions (currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
+				numberOfQuestionsAsked++;
+				ShowAnswers(currentQuestionData);
+			}			
+		}
+
+		private void ShowAnswers(QuestionData currentQuestionData)
+		{
+			
+			List<int> answerText = new List<int> ();
+			Random rnd = new Random ();
+			for (int i = 0; i < currentQuestionData.answers.Length; i++) {  // For every AnswerData in the current QuestionData...
+			
+				int n = Random.Range (0, currentQuestionData.answers.Length);
+				while (answerText.Contains (n)) {
+					n = Random.Range (0, currentQuestionData.answers.Length);//randomise where the answers are displayed
+				}
+				answerText.Add (n);
+				GameObject answerButtonGameObject = answerButtonObjectPool.GetObject ();// Spawn an AnswerButton from the object pool
+				answerButtonGameObjects.Add (answerButtonGameObject);
+
+				answerButtonGameObject.transform.SetParent (answerButtonParent);
+				answerButtonGameObject.transform.localScale = Vector3.one; //I was having an issue were the scale blew out, this fixed it...
+				AnswerButton answerButton = answerButtonGameObject.GetComponent<AnswerButton> ();
+				answerButton.SetUp (currentQuestionData.answers [n]);// Pass the AnswerData to the AnswerButton to check if it correct
+
+				if (answerButton.isCorrect (currentQuestionData.answers [n])) {
+					correctAnswerButton = answerButton;
+					isCorrect = true;
+					correctAnswerData = currentQuestionData.answers [n];
+				}
+			}
+		}
+
+		#endregion
+
+		public AnswerButton getCorrectAnswerButton() //getter used by the answerButton, I got an error when i tryed to declar with the variable at the top
+		{
+			return correctAnswerButton;
+		}
+
+
+		void RemoveAnswerButtons ()  // Return all spawned AnswerButtons to the object pool
+		{
+			while (answerButtonGameObjects.Count > 0) {
+				answerButtonObjectPool.ReturnObject (answerButtonGameObjects [0]);
+				answerButtonGameObjects.RemoveAt (0);
+			}
+		}
+
+		#region like & dislike buttons
         // NOTE : placeholder
         public void ReportQuestion()
         {
@@ -102,78 +167,31 @@ namespace _LetsQuiz
         }
 
         // NOTE : placeholder
-        public void LikeQuestion()
-        {
-            _click.Play();
-            FeedbackAlert.Show("Like question");
+        public void LikeQuestion ()
+		{
+			_click.Play ();
+			FeedbackAlert.Show ("Like question");
+		}
+		#endregion
 
+		#region user stuff
 
-        }
+		public void Score()
+    	{
+			if (!isCorrect) {
+				Debug.Log ("Incorrect");
+				Debug.Log("-5");
+			}
+			if (isCorrect){
+				Debug.Log ("Correct");
+				Debug.Log("+10");
+        	}
+			ShowQuestion();
+    	}
 
+		#endregion
 
-        public void selectAnswer(Text answerText)
-        {
-            _click.Play();
-
-            //determine if answer is correct, pass data onto AnswerButtonClicked
-
-            AnswerData selectedAnswer = findQuestion(answerText);
-
-            if (selectedAnswer.isCorrect)
-            {
-                FeedbackAlert.Show("correct");
-                //add points
-
-
-
-            }
-            else
-            {
-                FeedbackAlert.Show("Incorrect");
-                //remove points?
-
-            }
-
-            //show next question
-            _questionIndex++;
-            ShowQuestion();
-
-        }
-
-        public AnswerData findQuestion(Text AnswerText)
-        {
-
-            for (int i = 0; i <= 3; i++)
-            {
-				
-                if (AnswerText.text == currentQuestion.answers[i].answerText)
-                {
-
-                    return currentQuestion.answers[i];
-                }
-
-
-            }
-            return currentQuestion.answers[0];
-        }
-
-
-        private void ShowQuestion()
-        {
-            //retrieve next question
-            currentQuestion = questionPool[_questionIndex];
-
-            //update UI
-            questionData.answers = currentQuestion.answers;
-            answerText1.text = questionData.answers[0].answerText;
-            answerText2.text = questionData.answers[1].answerText;
-            answerText3.text = questionData.answers[2].answerText;
-            answerText4.text = questionData.answers[3].answerText;
-            questionText.text = currentQuestion.questionText;
-        }
-
-
-        #region timer specific
+         #region timer specific
 
         private void UpdateTimeRemainingDisplay()
         {
@@ -190,17 +208,7 @@ namespace _LetsQuiz
 
         #endregion
 
-        #region navigatin specific
-
-        public void BackToMenu()
-        {
-            _click.Play();
-            SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
-        }
-
-        #endregion
-
-        public void EndGame()
+        public void EndRound()
         {
             _music.Stop();
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
@@ -209,4 +217,3 @@ namespace _LetsQuiz
         #endregion
     }
 }
-

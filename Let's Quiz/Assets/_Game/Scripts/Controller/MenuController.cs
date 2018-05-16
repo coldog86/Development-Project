@@ -12,6 +12,7 @@ namespace _LetsQuiz
 
         [Header("Component")]
         public GameObject navigationDrawer;
+		public Button submitQuestionButton;
        
         private Text _usernameText;
         private FeedbackClick _click;
@@ -34,6 +35,9 @@ namespace _LetsQuiz
 
             if (PlayerPrefs.HasKey(_playerController.usernameKey) && playerType == PlayerStatus.LoggedIn)
                 _usernameText.text = _playerController.GetUsername();
+
+			if (_playerController.GetPlayerType () == -1)
+				submitQuestionButton.gameObject.SetActive (false);
                 
         }
 

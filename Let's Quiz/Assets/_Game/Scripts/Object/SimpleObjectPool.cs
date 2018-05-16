@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace _Tutorial
+namespace _LetsQuiz
 {
     // Identifies the pool that a GameObject came from
     public class PooledObject : MonoBehaviour
