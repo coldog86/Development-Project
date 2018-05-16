@@ -21,36 +21,36 @@ namespace _LetsQuiz
         [Header("Question")]
         public Text questionText;
         public Text scoreText;
-		public PlayerController player;
-		public AllQuestions allQuestions;
-		public QuestionData questionData;
-		public Text answerText1;
-		public Text answerText2;
-		public Text answerText3;
-		public Text answerText4;
+        public PlayerController player;
+        public AllQuestions allQuestions;
+        public QuestionData questionData;
+        public Text answerText1;
+        public Text answerText2;
+        public Text answerText3;
+        public Text answerText4;
 
-		[Header("Answer Buttons")]
-		public Button answerButton1;
-		public Button answerButton2;
-		public Button answerButton3;
-		public Button answerButton4;
+        [Header("Answer Buttons")]
+        public Button answerButton1;
+        public Button answerButton2;
+        public Button answerButton3;
+        public Button answerButton4;
 
-		public Transform answerButtonParent;
-		public GameObject questionDisplay;
-		public GameObject roundEndDisplay;
+        public Transform answerButtonParent;
+        public GameObject questionDisplay;
+        public GameObject roundEndDisplay;
 
-		private DataController _dataController;
-		private RoundData _currentRoundData;
-		private QuestionData[] questionPool;
-		public QuestionData currentQuestion;
+        private DataController _dataController;
+        private RoundData _currentRoundData;
+        private QuestionData[] questionPool;
+        public QuestionData currentQuestion;
 
-		private bool _isRoundActive;
-		private int _questionIndex;
-		private int _playerScore;
+        private bool _isRoundActive;
+        private int _questionIndex;
+        private int _playerScore;
 
 
-		private Button theButton;
-		private ColorBlock theColor;
+        private Button theButton;
+        private ColorBlock theColor;
 
         private FeedbackClick _click;
         private FeedbackMusic _music;
@@ -67,16 +67,16 @@ namespace _LetsQuiz
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
 
-			allQuestions.SetUp ();
+            allQuestions.SetUp();
 
-			questionPool = allQuestions.getAllQuestions();
-			//_questionPool = _currentRoundData.questions;
+            questionPool = allQuestions.getAllQuestions();
+            //_questionPool = _currentRoundData.questions;
 
-			_questionIndex = 0;
+            _questionIndex = 0;
 
-			currentQuestion = questionPool [_questionIndex];
+            currentQuestion = questionPool[_questionIndex];
 
-			ShowQuestion ();
+            ShowQuestion();
 
 
 
@@ -111,61 +111,67 @@ namespace _LetsQuiz
         }
 
 
-		public void selectAnswer(Text answerText) 
-		{
-			_click.Play ();
+        public void selectAnswer(Text answerText)
+        {
+            _click.Play();
 
-			//determine if answer is correct, pass data onto AnswerButtonClicked
+            //determine if answer is correct, pass data onto AnswerButtonClicked
 
-			AnswerData selectedAnswer = findQuestion (answerText);
+            AnswerData selectedAnswer = findQuestion(answerText);
 
-			if (selectedAnswer.isCorrect) {
-				FeedbackAlert.Show ("correct");
-				//add points
+            if (selectedAnswer.isCorrect)
+            {
+                FeedbackAlert.Show("correct");
+                //add points
 
 
 
-			} else {
-				FeedbackAlert.Show ("Incorrect");
-				//remove points?
+            }
+            else
+            {
+                FeedbackAlert.Show("Incorrect");
+                //remove points?
 
-			}
+            }
 
-			//show next question
-			_questionIndex++;
-			ShowQuestion ();
+            //show next question
+            _questionIndex++;
+            ShowQuestion();
 
-		}
+        }
 
-		public AnswerData findQuestion(Text AnswerText) {
+        public AnswerData findQuestion(Text AnswerText)
+        {
 
-			for (int i = 0; i <= 3; i++) {
+            for (int i = 0; i <= 3; i++)
+            {
 				
-				if (AnswerText.text == currentQuestion.answers[i].answerText) {
+                if (AnswerText.text == currentQuestion.answers[i].answerText)
+                {
 
-					return currentQuestion.answers[i];
-				}
+                    return currentQuestion.answers[i];
+                }
 
 
-			}
-			return currentQuestion.answers[0];
-		}
-			
+            }
+            return currentQuestion.answers[0];
+        }
 
-		private void ShowQuestion()
-		{
-			//retrieve next question
-			currentQuestion = questionPool [_questionIndex];
 
-			//update UI
-			questionData.answers = currentQuestion.answers;
-			answerText1.text = questionData.answers [0].answerText;
-			answerText2.text = questionData.answers [1].answerText;
-			answerText3.text = questionData.answers [2].answerText;
-			answerText4.text = questionData.answers [3].answerText;
-			questionText.text = currentQuestion.questionText;
-		}
-			
+        private void ShowQuestion()
+        {
+            //retrieve next question
+            currentQuestion = questionPool[_questionIndex];
+
+            //update UI
+            questionData.answers = currentQuestion.answers;
+            answerText1.text = questionData.answers[0].answerText;
+            answerText2.text = questionData.answers[1].answerText;
+            answerText3.text = questionData.answers[2].answerText;
+            answerText4.text = questionData.answers[3].answerText;
+            questionText.text = currentQuestion.questionText;
+        }
+
 
         #region timer specific
 
@@ -180,6 +186,16 @@ namespace _LetsQuiz
                 timerImage.color = timerColorMid;
             else if (timerBar.value <= 5)
                 timerImage.color = timerColorMin;
+        }
+
+        #endregion
+
+        #region navigatin specific
+
+        public void BackToMenu()
+        {
+            _click.Play();
+            SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
         #endregion
