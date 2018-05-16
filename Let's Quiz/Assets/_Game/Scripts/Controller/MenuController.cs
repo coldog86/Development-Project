@@ -30,14 +30,16 @@ namespace _LetsQuiz
             _usernameText = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
             _playerController = FindObjectOfType<PlayerController>();
 
-            if (PlayerPrefs.HasKey(_playerController.usernameKey))
+            var playerType = _playerController.GetPlayerType();
+
+            if (PlayerPrefs.HasKey(_playerController.usernameKey) && playerType == PlayerStatus.LoggedIn)
                 _usernameText.text = _playerController.GetUsername();
                 
         }
 
         private void Start()
         {
-            navigationDrawer.SetActive(false);
+            //navigationDrawer.SetActive(false);
 
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
