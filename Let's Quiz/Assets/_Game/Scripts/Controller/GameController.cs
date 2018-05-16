@@ -1,21 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Threading;
-using System.Collections.Generic;
-using Random = UnityEngine.Random;
-
-using UnityEngine;
-using System.Collections;
-using System.IO;
-using UnityEngine.UI;
-using System.Collections.Generic;
-using UnityEngine.SceneManagement;
-using System;
-
 
 namespace _LetsQuiz
 {
@@ -54,8 +42,7 @@ namespace _LetsQuiz
 		private DataController _dataController;
 		private RoundData _currentRoundData;
 		private QuestionData[] questionPool;
-		public QuestionData _currentQuestion;
-		private QuestionController _questionController;
+		public QuestionData currentQuestion;
 
 		private bool _isRoundActive;
 		private int _questionIndex;
@@ -69,11 +56,6 @@ namespace _LetsQuiz
         private FeedbackMusic _music;
         private float _timeRemaining = 20;
 
-		int numberOfQuestionsAsked;
-		Button correctAnswer;
-
-
-
         #endregion
 
         #region methods
@@ -84,17 +66,15 @@ namespace _LetsQuiz
         {
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
-			_questionController = FindObjectOfType<QuestionController>();
 
-			//allQuestions.SetUp();
+			allQuestions.SetUp ();
 
-			_questionController.Load ();
-			//questionPool = _questionController.extractQuestions ();
+			questionPool = allQuestions.getAllQuestions();
 			//_questionPool = _currentRoundData.questions;
-			questionPool = _questionController.getAllQuestionsAllCatagories();
 
+			_questionIndex = 0;
 
-
+			currentQuestion = questionPool [_questionIndex];
 
 			ShowQuestion ();
 
@@ -144,6 +124,7 @@ namespace _LetsQuiz
 				//add points
 
 
+
 			} else {
 				FeedbackAlert.Show ("Incorrect");
 				//remove points?
@@ -160,71 +141,31 @@ namespace _LetsQuiz
 
 			for (int i = 0; i <= 3; i++) {
 				
-				if (AnswerText.text == _currentQuestion.answers[i].answerText) {
+				if (AnswerText.text == currentQuestion.answers[i].answerText) {
 
-					return _currentQuestion.answers[i];
+					return currentQuestion.answers[i];
 				}
 
 
 			}
-			return _currentQuestion.answers[0];
+			return currentQuestion.answers[0];
 		}
 			
 
-		private void ShowQuestion ()
+		private void ShowQuestion()
 		{
 			//retrieve next question
-
+			currentQuestion = questionPool [_questionIndex];
 
 			//update UI
-			if (questionPool.Length <= numberOfQuestionsAsked) { //if all questions are asked, end round
-				Debug.Log ("out of questions");
-				//TODO call somesort of endRound()
-			} else {
-
-				int randomNumber = Random.Range (0, questionPool.Length - 1); //gets random number between 0 and total number of questions
-
-
-
-				_currentQuestion = questionPool [randomNumber];// Get the QuestionData for the current question
-				questionText.text = _currentQuestion.questionText;  // Update questionText with the correct text
-				_questionController.addAskedQuestionToAskedQuestions (_currentQuestion);//keep track of the questions we asked so we can repeat it for the oppoent player
-				_questionController.removeFromAllQuestionsLeft (_currentQuestion);
-
-				List<string> answers = new List<string>();
-				for(int i =0; i<_currentQuestion.answers.Length; i++)
-				{
-					answers.Add(_currentQuestion.answers[i].answerText);
-					Debug.Log(answers[i]);
-				}
-
-				//this would be better if we were using the object pool to create the answer buttons
-
-				randomNumber = Random.Range (0, answers.Count);
-				answerText1.text = answers[randomNumber];
-				answers.RemoveAt(randomNumber);
-
-				randomNumber = Random.Range (0, answers.Count);
-				answerText2.text = answers[randomNumber];
-				answers.RemoveAt(randomNumber);
-
-				randomNumber = Random.Range (0, answers.Count);
-				answerText3.text = answers[randomNumber];
-				answers.RemoveAt(randomNumber);
-
-				randomNumber = Random.Range (0, answers.Count);
-				answerText4.text = answers[randomNumber];
-				answers.RemoveAt(randomNumber);
-
-			
-
-				numberOfQuestionsAsked++;
-				questionPool = _questionController.removeQuestion(questionPool, randomNumber);
-			}
+			questionData.answers = currentQuestion.answers;
+			answerText1.text = questionData.answers [0].answerText;
+			answerText2.text = questionData.answers [1].answerText;
+			answerText3.text = questionData.answers [2].answerText;
+			answerText4.text = questionData.answers [3].answerText;
+			questionText.text = currentQuestion.questionText;
 		}
-
-
-
+			
 
         #region timer specific
 
@@ -252,3 +193,4 @@ namespace _LetsQuiz
         #endregion
     }
 }
+

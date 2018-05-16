@@ -3,23 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-
 namespace _LetsQuiz
 {
-
 	[System.Serializable]
-	public class AllQuestionData {
-
-		public List<CategoryQuestions> allRoundData;
-
-	}
-
-
-	[System.Serializable]
-	public class CategoryQuestions{
-
-		public List<QuestionData> questions;
-		public string name;
+	public class RawQuestion
+	{
+		public string QuestionText = "empty question";
+		public string CorrectAns = "Correct Answer";
+		public string WrongAns1 = "Wrong Answer";
+		public string WrongAns2 = "Wrong Answer";
+		public string WrongAns3 = "Wrong Answer";
+			
 
 	}
 }

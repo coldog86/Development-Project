@@ -32,7 +32,6 @@ public class AllQuestions
 		answers = new AnswerData[4];
 
 			//DEBUG TEST DATA
-
 		question1.questionText = "First Question";
 		question2.questionText = "Second Question";
 		question3.questionText = "Third Question";
@@ -64,13 +63,12 @@ public class AllQuestions
 
 			//DEBUG TEST DATA END HERE
 
-
-
 	}
 
 		public QuestionData[] getAllQuestions() {
 			return allQuestions;
 		}
-			
+
 	}
+
 }
