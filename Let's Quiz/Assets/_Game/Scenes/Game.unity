@@ -1290,7 +1290,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b45378d007e248f193f3595b38de8d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  answerButtonPrefab: {fileID: 1000012940852226, guid: 3104b41aef31ea64bbef0e080b00e429,
+  answerButtonPrefab: {fileID: 1000012940852226, guid: 91c58b77279b34c9da33f4b7bb2c6481,
     type: 2}
 --- !u!4 &1108290747
 Transform:
