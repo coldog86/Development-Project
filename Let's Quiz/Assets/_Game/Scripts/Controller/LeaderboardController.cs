@@ -14,6 +14,9 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private GameObject _warningPanel;
         private GameObject _userPanel;
+		private HighScoreData allHighScores;
+		private DataController _dataController;
+		private string highScoreData;
 
         #endregion
 
@@ -49,7 +52,26 @@ namespace _LetsQuiz
                 _warningPanel.SetActive(false);
                 _userPanel.SetActive(true);
             }
+
+			allHighScores = extractHighScores();
+				
         }
+
+
+		public HighScoreData extractHighScores() {
+
+			HighScoreData allH = JsonUtility.FromJson<HighScoreData>(highScoreData);
+			return allH;
+		}
+
+
+		public void setHighScoreData(string data) {
+
+			highScoreData = data;
+		}
+
+
+
 
         #endregion
 
@@ -60,6 +82,7 @@ namespace _LetsQuiz
             _click.Play();
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
+
 
         #endregion
 

@@ -266,6 +266,7 @@ GameObject:
   - component: {fileID: 1511502299}
   - component: {fileID: 1511502298}
   - component: {fileID: 1511502302}
+  - component: {fileID: 1511502301}
   - component: {fileID: 1511502303}
   - component: {fileID: 1511502304}
   - component: {fileID: 1511502300}
@@ -314,6 +315,17 @@ MonoBehaviour:
   unmutedVolume: -10
   mutedVolume: -80
   masterMixer: {fileID: 24100000, guid: bbedf9fbfe2254949967ae5b6be8b81a, type: 2}
+--- !u!114 &1511502301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1511502297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd09101bafab74f48b88d44f6b510976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1511502302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,11 +373,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7546d2eb54a014fc591fa129b6c54a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  QuestionText: empty question
-  CorrectAns: Correct Answer
-  WrongAns1: Wrong Answer
-  WrongAns2: Wrong Answer
-  WrongAns3: Wrong Answer
 --- !u!1 &1661182033
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ namespace _LetsQuiz
 
         [Header("Components")]
         private GetAllQuestions _questionDownload;
+		private GetHighScores _highscoreDownload;
         private PlayerController _playerController;
         private SettingsController _settingsController;
         private QuestionController _questionController;
@@ -40,6 +41,8 @@ namespace _LetsQuiz
 
         public string allQuestionJSON { get; set; }
 
+		public string allHighScoreJSON { get; set; }
+
         #endregion
 
         #region methods
@@ -58,6 +61,9 @@ namespace _LetsQuiz
 
             _questionDownload = FindObjectOfType<GetAllQuestions>();
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+
+			_highscoreDownload = FindObjectOfType<GetHighScores>();
+			StartCoroutine (_highscoreDownload.PullAllHighScoresFromServer());
 
             _questionController = GetComponent<QuestionController>();
             _questionController.Load();
@@ -174,6 +180,8 @@ namespace _LetsQuiz
             FeedbackAlert.Show("Retrying connection...", 1.0f);
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
         }
+
+
 
         #endregion
 
