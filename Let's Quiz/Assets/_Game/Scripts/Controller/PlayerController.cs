@@ -23,6 +23,8 @@ namespace _LetsQuiz
         private string _totalQuestionsAnsweredKey = "PlayerTotalQuestionsAnswered";
         private string _questionDataKey = "PlayerQuestionData";
 
+        public int userScore {get; set;}
+
         [Header("Player Details")]
         [SerializeField]
         private Player _player;
@@ -148,6 +150,9 @@ namespace _LetsQuiz
             PlayerPrefs.SetString(_usernameKey, _player.username);
             PlayerPrefs.Save();
         }
+
+
+
 
         #endregion
 

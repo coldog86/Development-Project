@@ -59,7 +59,7 @@ namespace _LetsQuiz{
 			GetComponent<Image> ().color = Color.green; //set wrong push to red
 			yield return new WaitForSeconds(1); //give people a chance to see 
 			GetComponent<Image> ().color = prevColor; //change color back
-			_GameController.Score();
+			_GameController.Score(answerData.isCorrect);
 		}
 
 		public void changeToRed()
@@ -75,7 +75,7 @@ namespace _LetsQuiz{
 			yield return new WaitForSeconds(1); //give people a chance to see 
 			GetComponent<Image> ().color = prevColor; //change wrong answer color back 
 			rightButton.GetComponent<Image> ().color = prevColor; //change correct answer color back
-			_GameController.Score ();
+			_GameController.Score (answerData.isCorrect);
 
 		}
 

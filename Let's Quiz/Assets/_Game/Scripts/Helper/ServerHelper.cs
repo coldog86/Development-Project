@@ -10,6 +10,7 @@ namespace _LetsQuiz
         public static string DownloadQuestion = "pullAllQuestions.php";
         public static string Login = "loginExistingUserWithEmail.php";
         public static string Register = "addUser.php";
+        public static string Ranking = "ranking.php";
 
     }
 }

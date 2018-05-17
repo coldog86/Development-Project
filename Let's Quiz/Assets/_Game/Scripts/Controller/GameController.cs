@@ -22,40 +22,37 @@ namespace _LetsQuiz
         public Color timerColorMid;
         public Color timerColorMin;
 
+		private float _timeRemaining = 20;
+
+        [Header("header")]
+		public Text scoreDisplay;
+
         [Header("Question")]
         public Text questionText;
-		public GameObject questionDisplay;
+        public GameObject questionDisplay;
 		public QuestionData questionData;
-
-        public Text scoreText;
 		public PlayerController player;
+		public QuestionData _currentQuestion;
 
+		private QuestionData[] questionPool;
+		private int numberOfQuestionsAsked;
 
 		[Header("Answers")]
 		public SimpleObjectPool answerButtonObjectPool;
 		public Transform answerButtonParent;
 
-		public GameObject roundEndDisplay;
-
 		[Header ("Controllers")]
 		private DataController _dataController;
 		private RoundData _currentRoundData;
 		private QuestionController _questionController;
+		private PlayerController _playerController;
 
 		private bool _isRoundActive;
-		private int _questionIndex;
-		private int _playerScore;
-
-        private FeedbackClick _click;
+		//private int _questionIndex;
+		private FeedbackClick _click;
         private FeedbackMusic _music;
 
-
-        private float _timeRemaining = 20;
-		private QuestionData[] questionPool;
-		public QuestionData _currentQuestion;
-
-		private int numberOfQuestionsAsked;
-		public bool clicked {get; set;}
+        public bool clicked {get; set;}
 		bool isCorrect = false;
 		AnswerButton correctAnswerButton;
 		AnswerData correctAnswerData;
@@ -73,10 +70,11 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            _click = FindObjectOfType<FeedbackClick>();
+        	_click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
 			_questionController = FindObjectOfType<QuestionController>();
-			//allQuestions.SetUp();
+			_playerController = FindObjectOfType<PlayerController>();
+			_playerController.userScore = 0;
 
 			_questionController.Load ();
 			questionPool = _questionController.getAllQuestionsAllCatagories(); 
@@ -98,8 +96,10 @@ namespace _LetsQuiz
 
 		public void ShowQuestion ()
 		{	
+			scoreDisplay.text = _playerController.userScore.ToString();
 			clicked = false;
 			RemoveAnswerButtons ();
+
 			QuestionData currentQuestionData = null;
 			if (questionPool.Length <= numberOfQuestionsAsked) { //if all questions are asked, end round
 				Debug.Log ("out of questions");
@@ -176,16 +176,15 @@ namespace _LetsQuiz
 
 		#region user stuff
 
-		public void Score()
+		public void Score(bool answer)
     	{
-			if (!isCorrect) {
-				Debug.Log ("Incorrect");
-				Debug.Log("-5");
-			}
-			if (isCorrect){
-				Debug.Log ("Correct");
-				Debug.Log("+10");
-        	}
+    		Debug.Log("score called bool = " + answer);
+			if (answer)
+				_playerController.userScore = _playerController.userScore + 10;
+
+			if (!answer)
+				_playerController.userScore = _playerController.userScore - 5;
+
 			ShowQuestion();
     	}
 
