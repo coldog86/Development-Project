@@ -17,7 +17,7 @@ namespace _LetsQuiz
 
 			Debug.Log ("Load HighScore Controller");
 			_playerController = FindObjectOfType<PlayerController>();
-			highScoreData = _playerController.GetHighScoreJSON();
+			highScoreData = _playerController.highScoreJSON;
 		}
 
 		public HighScoreData extractHighScores() {
