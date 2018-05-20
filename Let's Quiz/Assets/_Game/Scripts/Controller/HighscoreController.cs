@@ -20,7 +20,7 @@ namespace _LetsQuiz
 			highScoreData = _playerController.highScoreJSON;
 		}
 
-		public HighScoreData extractHighScores() {
+		public HighScoresContainer extractHighScores() {
 
 			HighScoresContainer allHighScorers = JsonUtility.FromJson<HighScoresContainer> (highScoreData);
 			return allHighScorers;

@@ -14,7 +14,7 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private GameObject _warningPanel;
         private GameObject _userPanel;
-		private HighScoreData allHighScores;
+		private HighScoresContainer allHighScores;
 		private DataController _dataController;
 		private string highScoreData;
 		private HighscoreController _highScoreController;
@@ -35,6 +35,7 @@ namespace _LetsQuiz
 
 			_highScoreController.Load ();
 			allHighScores = _highScoreController.extractHighScores();
+			Debug.Log (allHighScores.allHighScorers.Length);
 
             if (_playerController.GetPlayerType() != PlayerStatus.LoggedIn)
             {
