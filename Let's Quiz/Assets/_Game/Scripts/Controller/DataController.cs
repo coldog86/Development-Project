@@ -18,6 +18,7 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private SettingsController _settingsController;
         private QuestionController _questionController;
+		private HighscoreController _highScoreController;
 
         [Header("Player")]
         private Player _player;
@@ -67,6 +68,9 @@ namespace _LetsQuiz
 
             _questionController = GetComponent<QuestionController>();
             _questionController.Load();
+
+			_highScoreController = GetComponent<HighscoreController> ();
+			_highScoreController.Load ();
 
             // retrive player username and password from PlayerPrefs if they have an id
             if (PlayerPrefs.HasKey(_playerController.idKey))

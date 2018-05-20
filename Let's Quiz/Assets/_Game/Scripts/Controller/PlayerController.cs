@@ -36,6 +36,7 @@ namespace _LetsQuiz
         [Header("Player Content")]
         [SerializeField]
         private string _questionData = "";
+		private string _highScoreData = "";
 
 
 
@@ -423,6 +424,22 @@ namespace _LetsQuiz
             PlayerPrefs.SetString(_questionDataKey, _questionData);
             PlayerPrefs.Save();
         }
+
+		// set the worldwide highscore data
+		public void SetHighscoreData(string highScoreData)
+		{
+			if (highScoreData != _highScoreData)
+			{
+				_highScoreData = highScoreData;
+			}
+		}
+
+		// get worldwide highscore data
+		public string GetHighScoreData()
+		{
+			return _highScoreData;
+		}
+
 
         #endregion
 

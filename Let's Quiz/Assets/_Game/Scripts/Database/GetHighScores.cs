@@ -12,7 +12,6 @@ namespace _LetsQuiz
 
 		private DataController _dataController;
 		private PlayerController _playerController;
-		private LeaderboardController _leaderboardController;
 
 		#endregion
 
@@ -23,7 +22,7 @@ namespace _LetsQuiz
 		private void Start()
 		{
 			_dataController = FindObjectOfType<DataController>();
-			_leaderboardController = FindObjectOfType<LeaderboardController>();
+			_playerController = FindObjectOfType<PlayerController>();
 		}
 
 		#endregion
@@ -62,9 +61,11 @@ namespace _LetsQuiz
 
 				_dataController.serverConnected = true;
 				_dataController.allHighScoreJSON = download.text;
-				_leaderboardController.setHighScoreData(download.text);
+				//_leaderboardController.setHighScoreData(download.text);
 
 				yield return download;
+
+				_playerController.SetHighscoreData (download.text);
 			} 
 		}
 

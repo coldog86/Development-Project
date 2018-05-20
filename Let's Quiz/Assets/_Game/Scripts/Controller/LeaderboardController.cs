@@ -17,6 +17,7 @@ namespace _LetsQuiz
 		private HighScoreData allHighScores;
 		private DataController _dataController;
 		private string highScoreData;
+		private HighscoreController _highScoreController;
 
         #endregion
 
@@ -24,23 +25,16 @@ namespace _LetsQuiz
 
         #region unity
 
-        private void Awake()
-        {
-            _click = FindObjectOfType<FeedbackClick>();
-
-            _playerController = FindObjectOfType<PlayerController>();
-
-            _playerController.Load();
-
-            _warningPanel = GameObject.FindGameObjectWithTag("Panel_Warning");
-            _warningPanel.SetActive(false);
-
-            _userPanel = GameObject.FindGameObjectWithTag("Panel_User");
-            _userPanel.SetActive(false);
-        }
+       
 
         private void Start()
         {
+
+			_playerController = FindObjectOfType<PlayerController>();
+			_highScoreController = FindObjectOfType<HighscoreController>();
+
+			_highScoreController.Load ();
+			allHighScores = _highScoreController.extractHighScores();
 
             if (_playerController.GetPlayerType() != PlayerStatus.LoggedIn)
             {
@@ -52,25 +46,21 @@ namespace _LetsQuiz
                 _warningPanel.SetActive(false);
                 _userPanel.SetActive(true);
             }
-
-			allHighScores = extractHighScores();
 				
         }
 
+		private void Awake()
+		{
+			_click = FindObjectOfType<FeedbackClick>();
 
-		public HighScoreData extractHighScores() {
 
-			HighScoreData allH = JsonUtility.FromJson<HighScoreData>(highScoreData);
-			return allH;
+
+			_warningPanel = GameObject.FindGameObjectWithTag("Panel_Warning");
+			_warningPanel.SetActive(false);
+
+			_userPanel = GameObject.FindGameObjectWithTag("Panel_User");
+			_userPanel.SetActive(false);
 		}
-
-
-		public void setHighScoreData(string data) {
-
-			highScoreData = data;
-		}
-
-
 
 
         #endregion
