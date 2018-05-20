@@ -69,6 +69,8 @@ namespace _LetsQuiz
         public string totalQuestionsAnsweredKey { get { return _totalQuestionsAnsweredKey; } }
 
         public string questionDataKey { get { return _questionDataKey; } }
+	
+	public string highScoreJSON {get; set;}
 
         #endregion
 
@@ -336,6 +338,8 @@ namespace _LetsQuiz
         {
             return _player.highestScore;
         }
+	
+	
 
         // save the player number questions submitted value in playerprefs
         private void SaveHighestScore()
