@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 namespace _LetsQuiz
 {
@@ -71,21 +72,21 @@ namespace _LetsQuiz
 			_userPanel.SetActive(false);
 		}
 
-
+		//sorts highScorers and displays top 10 in highScorerParent using LeaderboardEntry prefabs. 
 		private void showHighScorers(HighScoresContainer allHighScorers) {
-
-
-			//need to sort highScorers into order
 
 			removeHighScorers (); //clear leaderboard to start
 
-			GameObject highScorerGameObject = highScorerObjectPool.GetObject();
+			//sort scores by totalScore. 
+			HighScoresObject[] sorted = allHighScorers.allHighScorers.OrderBy (c => c.getTotalScoreInt ()).ToArray ();
 
-			for (int i = 0; i < allHighScorers.allHighScorers.Length; i++) {
+			//for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items. 
+			for (int i = sorted.Length-1; i > sorted.Length-11; i--) {
+				
+				GameObject highScorerGameObject = highScorerObjectPool.GetObject(); //create new GameObejct
+				HighScoresObject currentHighScore = sorted[i]; 						//get current highscorer
 
-				HighScoresObject currentHighScore = allHighScorers.allHighScorers [i]; //get current highscorer
-
-				highScorerGameObjects.Add (highScorerGameObject);  //this will need to repeat for however many items in list
+				highScorerGameObjects.Add (highScorerGameObject);  
 				highScorerGameObject.transform.SetParent(highScorerParent);
 				LeaderboardEntry leaderBoardEntry = highScorerGameObject.GetComponent<LeaderboardEntry> ();
 
@@ -95,6 +96,7 @@ namespace _LetsQuiz
 
 		}
 
+		//removes all LeaderboardEntry Objects from the scene
 		void removeHighScorers() {
 
 			while (highScorerGameObjects.Count > 0) {
@@ -103,6 +105,7 @@ namespace _LetsQuiz
 				highScorerGameObjects.RemoveAt (0);
 			}
 		}
+
 
         #endregion
 
