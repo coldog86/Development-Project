@@ -131,7 +131,7 @@ namespace _LetsQuiz
 
 				answerButtonGameObject.transform.SetParent (answerButtonParent);
 				answerButtonGameObject.transform.localScale = Vector3.one; //I was having an issue were the scale blew out, this fixed it...
-				AnswerButton answerButton = answerButtonGameObject.GetComponent<AnswerButton> ();
+				AnswerButton answerButton = answerButtonGameObject.GetComponent<AnswerButton> ();	
 				answerButton.SetUp (currentQuestionData.answers [n]);// Pass the AnswerData to the AnswerButton to check if it correct
 
 				if (answerButton.isCorrect (currentQuestionData.answers [n])) {

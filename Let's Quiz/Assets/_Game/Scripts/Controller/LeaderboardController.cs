@@ -19,6 +19,12 @@ namespace _LetsQuiz
 		private string highScoreData;
 		private HighscoreController _highScoreController;
 
+		[Header("HighScorers")]
+		public SimpleObjectPool highScorerObjectPool;
+		public Transform highScorerParent;
+
+		private List<GameObject> highScorerGameObjects = new List<GameObject>();
+
         #endregion
 
         #region methods
@@ -36,6 +42,8 @@ namespace _LetsQuiz
 			_highScoreController.Load ();
 			allHighScores = _highScoreController.extractHighScores();
 			Debug.Log (allHighScores.allHighScorers.Length);
+
+			showHighScorers(allHighScores);
 
             if (_playerController.GetPlayerType() != PlayerStatus.LoggedIn)
             {
@@ -63,6 +71,38 @@ namespace _LetsQuiz
 			_userPanel.SetActive(false);
 		}
 
+
+		private void showHighScorers(HighScoresContainer allHighScorers) {
+
+
+			//need to sort highScorers into order
+
+			removeHighScorers (); //clear leaderboard to start
+
+			GameObject highScorerGameObject = highScorerObjectPool.GetObject();
+
+			for (int i = 0; i < allHighScorers.allHighScorers.Length; i++) {
+
+				HighScoresObject currentHighScore = allHighScorers.allHighScorers [i]; //get current highscorer
+
+				highScorerGameObjects.Add (highScorerGameObject);  //this will need to repeat for however many items in list
+				highScorerGameObject.transform.SetParent(highScorerParent);
+				LeaderboardEntry leaderBoardEntry = highScorerGameObject.GetComponent<LeaderboardEntry> ();
+
+				leaderBoardEntry.SetUp(currentHighScore.userName, currentHighScore.totalScore); //pass in the data of current HighScorer
+
+			}
+
+		}
+
+		void removeHighScorers() {
+
+			while (highScorerGameObjects.Count > 0) {
+
+				highScorerObjectPool.ReturnObject (highScorerGameObjects [0]);
+				highScorerGameObjects.RemoveAt (0);
+			}
+		}
 
         #endregion
 

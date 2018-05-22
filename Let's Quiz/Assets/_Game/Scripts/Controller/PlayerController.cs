@@ -432,9 +432,9 @@ namespace _LetsQuiz
 		// set the worldwide highscore data
 		public void SetHighscoreData(string highScoreData)
 		{
-			if (highScoreData != _highScoreData)
+			if (highScoreData != highScoreJSON)
 			{
-				_highScoreData = highScoreData;
+				highScoreJSON = highScoreData;
 			}
 		}
 
