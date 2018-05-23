@@ -1,6 +1,9 @@
-﻿[System.Serializable]
-public class QuestionData
+﻿namespace _LetsQuiz
 {
-	public string questionText;
-	public AnswerData[] answers;
+    [System.Serializable]
+    public class QuestionData
+    {
+        public string questionText;
+        public AnswerData[] answers;
+    }
 }

@@ -1,7 +1,11 @@
-﻿[System.Serializable]
-public class AnswerData
+﻿namespace _LetsQuiz
 {
-	public string answerText;
-	public bool isCorrect;
+    [System.Serializable]
+    public class AnswerData
+    {
+        public string answerText;
+        public bool isCorrect;
+
+    }
 }
 

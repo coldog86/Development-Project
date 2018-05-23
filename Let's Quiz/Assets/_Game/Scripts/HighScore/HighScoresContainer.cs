@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-
-[System.Serializable]
-public class HighScoresContainer
+﻿namespace _LetsQuiz
 {
-	public HighScoresObject[] allHighScorers;
+    [System.Serializable]
+    public class HighScoresContainer
+    {
+        public HighScoresObject[] allHighScorers;
+    }
 }
-

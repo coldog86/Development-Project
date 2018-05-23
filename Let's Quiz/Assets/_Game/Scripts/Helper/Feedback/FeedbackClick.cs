@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FeedbackClick : MonoBehaviour
+namespace _LetsQuiz
 {
-    public AudioSource source;
-
-    private void Start()
+    public class FeedbackClick : MonoBehaviour
     {
-        DontDestroyOnLoad(gameObject);
-    }
+        public AudioSource source;
 
-    public void Play()
-    {
-        source.Play();
+        private void Start()
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+
+        public void Play()
+        {
+            source.Play();
+        }
     }
 }

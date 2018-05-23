@@ -5,30 +5,30 @@ using UnityEngine.SceneManagement;
 using System.IO;
 using System.Collections.Generic;
 
-namespace _LetsQuiz{
+namespace _LetsQuiz
+{
+    public class LeaderboardEntry : MonoBehaviour
+    {
+        public Text usernameText;
+        public Text scoreText;
 
-	public class LeaderboardEntry : MonoBehaviour 
-	{
+        private GameController _gameController;
+        private RectTransform transform;
 
-		public Text usernameText;
-		public Text scoreText;
+        void Start()
+        {
+            _gameController = FindObjectOfType<GameController>();
+            transform = GetComponent<RectTransform>();
 
-		private GameController _GameController; 
+            // in case scale goes a bit funny
+            transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        }
 
-		void Start()
-		{
-			_GameController = FindObjectOfType<GameController>();
-		}
-
-		public void SetUp(string username, string score)
-		{
-			usernameText.text = username;
-			scoreText.text = score;
-			Debug.Log (usernameText.text);
-		}
-
-
-
-	}
-
+        public void SetUp(string username, string score)
+        {
+            usernameText.text = username;
+            scoreText.text = score;
+            Debug.Log(usernameText.text);
+        }
+    }
 }

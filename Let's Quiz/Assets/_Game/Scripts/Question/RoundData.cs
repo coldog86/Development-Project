@@ -1,6 +1,9 @@
-﻿[System.Serializable]
-public class RoundData
+﻿namespace _LetsQuiz
 {
-	public string name;
-	public QuestionData[] questions;
+    [System.Serializable]
+    public class RoundData
+    {
+        public string name;
+        public QuestionData[] questions;
+    }
 }

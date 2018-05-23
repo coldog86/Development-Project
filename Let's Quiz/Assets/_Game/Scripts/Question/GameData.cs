@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-
-[System.Serializable]
-public class GameData
+﻿namespace _LetsQuiz
 {
-    public RoundData[] allRoundData;
+    [System.Serializable]
+    public class GameData
+    {
+        public RoundData[] allRoundData;
+    }
 }
-
