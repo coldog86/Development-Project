@@ -488,7 +488,7 @@ GameObject:
   - component: {fileID: 225132903789452402}
   - component: {fileID: 114294917723333218}
   m_Layer: 5
-  m_Name: ToggleLoginPanel
+  m_Name: ToggleLoginPanelButton
   m_TagString: MaterialButtonLayer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -737,7 +737,7 @@ GameObject:
   - component: {fileID: 225064798353551588}
   - component: {fileID: 114819454618740576}
   m_Layer: 5
-  m_Name: ToggleRegisterPanel
+  m_Name: ToggleRegisterPanelButton
   m_TagString: MaterialButtonLayer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4668,7 +4668,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.000030518}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -208, y: 184}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224409670749245928

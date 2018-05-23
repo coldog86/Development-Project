@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Runtime.Serialization.Formatters;
 
 namespace _LetsQuiz
 {
@@ -22,8 +21,8 @@ namespace _LetsQuiz
         public GameObject toogleLoginPanelButton;
         public GameObject toggleRegisterPanelButton;
         public GameObject skipButton;
-        public GameObject googleButton;
-        public GameObject facebookButton;
+        //public GameObject googleButton;
+        //public GameObject facebookButton;
 
         [Header("Existing User")]
         public InputField existingUsernameInput;
@@ -95,8 +94,8 @@ namespace _LetsQuiz
             skipButton.SetActive(false);
             registerButton.SetActive(false);
             buttonPanel.SetActive(false);
-            googleButton.SetActive(false);
-            facebookButton.SetActive(false);
+            //googleButton.SetActive(false);
+            //facebookButton.SetActive(false);
         }
 
         private void Start()
@@ -114,7 +113,7 @@ namespace _LetsQuiz
         {
             #if PLATFORM_ANDROID
             if (Input.GetKeyDown(KeyCode.Escape))
-                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
+                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", Application.Quit, FeedbackTwoButtonModal.Hide);
             #endif
         }
 
@@ -371,8 +370,8 @@ namespace _LetsQuiz
             loginButton.SetActive(true);
             skipButton.SetActive(true);
             registerButton.SetActive(false);
-            googleButton.SetActive(true);
-            facebookButton.SetActive(true);
+            //googleButton.SetActive(true);
+            //facebookButton.SetActive(true);
             toogleLoginPanelButton.SetActive(false);
             toggleRegisterPanelButton.SetActive(false);
         }
@@ -386,8 +385,8 @@ namespace _LetsQuiz
             loginButton.SetActive(false);
             skipButton.SetActive(true);
             registerButton.SetActive(true);
-            googleButton.SetActive(true);
-            facebookButton.SetActive(true);
+            //googleButton.SetActive(true);
+            //facebookButton.SetActive(true);
             toogleLoginPanelButton.SetActive(false);
             toggleRegisterPanelButton.SetActive(false);
         }
@@ -395,16 +394,6 @@ namespace _LetsQuiz
         public void LoadMenu()
         {
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
-        }
-
-        private void QuitGame()
-        {
-            Application.Quit();
-
-            // NOTE : DEBUG PURPOSES ONLY
-            #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-            #endif
         }
 
         #endregion
