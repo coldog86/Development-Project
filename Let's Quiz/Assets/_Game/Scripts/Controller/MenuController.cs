@@ -12,9 +12,9 @@ namespace _LetsQuiz
 
         [Header("Component")]
         public GameObject navigationDrawer;
-		public Button submitQuestionButton;
+        public Button submitQuestionButton;
        
-        private Text _usernameText;
+        private Text _username;
         private FeedbackClick _click;
         private FeedbackMusic _music;
         private PlayerController _playerController;
@@ -28,16 +28,16 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            _usernameText = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
+            _username = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
             _playerController = FindObjectOfType<PlayerController>();
 
             var playerType = _playerController.GetPlayerType();
 
             if (PlayerPrefs.HasKey(_playerController.usernameKey) && playerType == PlayerStatus.LoggedIn)
-                _usernameText.text = _playerController.GetUsername();
+                _username.text = _playerController.GetUsername();
 
-			if (_playerController.GetPlayerType () == -1)
-				submitQuestionButton.gameObject.SetActive (false);
+            if (_playerController.GetPlayerType() == -1)
+                submitQuestionButton.gameObject.SetActive(false);
                 
         }
 
@@ -51,15 +51,6 @@ namespace _LetsQuiz
             _questionDownload = FindObjectOfType<GetAllQuestions>();
 
             Destroy(_questionDownload);
-        }
-
-        private void Update()
-        {
-            // NOTE : android platform only
-            #if PLATFORM_ANDROID
-            if (Input.GetKeyDown(KeyCode.Escape))
-                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
-            #endif
         }
 
         #endregion
@@ -144,17 +135,7 @@ namespace _LetsQuiz
         public void Quit()
         {
             _click.Play();
-            FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", QuitGame, FeedbackTwoButtonModal.Hide);
-        }
-
-        private void QuitGame()
-        {
-            Application.Quit();
-
-            // NOTE : debug purposes only
-            #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-            #endif
+            FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", Application.Quit, FeedbackTwoButtonModal.Hide);
         }
 
         #endregion

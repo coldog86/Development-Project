@@ -23,8 +23,6 @@ namespace _LetsQuiz
         private string _totalQuestionsAnsweredKey = "PlayerTotalQuestionsAnswered";
         private string _questionDataKey = "PlayerQuestionData";
 
-        public int userScore {get; set;}
-
         [Header("Player Details")]
         [SerializeField]
         private Player _player;
@@ -36,9 +34,7 @@ namespace _LetsQuiz
         [Header("Player Content")]
         [SerializeField]
         private string _questionData = "";
-		private string _highScoreData = "";
-
-
+        private string _highScoreData = "";
 
         #endregion
 
@@ -69,8 +65,12 @@ namespace _LetsQuiz
         public string totalQuestionsAnsweredKey { get { return _totalQuestionsAnsweredKey; } }
 
         public string questionDataKey { get { return _questionDataKey; } }
-	
-	public string highScoreJSON {get; set;}
+
+        public string highScoreJSON { get; set; }
+
+        public int userScore { get; set; }
+
+        public string scoreStatus { get; set; }
 
         #endregion
 
@@ -153,9 +153,6 @@ namespace _LetsQuiz
             PlayerPrefs.SetString(_usernameKey, _player.username);
             PlayerPrefs.Save();
         }
-
-
-
 
         #endregion
 
@@ -429,20 +426,20 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-		// set the worldwide highscore data
-		public void SetHighscoreData(string highScoreData)
-		{
-			if (highScoreData != highScoreJSON)
-			{
-				highScoreJSON = highScoreData;
-			}
-		}
+        // set the worldwide highscore data
+        public void SetHighscoreData(string highScoreData)
+        {
+            if (highScoreData != highScoreJSON)
+            {
+                highScoreJSON = highScoreData;
+            }
+        }
 
-		// get worldwide highscore data
-		public string GetHighScoreData()
-		{
-			return _highScoreData;
-		}
+        // get worldwide highscore data
+        public string GetHighScoreData()
+        {
+            return _highScoreData;
+        }
 
 
         #endregion
@@ -489,9 +486,9 @@ namespace _LetsQuiz
 
         }
 
-		//method to take raw question data and create local pool of questions inside the playercontroller. 
+        //method to take raw question data and create local pool of questions inside the playercontroller.
 
-	}
+    }
 			
 }
 

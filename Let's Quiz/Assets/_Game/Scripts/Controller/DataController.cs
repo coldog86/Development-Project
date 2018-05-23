@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Audio;
 using UnityEngine.Events;
 
 namespace _LetsQuiz
@@ -14,11 +13,11 @@ namespace _LetsQuiz
 
         [Header("Components")]
         private GetAllQuestions _questionDownload;
-		private GetHighScores _highscoreDownload;
+        private GetHighScores _highscoreDownload;
         private PlayerController _playerController;
         private SettingsController _settingsController;
         private QuestionController _questionController;
-		private HighscoreController _highScoreController;
+        private HighscoreController _highScoreController;
 
         [Header("Player")]
         private Player _player;
@@ -42,7 +41,7 @@ namespace _LetsQuiz
 
         public string allQuestionJSON { get; set; }
 
-		public string allHighScoreJSON { get; set; }
+        public string allHighScoreJSON { get; set; }
 
         #endregion
 
@@ -63,14 +62,14 @@ namespace _LetsQuiz
             _questionDownload = FindObjectOfType<GetAllQuestions>();
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
 
-			_highscoreDownload = FindObjectOfType<GetHighScores>();
-			StartCoroutine (_highscoreDownload.PullAllHighScoresFromServer());
+            _highscoreDownload = FindObjectOfType<GetHighScores>();
+            StartCoroutine(_highscoreDownload.PullAllHighScoresFromServer());
 
             _questionController = GetComponent<QuestionController>();
             _questionController.Load();
 
-			_highScoreController = GetComponent<HighscoreController> ();
-			_highScoreController.Load ();
+            _highScoreController = GetComponent<HighscoreController>();
+            _highScoreController.Load();
 
             // retrive player username and password from PlayerPrefs if they have an id
             if (PlayerPrefs.HasKey(_playerController.idKey))
@@ -79,16 +78,6 @@ namespace _LetsQuiz
                 _username = _playerController.GetUsername();
                 _password = _playerController.GetPassword();
             }
-        }
-
-        private void Quit()
-        {
-            Application.Quit();
-
-            // NOTE : debug purposes only
-            #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-            #endif
         }
 
         #endregion
@@ -185,8 +174,6 @@ namespace _LetsQuiz
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
         }
 
-
-
         #endregion
 
         #region feedback specific
@@ -195,7 +182,7 @@ namespace _LetsQuiz
         // negative action - quit application
         private void DisplayErrorModal(string message)
         {
-            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Quit);
+            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Application.Quit);
         }
 
         #endregion
