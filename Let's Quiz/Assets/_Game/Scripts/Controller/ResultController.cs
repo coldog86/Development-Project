@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 
 namespace _LetsQuiz
 {
@@ -12,13 +13,15 @@ namespace _LetsQuiz
 
         [Header("Components")]
         public Image backgroundEffect;
-        public Text userName;
+        public Text username;
         public Text score;
         public Text rank;
+        public Text heading;
+        public Text subHeading;
 
         private FeedbackClick _click;
         private FeedbackMusic _music;
-        private PlayerController _PlayerController;
+        private PlayerController _playerController;
 
         #endregion
 
@@ -30,13 +33,15 @@ namespace _LetsQuiz
         {
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
-			_PlayerController = FindObjectOfType<PlayerController>();
+            _playerController = FindObjectOfType<PlayerController>();
 
-            display();
+            Display();
+            ChangeText();
         }
 
         private void Update()
         {
+            // spins background image
             backgroundEffect.transform.Rotate(Vector3.forward * Time.deltaTime * 7.0f);
         }
 
@@ -44,17 +49,19 @@ namespace _LetsQuiz
 
         #region Display
 
-        private void display()
+        private void Display()
         {
-			userName.text = _PlayerController.GetUsername();
-			score.text = _PlayerController.userScore.ToString();
+            username.text = _playerController.GetUsername();
+            score.text = _playerController.userScore.ToString();
         }
 
 
-		public IEnumerator FindRanking()
+        public IEnumerator FindRanking()
         {
-			float _downloadTimer = 5.0f;
+            float _downloadTimer = 5.0f;
+
             WWW download = new WWW(ServerHelper.Host + ServerHelper.Ranking);
+
             while (!download.isDone)
             {
                 if (_downloadTimer < 0)
@@ -77,23 +84,15 @@ namespace _LetsQuiz
             else
             { 
                 // we got the string from the server, it is every question in JSON format
-                Debug.Log(download.text);
+                Debug.Log("Result Controller: FindRanking() : " + download.text);
 
                 string rankingsAsJSON = download.text;
 
                 yield return download;
-
-
             } 
         }
 
-
-
-
-
         #endregion
-
-
 
         #region user interaction
 
@@ -108,6 +107,24 @@ namespace _LetsQuiz
             _click.Play();
             _music.PlayBackgroundMusic();
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
+        }
+
+        #endregion
+
+        #region user feedback
+
+        private void ChangeText()
+        {
+            if (_playerController.scoreStatus.Contains("new high score"))
+            {
+                heading.text = "Congrats!";
+                subHeading.text = "You just got a new a high score!";
+            }
+            else
+            {
+                heading.text = "Uh-Oh!";
+                subHeading.text = "Someone needs to practise more...";
+            }
         }
 
         #endregion
