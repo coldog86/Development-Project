@@ -46,6 +46,7 @@ namespace _LetsQuiz
 		private RoundData _currentRoundData;
 		private QuestionController _questionController;
 		private PlayerController _playerController;
+		private SubmitScore _submitScore;
 
 		private bool _isRoundActive;
 		//private int _questionIndex;
@@ -207,10 +208,20 @@ namespace _LetsQuiz
 
         #endregion
 
-        public void EndRound()
-        {
-            _music.Stop();
+        public void EndRound ()
+		{
+			_music.Stop ();
+			if (_playerController.userScore > _playerController.GetHighestScore ()) 
+			{
+				Debug.Log("new high score");
+				_playerController.SetHighestScore(_playerController.userScore);
+				_submitScore = FindObjectOfType<SubmitScore> ();
+				_submitScore.SubmitScores (_playerController.GetUsername(), _playerController.GetHighestScore ());
+			}
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
+            Debug.Log("end round");
+
+
         }
 
         #endregion

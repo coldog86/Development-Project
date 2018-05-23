@@ -12,6 +12,7 @@ namespace _LetsQuiz
         public static string Register = "addUser.php";
         public static string Ranking = "ranking.php";
 		public static string HighScores = "viewHighScores.php";
+		public static string SubmitHighScore = "submitHighScore.php";
 
     }
 }
