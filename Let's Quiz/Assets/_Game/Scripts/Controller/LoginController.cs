@@ -109,14 +109,6 @@ namespace _LetsQuiz
             _click = FindObjectOfType<FeedbackClick>();
         }
 
-        private void Update()
-        {
-            #if PLATFORM_ANDROID
-            if (Input.GetKeyDown(KeyCode.Escape))
-                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", Application.Quit, FeedbackTwoButtonModal.Hide);
-            #endif
-        }
-
         #endregion
 
         #region register specific
@@ -143,10 +135,10 @@ namespace _LetsQuiz
             if (string.IsNullOrEmpty(confirmPassword))
                 FeedbackAlert.Show("Confirm password cannont be empty.");
             
-            if (confirmPassword != password)
+            if (!string.IsNullOrEmpty(confirmPassword) && !string.IsNullOrEmpty(password) && (confirmPassword != password))
                 FeedbackAlert.Show("Passwords don't match. Please try again");
             
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(confirmPassword))
+            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(confirmPassword) && confirmPassword == password)
             {
                 if (ValidRegister(username, email, password))
                 {
@@ -200,7 +192,7 @@ namespace _LetsQuiz
 
             if (registerRequest.isDone)
             {
-                // check that the login request returned something
+                // check that the register request returned something
                 if (!String.IsNullOrEmpty(registerRequest.text))
                 {
                     _playerString = registerRequest.text;
@@ -209,7 +201,7 @@ namespace _LetsQuiz
                     // if the retrieved register text doesn't have "ID" load login scene
                     if (!_playerString.Contains("ID"))
                     {
-                        FeedbackAlert.Show("User not found. Please try again.");
+                        FeedbackAlert.Show("Registration failed. Please try again.");
                         return false;
                     }
                     // otherwise save the player information to PlayerPrefs and load menu scene
@@ -232,19 +224,31 @@ namespace _LetsQuiz
 
         #endregion
 
-        #region login specific
+        #region skip
 
         public void Skip()
         {
             _click.Play();
-
-            _playerController.SetPlayerType(PlayerStatus.Guest);
 
             if (registerPanel.activeInHierarchy)
                 FeedbackTwoButtonModal.Show("Warning!", "Registering in as a guest limits what you can do.", "Register", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
             else if (loginPanel.activeInHierarchy)
                 FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guest limits what you can do.", "Login", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
         }
+
+        private bool RegisterAsGuest()
+        {
+            return false;
+        }
+
+        private bool LoginAsGuest()
+        {
+            return false;
+        }
+
+        #endregion
+
+        #region login specific
 
         public void Login()
         {
