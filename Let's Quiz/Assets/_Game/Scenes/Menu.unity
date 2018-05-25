@@ -316,6 +316,18 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 43bfdf75afdc2944e8c2955658c7ae36, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1825850147 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114545322544389852, guid: 43bfdf75afdc2944e8c2955658c7ae36,
+    type: 2}
+  m_PrefabInternal: {fileID: 1825850146}
+  m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+--- !u!114 &1825850148 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114201347535943402, guid: 43bfdf75afdc2944e8c2955658c7ae36,
+    type: 2}
+  m_PrefabInternal: {fileID: 1825850146}
+  m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &2043729809
 GameObject:
   m_ObjectHideFlags: 0
@@ -357,6 +369,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   navigationDrawer: {fileID: 0}
+  accountButton: {fileID: 1825850148}
+  leaderboardButton: {fileID: 1825850147}
   submitQuestionButton: {fileID: 725177950}
 --- !u!1 &2082049805
 GameObject:

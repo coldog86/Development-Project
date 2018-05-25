@@ -453,6 +453,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7e162f947fc1bd647a9d4f489a994739, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &664543452 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114003039335997298, guid: 7e162f947fc1bd647a9d4f489a994739,
+    type: 2}
+  m_PrefabInternal: {fileID: 664543451}
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 --- !u!1 &1685537378
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,6 +503,7 @@ MonoBehaviour:
   loginPanel: {fileID: 265245514}
   registerPanel: {fileID: 265245511}
   buttonPanel: {fileID: 265245506}
+  subHeading: {fileID: 664543452}
   toogleLoginPanelButton: {fileID: 265245500}
   toggleRegisterPanelButton: {fileID: 265245515}
   skipButton: {fileID: 265245503}
@@ -508,8 +515,6 @@ MonoBehaviour:
   newPasswordInput: {fileID: 265245508}
   confirmPasswordInput: {fileID: 265245507}
   registerButton: {fileID: 265245504}
-  testUsername: test@email.com
-  testPassword: 123456
   _connectionTimeLimit: 10000
   _connectionTimer: 0
 --- !u!1 &1863626985

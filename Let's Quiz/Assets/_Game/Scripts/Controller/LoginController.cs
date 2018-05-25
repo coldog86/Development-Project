@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace _LetsQuiz
 {
@@ -16,6 +17,7 @@ namespace _LetsQuiz
         public GameObject loginPanel;
         public GameObject registerPanel;
         public GameObject buttonPanel;
+        public Text subHeading;
 
         [Header("Button")]
         public GameObject toogleLoginPanelButton;
@@ -24,21 +26,17 @@ namespace _LetsQuiz
         //public GameObject googleButton;
         //public GameObject facebookButton;
 
-        [Header("Existing User")]
+        [Header("Login")]
         public InputField existingUsernameInput;
         public InputField existingPasswordInput;
         public GameObject loginButton;
        
-        [Header("New User")]
+        [Header("Register")]
         public InputField newUsernameInput;
         public InputField newEmailInput;
         public InputField newPasswordInput;
         public InputField confirmPasswordInput;
         public GameObject registerButton;
-
-        [Header("Debug")]
-        public string testUsername = "test@email.com";
-        public string testPassword = "123456";
 
         [Header("Connection")]
         [SerializeField]
@@ -63,29 +61,7 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            // NOTE : DEBUG PURPOSES ONLY - ENSURES ALL REFERENCES ARE AVAILABLE
-            if (!existingUsernameInput)
-                Debug.LogError("Existing username input field is null");
-            if (!existingPasswordInput)
-                Debug.LogError("Existing password input field is null");
-            if (!newUsernameInput)
-                Debug.LogError("New username input field is null");
-            if (!newEmailInput)
-                Debug.LogError("New email input field is null");
-            if (!newPasswordInput)
-                Debug.LogError("New password input field is null");
-            if (!confirmPasswordInput)
-                Debug.LogError("Confirm password input field is null");
-            if (!loginButton)
-                Debug.LogError("Login button is null");
-            if (!registerButton)
-                Debug.LogError("Create User button is null");
-            if (!loginButton)
-                Debug.LogError("Login button is null");
-            if (!registerButton)
-                Debug.LogError("Register User button is null");
-            if (!skipButton)
-                Debug.LogError("Skip button is null");
+            subHeading.text = "";
 
             entryPanel.SetActive(true);
             loginPanel.SetActive(false);
@@ -142,9 +118,6 @@ namespace _LetsQuiz
             {
                 if (ValidRegister(username, email, password))
                 {
-                    _playerController.SetUsername(username);
-                    _playerController.SetPassword(password);
-                    _playerController.SetEmail(email);
                     _playerController.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }      
@@ -193,7 +166,7 @@ namespace _LetsQuiz
             if (registerRequest.isDone)
             {
                 // check that the register request returned something
-                if (!String.IsNullOrEmpty(registerRequest.text))
+                if (!string.IsNullOrEmpty(registerRequest.text))
                 {
                     _playerString = registerRequest.text;
                     Debug.Log(_playerString);
@@ -231,19 +204,20 @@ namespace _LetsQuiz
             _click.Play();
 
             if (registerPanel.activeInHierarchy)
-                FeedbackTwoButtonModal.Show("Warning!", "Registering in as a guest limits what you can do.", "Register", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
+                FeedbackTwoButtonModal.Show("Warning!", "Registering as a guest limits what you can do.", "Register", "Cancel", ContinueAsGuest, FeedbackTwoButtonModal.Hide);
             else if (loginPanel.activeInHierarchy)
-                FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guest limits what you can do.", "Login", "Cancel", LoadMenu, FeedbackTwoButtonModal.Hide);
+                FeedbackTwoButtonModal.Show("Warning!", "Logging in as a guest limits what you can do.", "Login", "Cancel", ContinueAsGuest, FeedbackTwoButtonModal.Hide);
         }
 
-        private bool RegisterAsGuest()
+        private void ContinueAsGuest()
         {
-            return false;
-        }
+            var guest = "Guest" + Random.Range(0, 1000000);
 
-        private bool LoginAsGuest()
-        {
-            return false;
+            if (ValidRegister(guest, guest, guest))
+            {
+                _playerController.SetPlayerType(PlayerStatus.Guest);
+                LoadMenu();
+            } 
         }
 
         #endregion
@@ -256,7 +230,6 @@ namespace _LetsQuiz
 
             string username = existingUsernameInput.text;
             string password = existingPasswordInput.text;
-
 
             if (string.IsNullOrEmpty(username))
                 FeedbackAlert.Show("Username cannont be empty.");
@@ -347,14 +320,14 @@ namespace _LetsQuiz
 
         #region social media specific
 
-        // TASK : PLACEHOLDER
+        // TASK : to be completed when social media is integrated
         public void FacebookLogin()
         {
             _click.Play();
             FeedbackAlert.Show("Not implemented yet.");
         }
 
-        // TASK : PLACEHOLDER
+        // TASK : to be completed when social media is integrated
         public void GoogleLogin()
         {
             _click.Play();
@@ -378,6 +351,8 @@ namespace _LetsQuiz
             //facebookButton.SetActive(true);
             toogleLoginPanelButton.SetActive(false);
             toggleRegisterPanelButton.SetActive(false);
+
+            subHeading.text = "Login to Continue";
         }
 
         public void ToggleRegisterPanel()
@@ -393,6 +368,8 @@ namespace _LetsQuiz
             //facebookButton.SetActive(true);
             toogleLoginPanelButton.SetActive(false);
             toggleRegisterPanelButton.SetActive(false);
+
+            subHeading.text = "Register to Continue";
         }
 
         public void LoadMenu()

@@ -302,9 +302,15 @@ Transform:
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114191562762111210, guid: 8302f419c2154234cbe5d0a03e778a9e,
     type: 2}
-  m_PrefabInternal: {fileID: 1574653787}
+  m_PrefabInternal: {fileID: 2009679008}
   m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
---- !u!1001 &1574653787
+--- !u!114 &1998438404 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114049587739625944, guid: 8302f419c2154234cbe5d0a03e778a9e,
+    type: 2}
+  m_PrefabInternal: {fileID: 2009679008}
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+--- !u!1001 &2009679008
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -406,24 +412,6 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 408695508}
-    - target: {fileID: 1242222539767420, guid: 8302f419c2154234cbe5d0a03e778a9e, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1736851719864548, guid: 8302f419c2154234cbe5d0a03e778a9e, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1411263725630706, guid: 8302f419c2154234cbe5d0a03e778a9e, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8302f419c2154234cbe5d0a03e778a9e, type: 2}
   m_IsPrefabParent: 0
---- !u!114 &1998438404 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114049587739625944, guid: 8302f419c2154234cbe5d0a03e778a9e,
-    type: 2}
-  m_PrefabInternal: {fileID: 1574653787}
-  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}

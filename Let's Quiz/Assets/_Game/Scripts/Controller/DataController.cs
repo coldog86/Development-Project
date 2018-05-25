@@ -90,7 +90,7 @@ namespace _LetsQuiz
             {
                 // check if username and password are stored in PlayerPrefs
                 // if it is login, otherwise load login scene
-                if (_username != "u" && _password != "p" && _status == PlayerStatus.LoggedIn)
+                if (_username != "u" && _password != "p" && (_status == PlayerStatus.LoggedIn || _status == PlayerStatus.Guest))
                     StartCoroutine(Login(_username, _password));
                 else
                     SceneManager.LoadScene(BuildIndex.Login);

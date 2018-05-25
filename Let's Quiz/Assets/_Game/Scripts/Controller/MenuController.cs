@@ -11,7 +11,9 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Component")]
-        public GameObject navigationDrawer;
+        // public GameObject navigationDrawer;
+        public Button accountButton;
+        public Button leaderboardButton;
         public Button submitQuestionButton;
        
         private Text _username;
@@ -33,12 +35,15 @@ namespace _LetsQuiz
 
             var playerType = _playerController.GetPlayerType();
 
-            if (PlayerPrefs.HasKey(_playerController.usernameKey) && playerType == PlayerStatus.LoggedIn)
+            if (PlayerPrefs.HasKey(_playerController.usernameKey) && (playerType == PlayerStatus.LoggedIn || playerType == PlayerStatus.Guest))
                 _username.text = _playerController.GetUsername();
 
-            if (_playerController.GetPlayerType() == -1)
+            if (playerType == PlayerStatus.Guest)
+            {
+                accountButton.gameObject.SetActive(false);
+                leaderboardButton.gameObject.SetActive(false);
                 submitQuestionButton.gameObject.SetActive(false);
-                
+            }  
         }
 
         private void Start()
@@ -57,7 +62,6 @@ namespace _LetsQuiz
 
         #region game specific
 
-        // TASK : TO BE COMPLETED
         public void StartGame()
         {
             _click.Play();
@@ -65,12 +69,12 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Game, LoadSceneMode.Single);
         }
 
-        // NOTE : TO BE COMPLETED
+        // TASK : to be completed when multiplayer is implemented
         public void LoadActiveGames()
         {
         }
 
-        // TASK : TO BE COMPLETED
+        // TASK : to be completed when multiplayer is implemented
         public void ContinueGame(int gameId)
         {
         }
@@ -79,17 +83,17 @@ namespace _LetsQuiz
 
         #region navigation drawer specific
 
-        public void OpenNavDrawer()
-        {
-            _click.Play();
-            navigationDrawer.SetActive(true);
-        }
-
-        public void CloseNavDrawer()
-        {
-            _click.Play();
-            navigationDrawer.SetActive(false);
-        }
+        //        public void OpenNavDrawer()
+        //        {
+        //            _click.Play();
+        //            navigationDrawer.SetActive(true);
+        //        }
+        //
+        //        public void CloseNavDrawer()
+        //        {
+        //            _click.Play();
+        //            navigationDrawer.SetActive(false);
+        //        }
 
         #endregion
 

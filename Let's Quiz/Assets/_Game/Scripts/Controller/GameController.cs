@@ -105,8 +105,10 @@ namespace _LetsQuiz
             RemoveAnswerButtons();
 
             QuestionData currentQuestionData = null;
+
+            //if all questions are asked, end round
             if (_questionPool.Length <= _numberOfQuestionsAsked)
-            { //if all questions are asked, end round
+            { 
                 Debug.Log("out of questions");
                 EndRound();
             }
@@ -123,25 +125,25 @@ namespace _LetsQuiz
 
         private void ShowAnswers(QuestionData currentQuestionData)
         {
-			
             List<int> answerText = new List<int>();
             Random rnd = new Random();
+
+            // For every AnswerData in the current QuestionData...
             for (int i = 0; i < currentQuestionData.answers.Length; i++)
-            {  // For every AnswerData in the current QuestionData...
-			
+            {		
                 int n = Random.Range(0, currentQuestionData.answers.Length);
+
                 while (answerText.Contains(n))
-                {
-                    n = Random.Range(0, currentQuestionData.answers.Length);//randomise where the answers are displayed
-                }
+                    n = Random.Range(0, currentQuestionData.answers.Length); //randomise where the answers are displayed
+
                 answerText.Add(n);
-                GameObject answerButtonGameObject = answerButtonObjectPool.GetObject();// Spawn an AnswerButton from the object pool
+                GameObject answerButtonGameObject = answerButtonObjectPool.GetObject(); // Spawn an AnswerButton from the object pool
                 answerButtonGameObjects.Add(answerButtonGameObject);
 
                 answerButtonGameObject.transform.SetParent(answerButtonParent);
                 answerButtonGameObject.transform.localScale = Vector3.one; //I was having an issue were the scale blew out, this fixed it...
                 AnswerButton answerButton = answerButtonGameObject.GetComponent<AnswerButton>();	
-                answerButton.SetUp(currentQuestionData.answers[n]);// Pass the AnswerData to the AnswerButton to check if it correct
+                answerButton.SetUp(currentQuestionData.answers[n]); // Pass the AnswerData to the AnswerButton to check if it correct
 
                 if (answerButton.isCorrect(currentQuestionData.answers[n]))
                 {
@@ -154,13 +156,14 @@ namespace _LetsQuiz
 
         #endregion
 
+        #region button set up
+
         public AnswerButton getCorrectAnswerButton() //getter used by the answerButton, I got an error when i tryed to declar with the variable at the top
         {
             return correctAnswerButton;
         }
 
-
-        void RemoveAnswerButtons()  // Return all spawned AnswerButtons to the object pool
+        private void RemoveAnswerButtons()  // Return all spawned AnswerButtons to the object pool
         {
             while (answerButtonGameObjects.Count > 0)
             {
@@ -169,16 +172,18 @@ namespace _LetsQuiz
             }
         }
 
+        #endregion
+
         #region like & dislike buttons
 
-        // NOTE : placeholder
+        // TASK : to be completed when multiplayer is implemented
         public void ReportQuestion()
         {
             _click.Play();
             FeedbackAlert.Show("Report question");
         }
 
-        // NOTE : placeholder
+        // TASK : to be completed when multiplayer is implemented
         public void LikeQuestion()
         {
             _click.Play();
@@ -187,11 +192,12 @@ namespace _LetsQuiz
 
         #endregion
 
-        #region user stuff
+        #region scoring specific
 
         public void Score(bool answer)
         {
             Debug.Log("score called bool = " + answer);
+
             if (answer)
                 _playerController.userScore = _playerController.userScore + 10;
 
@@ -220,6 +226,8 @@ namespace _LetsQuiz
 
         #endregion
 
+        #region navigation specific
+
         public void EndRound()
         {
             _music.Stop();
@@ -229,18 +237,23 @@ namespace _LetsQuiz
                 Debug.Log("new high score");
                 _playerController.scoreStatus = "new high score";
                 _playerController.SetHighestScore(_playerController.userScore);
-                _submitScore = FindObjectOfType<SubmitScore>();
-                _submitScore.SubmitScores(_playerController.GetUsername(), _playerController.GetHighestScore());
+
+                if (_playerController.GetPlayerType() == PlayerStatus.LoggedIn)
+                {
+                    _submitScore = FindObjectOfType<SubmitScore>();
+                    _submitScore.SubmitScores(_playerController.GetUsername(), _playerController.GetHighestScore());
+                }
             }
             else
-            {
                 _playerController.scoreStatus = "no change";
-            }
 
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
+
             Debug.Log("end round");
             Debug.Log(_playerController.scoreStatus);
         }
+
+        #endregion
 
         #endregion
     }
