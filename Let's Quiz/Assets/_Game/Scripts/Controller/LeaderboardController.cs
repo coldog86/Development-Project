@@ -11,18 +11,16 @@ namespace _LetsQuiz
     {
         #region variables
 
-        private FeedbackClick _click;
-        private PlayerController _playerController;
-        private GameObject _warningPanel;
-        private GameObject _userPanel;
+        [Header("High Scorers")]
         private HighScoresContainer allHighScores;
-        private DataController _dataController;
-        private string highScoreData;
-        private HighscoreController _highScoreController;
-
-        [Header("HighScorers")]
         public SimpleObjectPool highScorerObjectPool;
         public Transform highScorerParent;
+        private HighscoreController _highScoreController;
+        private string highScoreData;
+
+        private PlayerController _playerController;
+        private DataController _dataController;
+        private FeedbackClick _click;
 
         private List<GameObject> highScorerGameObjects = new List<GameObject>();
 
@@ -35,12 +33,6 @@ namespace _LetsQuiz
         private void Awake()
         {
             _click = FindObjectOfType<FeedbackClick>();
-
-            _warningPanel = GameObject.FindGameObjectWithTag("Panel_Warning");
-            _warningPanel.SetActive(false);
-
-            _userPanel = GameObject.FindGameObjectWithTag("Panel_User");
-            _userPanel.SetActive(false);
         }
 
         private void Start()
@@ -50,27 +42,19 @@ namespace _LetsQuiz
 
             _highScoreController.Load();
             allHighScores = _highScoreController.extractHighScores();
+
             Debug.Log(allHighScores.allHighScorers.Length);
 
             ShowHighScorers(allHighScores);
-
-            if (_playerController.GetPlayerType() != PlayerStatus.LoggedIn)
-            {
-                _warningPanel.SetActive(true);
-                _userPanel.SetActive(false);
-            }
-            else
-            {
-                _warningPanel.SetActive(false);
-                _userPanel.SetActive(true);
-            }
-				
         }
+
+        #endregion
+
+        #region high score specific
 
         //sorts highScorers and displays top 10 in highScorerParent using LeaderboardEntry prefabs.
         private void ShowHighScorers(HighScoresContainer allHighScorers)
         {
-
             RemoveHighScorers(); //clear leaderboard to start
 
             //sort scores by totalScore. 
@@ -79,7 +63,6 @@ namespace _LetsQuiz
             //for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items. 
             for (int i = sorted.Length - 1; i > sorted.Length - 11; i--)
             {
-				
                 GameObject highScorerGameObject = highScorerObjectPool.GetObject(); //create new GameObejct
                 HighScoresObject currentHighScore = sorted[i]; 						//get current highscorer
 
@@ -88,23 +71,18 @@ namespace _LetsQuiz
                 LeaderboardEntry leaderBoardEntry = highScorerGameObject.GetComponent<LeaderboardEntry>();
 
                 leaderBoardEntry.SetUp(currentHighScore.userName, currentHighScore.totalScore); //pass in the data of current HighScorer
-
             }
-
         }
 
         //removes all LeaderboardEntry Objects from the scene
         void RemoveHighScorers()
         {
-
             while (highScorerGameObjects.Count > 0)
             {
-
                 highScorerObjectPool.ReturnObject(highScorerGameObjects[0]);
                 highScorerGameObjects.RemoveAt(0);
             }
         }
-
 
         #endregion
 

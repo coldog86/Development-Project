@@ -302,8 +302,49 @@ Transform:
 RectTransform:
   m_PrefabParentObject: {fileID: 224016181948119330, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
     type: 2}
-  m_PrefabInternal: {fileID: 1515367951}
---- !u!1001 &1515367951
+  m_PrefabInternal: {fileID: 2035988812}
+--- !u!1 &1895612648
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1895612650}
+  - component: {fileID: 1895612649}
+  m_Layer: 0
+  m_Name: HighScorerObjectPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1895612649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1895612648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b45378d007e248f193f3595b38de8d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1729787014246730, guid: 83fc3162c502649408ad1e608f0e62e2, type: 2}
+--- !u!4 &1895612650
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1895612648}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2035988812
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -400,58 +441,16 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114093239624245716, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
+    - target: {fileID: 224545897918844448, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
         type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 424547282}
-    - target: {fileID: 114093239624245716, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224545897918844448, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
         type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: BackToMenu
+      propertyPath: m_AnchorMax.y
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &1895612648
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1895612650}
-  - component: {fileID: 1895612649}
-  m_Layer: 0
-  m_Name: HighScorerObjectPool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1895612649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1895612648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b45378d007e248f193f3595b38de8d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  answerButtonPrefab: {fileID: 1729787014246730, guid: 83fc3162c502649408ad1e608f0e62e2,
-    type: 2}
---- !u!4 &1895612650
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1895612648}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 143.50635, y: 73.93187, z: -3.9673345}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
