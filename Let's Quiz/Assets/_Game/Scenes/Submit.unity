@@ -318,6 +318,8 @@ MonoBehaviour:
   wrong1Input: {fileID: 474571611}
   wrong2Input: {fileID: 474571609}
   wrong3Input: {fileID: 474571610}
+  connectionTimer: 0
+  connectionTimeLimit: 10000
 --- !u!4 &1871055819
 Transform:
   m_ObjectHideFlags: 0
@@ -438,6 +440,11 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1871055818}
+    - target: {fileID: 114934393728517514, guid: 2488bf582fca50e41b3b610809525d73,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Submit
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2488bf582fca50e41b3b610809525d73, type: 2}
   m_IsPrefabParent: 0
