@@ -13,7 +13,7 @@ namespace _LetsQuiz
     public class SimpleObjectPool : MonoBehaviour
     {
         [Header("Component")]
-        public GameObject answerButtonPrefab;
+        public GameObject prefab;
 
         private Stack<GameObject> _inactivePrefabInstances = new Stack<GameObject>();
 
@@ -26,7 +26,7 @@ namespace _LetsQuiz
                 spawnedGameObject = _inactivePrefabInstances.Pop();
             else
             {
-                spawnedGameObject = Instantiate(answerButtonPrefab);
+                spawnedGameObject = Instantiate(prefab);
 
                 var pooledObject = spawnedGameObject.AddComponent<PooledObject>();
                 pooledObject.objectPool = this;
