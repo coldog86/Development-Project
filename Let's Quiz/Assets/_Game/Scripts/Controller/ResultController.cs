@@ -77,7 +77,6 @@ namespace _LetsQuiz
             {
                 score.text = _playerController.userScore.ToString();
                 username.text = _playerController.GetUsername();
-                rank.text = _ranking;
             }
             else
             {
@@ -121,8 +120,9 @@ namespace _LetsQuiz
                 // we got the string from the server, it is every question in JSON format
                 Debug.Log("Result Controller: FindRanking() : " + download.text);
 
-                calculateRanking(download.text);
                 yield return download;
+
+                calculateRanking(download.text);
             } 
         }
 
@@ -141,7 +141,7 @@ namespace _LetsQuiz
                     ranking = i + 1;
             }
 
-            _ranking = ranking + " out of " + list.Count;
+            rank.text = ranking + " out of " + list.Count;
         }
 
         #endregion
