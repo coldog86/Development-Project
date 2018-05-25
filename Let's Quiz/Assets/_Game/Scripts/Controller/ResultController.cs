@@ -13,11 +13,13 @@ namespace _LetsQuiz
 
         [Header("Components")]
         public Image backgroundEffect;
-        public Text username;
         public Text score;
+        public Text username;
+        public Text rankText;
         public Text rank;
-        public Text heading;
-        public Text subHeading;
+        public Text worldText;
+
+        private string _ranking;
 
         private FeedbackClick _click;
         private FeedbackMusic _music;
@@ -29,14 +31,34 @@ namespace _LetsQuiz
 
         #region unity
 
-        private void Start()
+        private void Awake()
         {
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
-            _playerController = FindObjectOfType<PlayerController>();
+            _playerController = FindObjectOfType<PlayerController>();                
+        }
 
+        private void Start()
+        { 
+            if (_playerController.GetPlayerType() == PlayerStatus.LoggedIn)
+            {
+                score.enabled = true;
+                username.enabled = true;
+                rank.enabled = true;
+                rankText.enabled = true;
+                worldText.enabled = true;
+            }
+            else
+            {
+                score.enabled = false;
+                username.enabled = true;
+                rank.enabled = true;
+                rankText.enabled = true;
+                worldText.enabled = false;
+            }
+
+            StartCoroutine(FindRanking());
             Display();
-            ChangeText();
         }
 
         private void Update()
@@ -47,14 +69,27 @@ namespace _LetsQuiz
 
         #endregion
 
-        #region Display
+        #region user feedback
 
         private void Display()
         {
-            username.text = _playerController.GetUsername();
-            score.text = _playerController.userScore.ToString();
+            if (_playerController.GetPlayerType() == PlayerStatus.LoggedIn)
+            {
+                score.text = _playerController.userScore.ToString();
+                username.text = _playerController.GetUsername();
+                rank.text = _ranking;
+            }
+            else
+            {
+                username.text = _playerController.GetUsername();
+                rankText.text = "Your final score was";
+                rank.text = _playerController.userScore.ToString();
+            }
         }
 
+        #endregion
+
+        #region rank specific
 
         public IEnumerator FindRanking()
         {
@@ -85,11 +120,27 @@ namespace _LetsQuiz
             { 
                 // we got the string from the server, it is every question in JSON format
                 Debug.Log("Result Controller: FindRanking() : " + download.text);
-
-                string rankingsAsJSON = download.text;
-
+                calculateRanking(download.text);
                 yield return download;
             } 
+        }
+
+        private void calculateRanking(string s)
+        {
+            List<string> lines = new List<string>(s.Split(new string[] { "<br>" }, System.StringSplitOptions.RemoveEmptyEntries));
+            List<int> list = new List<int>();
+            for (int i = 0; i < lines.Count; i++)
+                list.Add(int.Parse(lines[i]));
+
+            list.Sort();
+            int ranking = 0;
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i] < _playerController.userScore)
+                    ranking = i + 1;
+            }
+
+            _ranking = ranking + " out of " + list.Count;
         }
 
         #endregion
@@ -107,24 +158,6 @@ namespace _LetsQuiz
             _click.Play();
             _music.PlayBackgroundMusic();
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
-        }
-
-        #endregion
-
-        #region user feedback
-
-        private void ChangeText()
-        {
-            if (_playerController.scoreStatus.Contains("new high score"))
-            {
-                heading.text = "Congrats!";
-                subHeading.text = "You just got a new a high score!";
-            }
-            else
-            {
-                heading.text = "Uh-Oh!";
-                subHeading.text = "Someone needs to practise more...";
-            }
         }
 
         #endregion
