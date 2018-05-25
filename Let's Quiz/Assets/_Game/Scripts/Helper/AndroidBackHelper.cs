@@ -5,9 +5,9 @@ using UnityEngine.SceneManagement;
 
 namespace _LetsQuiz
 {
-    #if PLATFORM_ANDROID
     public class AndroidBackHelper : MonoBehaviour
     {
+        #if PLATFORM_ANDROID
         public void Update()
         {
             if (SceneManager.GetActiveScene().buildIndex == BuildIndex.Splash || SceneManager.GetActiveScene().buildIndex == BuildIndex.Login || SceneManager.GetActiveScene().buildIndex == BuildIndex.Menu)
@@ -23,7 +23,7 @@ namespace _LetsQuiz
             }
                 
         }
+        #endif
     }
-    #endif
 }
 
