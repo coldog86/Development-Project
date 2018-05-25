@@ -14,8 +14,6 @@ namespace _LetsQuiz
 
         private FeedbackClick _click;
         private PlayerController _playerController;
-        private GameObject _warningPanel;
-        private GameObject _userPanel;
 
         [Header("Components")]
         public Text username;
@@ -32,13 +30,6 @@ namespace _LetsQuiz
             _click = FindObjectOfType<FeedbackClick>();
 
             _playerController = FindObjectOfType<PlayerController>();
-            _playerController.Load();
-
-            _warningPanel = GameObject.FindGameObjectWithTag("Panel_Warning");
-            _warningPanel.SetActive(false);
-
-            _userPanel = GameObject.FindGameObjectWithTag("Panel_User");
-            _userPanel.SetActive(false);
 
             if (!username)
                 Debug.Log("Username Input Field is null");
@@ -48,18 +39,8 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            if (_playerController.GetPlayerType() != PlayerStatus.LoggedIn)
-            {
-                _warningPanel.SetActive(true);
-                _userPanel.SetActive(false);
-            }
-            else
-            {
-                _warningPanel.SetActive(false);
-                _userPanel.SetActive(true);
-                username.text = _playerController.GetUsername();
-                email.text = _playerController.GetEmail();
-            }  
+            username.text = _playerController.GetUsername();
+            email.text = _playerController.GetEmail();
         }
 
         #endregion
