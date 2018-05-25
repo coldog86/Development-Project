@@ -86,10 +86,28 @@ namespace _LetsQuiz
                 // we got the string from the server, it is every question in JSON format
                 Debug.Log("Result Controller: FindRanking() : " + download.text);
 
-                string rankingsAsJSON = download.text;
-
+                calculateRanking(download.text);
                 yield return download;
             } 
+        }
+
+
+        private void calculateRanking(string s)
+        {
+        	List<string> lines = new List<string>(s.Split(new string[] {"<br>"}, System.StringSplitOptions.RemoveEmptyEntries));
+			List<int> list = new List<int>();
+        	for(int i = 0; i<lines.Count; i++)
+        		list.Add(int.Parse(lines[i]));
+
+        	list.Sort();
+        	int ranking = 0;
+			for(int i = 0; i<list.Count; i++)
+			{
+				if(list[i] < _PlayerController.userScore)
+					ranking = i + 1;
+			}
+
+			rank.text = ranking + " out of " + list.Count;
         }
 
         #endregion
