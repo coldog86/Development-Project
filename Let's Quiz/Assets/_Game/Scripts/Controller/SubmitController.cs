@@ -6,138 +6,149 @@ using UnityEngine.UI;
 
 namespace _LetsQuiz
 {
-	public class SubmitController : MonoBehaviour
-	{
+    public class SubmitController : MonoBehaviour
+    {
+        #region variables
 
-		#region variables
+        [Header("Components")]
+        public InputField questionInput;
+        public InputField correctInput;
+        public InputField wrong1Input;
+        public InputField wrong2Input;
+        public InputField wrong3Input;
 
-		[Header("Components")]
-		public InputField questionInput;
-		public InputField correctInput;
-		public InputField wrong1Input;
-		public InputField wrong2Input;
-		public InputField wrong3Input;
+        [Header("Connection")]
+        public float connectionTimer = 0;
+        public float connectionTimeLimit = 10000.0f;
 
-		private FeedbackClick _click;
-		private PlayerController _playerController;
-		private GameObject _warningPanel;
-		private GameObject _userPanel;
+        private FeedbackClick _click;
+        private PlayerController _playerController;
 
-		#endregion
+        #endregion
 
-		#region methods
+        #region methods
 
-		public void checkInputs()
-		{
+        #region unity
 
-			//charnes can you do your val
-			bool _inputsOK = false;
-			_inputsOK = true;
-			if(_inputsOK)
-				handleData();
-			else
-			{
-				Debug.LogError("your data sucks and so do you, feel bad");
-			}
-		}
+        private void Awake()
+        {
+            _click = FindObjectOfType<FeedbackClick>();
 
+            _playerController = FindObjectOfType<PlayerController>();
 
-		private bool handleData()
-		{
-			Debug.Log ("attempting to submit");
-			float _connectionTimer =0;
-			float _connectionTimeLimit = 10000.0f;
-			WWWForm form = new WWWForm();
+            _playerController.Load();
+        }
 
-			//form.AddField("usernamePost", _playerController.GetUsername());
-			//form.AddField("idPost", _playerController.GetId());
-			form.AddField("questionText", questionInput.text);
-			form.AddField("correctAnswer", correctInput.text);
-			form.AddField("wrong1", wrong1Input.text);
-			form.AddField("wrong2", wrong2Input.text);
-			form.AddField("wrong3", wrong3Input.text);
-			form.AddField ("catgory", "User Submitted Question");
+        #endregion
 
-			WWW submitQuestion = new WWW("www.41melquizgame.xyz/LQ/submitQuestion.php", form);
+        #region submit specific
 
-			while (!submitQuestion.isDone)
-			{ 
-				_connectionTimer += Time.deltaTime;
-				FeedbackAlert.Show("Attempting to submit question.");
+        public void Submit()
+        {
+            _click.Play();
 
-				if (_connectionTimer > _connectionTimeLimit)
-				{
-					FeedbackAlert.Show("Time out error. Please try again.");
-					Debug.LogError(submitQuestion.error);
-					Debug.Log(submitQuestion.text);
-					return false;
-				}
-			}
+            var question = questionInput.text;
+            var correctAnswer = correctInput.text;
+            var wrong1Answer = wrong1Input.text;
+            var wrong2Answer = wrong2Input.text;
+            var wrong3Answer = wrong3Input.text;
 
-			if (submitQuestion.error != null)
-			{
-				FeedbackAlert.Show("Connection error. Please try again.");
-				Debug.Log(submitQuestion.error);
-				return false;
-			}
+            if (string.IsNullOrEmpty(question))
+                FeedbackAlert.Show("Question cannont be empty.");
 
-			if (submitQuestion.isDone)
-			{
-				Debug.Log(submitQuestion.text);
+            if (string.IsNullOrEmpty(correctAnswer))
+                FeedbackAlert.Show("Correct Answer cannont be empty.");
 
-				return true;
-			}
-			return false;
+            if (string.IsNullOrEmpty(wrong1Answer))
+                FeedbackAlert.Show("Wrong Answer 1 cannont be empty.");
 
-		}
+            if (string.IsNullOrEmpty(wrong2Answer))
+                FeedbackAlert.Show("Wrong Answer 2 cannont be empty.");
 
+            if (string.IsNullOrEmpty(wrong3Answer))
+                FeedbackAlert.Show("Wrong Answer 3 cannont be empty.");
 
-		#endregion
+            if (!string.IsNullOrEmpty(question) && !string.IsNullOrEmpty(correctAnswer) && !string.IsNullOrEmpty(wrong1Answer) && !string.IsNullOrEmpty(wrong2Answer) && !string.IsNullOrEmpty(wrong3Answer))
+            {
+                if (ValidSubmission(question, correctAnswer, wrong1Answer, wrong2Answer, wrong3Answer))
+                    FeedbackAlert.Show("Question submitted sucessfully.");
+                else
+                    FeedbackAlert.Show("Question submitted unucessfully.");
+            }
+        }
 
-		#region unity
+        private bool ValidSubmission(string question, string correctAnswer, string wrong1Answer, string wrong2Answer, string wrong3Answer, string category = "User Submitted Question")
+        {
+            Debug.Log("Attempting to submit");
 
-		private void Awake()
-		{
-			_click = FindObjectOfType<FeedbackClick>();
+            WWWForm form = new WWWForm();
 
-			_playerController = FindObjectOfType<PlayerController>();
+            //form.AddField("usernamePost", _playerController.GetUsername());
+            //form.AddField("idPost", _playerController.GetId());
+            form.AddField("questionText", question);
+            form.AddField("correctAnswer", correctAnswer);
+            form.AddField("wrong1", wrong1Answer);
+            form.AddField("wrong2", wrong2Answer);
+            form.AddField("wrong3", wrong3Answer);
+            form.AddField("catgory", category);
 
-			_playerController.Load();
+            WWW submitQuestion = new WWW(ServerHelper.Host + ServerHelper.SubmitUserQuestion, form);
 
-			_warningPanel = GameObject.FindGameObjectWithTag("Panel_Warning");
-			//            _warningPanel.SetActive(false);
+            while (!submitQuestion.isDone)
+            { 
+                connectionTimer += Time.deltaTime;
+                FeedbackAlert.Show("Attempting to submit question.");
 
-			_userPanel = GameObject.FindGameObjectWithTag("Panel_User");
-			_userPanel.SetActive(false);
-		}
+                if (connectionTimer > connectionTimeLimit)
+                {
+                    FeedbackAlert.Show("Server time out.");
+                    Debug.LogError("SubmitController : ValidSubmission() : " + submitQuestion.error);
+                    Debug.Log(submitQuestion.text);
+                    return false;
+                }
 
-		private void Start()
-		{
-			if (_playerController.GetPlayerType() != PlayerStatus.LoggedIn)
-			{
-				_warningPanel.SetActive(true);
-				_userPanel.SetActive(false);
-			}
-			else
-			{
-				//              _warningPanel.SetActive(false);
-				_userPanel.SetActive(true);
-			}     
-		}
+                // extra check just to ensure a stream error doesn't come up
+                if (connectionTimer > connectionTimeLimit || submitQuestion.error != null)
+                {
+                    FeedbackAlert.Show("Server time out.");
+                    Debug.LogError("SubmitController : ValidSubmission() : " + submitQuestion.error);
+                    Debug.Log(submitQuestion.text);
+                    return false;
+                }
+            }
 
-		#endregion
+            if (submitQuestion.error != null)
+            {
+                FeedbackAlert.Show("Connection error. Please try again.");
+                Debug.Log("SubmitController : ValidSubmission() : " + submitQuestion.error);
+                return false;
+            }
 
-		#region navigation specific
+            if (submitQuestion.isDone)
+            {
+                if (!string.IsNullOrEmpty(submitQuestion.text))
+                {
+                    Debug.Log(submitQuestion.text);
+                    return true;
+                }
+                else
+                    return false;
+            }
+            return false;
+        }
 
-		public void BackToMenu()
-		{
-			_click.Play();
-			SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
-		}
+        #endregion
 
-		#endregion
+        #region navigation specific
 
+        public void BackToMenu()
+        {
+            _click.Play();
+            SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
+        }
 
+        #endregion
 
-	}
+        #endregion
+    }
 }
