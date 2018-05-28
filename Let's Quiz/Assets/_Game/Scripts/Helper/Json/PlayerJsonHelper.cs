@@ -1,23 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using UnityEngine;
 
 namespace _LetsQuiz
 {
     public static class PlayerJsonHelper
     {
+        #region methods
+
         public static Player LoadPlayerFromServer(string playerString)
         {
-            if (!string.IsNullOrEmpty(playerString))
-                return JsonUtility.FromJson<Player>(playerString);
-            else
-                return null;
+            return !string.IsNullOrEmpty(playerString) ? JsonUtility.FromJson<Player>(playerString) : null;
         }
 
-        public static void SavePlayerToServer()
-        {
-        }
+        #endregion
     }
 }
 

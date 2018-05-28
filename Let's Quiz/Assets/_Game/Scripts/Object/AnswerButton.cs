@@ -1,14 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using UnityEngine.SceneManagement;
-using System.IO;
-using System.Collections.Generic;
 
 namespace _LetsQuiz
 {
     public class AnswerButton : MonoBehaviour
     {
+        #region variables
+
         [Header("Component")]
         public Text answerText;
         public Button answerButton;
@@ -22,17 +21,31 @@ namespace _LetsQuiz
         private AnswerData answerData;
         private GameController _gameController;
 
+        #endregion
+
+        #region methods
+
+        #region unity
+
         void Start()
         {
             _gameController = FindObjectOfType<GameController>();
             buttonImage = GetComponent<Image>();
         }
 
+        #endregion
+
+        #region setup
+
         public void SetUp(AnswerData data)
         {
             answerData = data;
             answerText.text = answerData.answerText;
         }
+
+        #endregion
+
+        #region validation
 
         public bool isCorrect(AnswerData data)
         {
@@ -53,6 +66,9 @@ namespace _LetsQuiz
             }		
         }
 
+        #endregion
+
+        #region colour feedback
 
         public void changeToGreen()
         {
@@ -82,5 +98,9 @@ namespace _LetsQuiz
             rightButton.buttonImage.color = original; //change correct answer color back
             _gameController.Score(answerData.isCorrect);
         }
+
+        #endregion
+
+        #endregion
     }
 }

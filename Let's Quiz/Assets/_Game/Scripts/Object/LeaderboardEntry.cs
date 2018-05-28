@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using UnityEngine.SceneManagement;
-using System.IO;
-using System.Collections.Generic;
 
 namespace _LetsQuiz
 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System;
 
 namespace _LetsQuiz
 {
@@ -18,8 +17,6 @@ namespace _LetsQuiz
         public Text rankText;
         public Text rank;
         public Text worldText;
-
-        private string _ranking;
 
         private FeedbackClick _click;
         private FeedbackMusic _music;
@@ -100,7 +97,7 @@ namespace _LetsQuiz
             {
                 if (_downloadTimer < 0)
                 {
-                    Debug.LogError("Server time out.");
+                    Debug.LogError("ResultController : FindRanking(): " + download.error);
                     break;
                 }
                 _downloadTimer -= Time.deltaTime;
@@ -112,24 +109,24 @@ namespace _LetsQuiz
             {
                 /* if we cannot connect to the server or there is some error in the data, 
                  * check the prefs for previously saved questions */
-                Debug.LogError(download.error);
+                Debug.LogError("ResultController : FindRanking(): " + download.error);
                 Debug.Log("Failed to hit the server.");
+                yield return null;
             }
             else
             { 
                 // we got the string from the server, it is every question in JSON format
-                Debug.Log("Result Controller: FindRanking() : " + download.text);
-
+                Debug.Log("ResultController: FindRanking() : " + download.text);
                 yield return download;
-
                 calculateRanking(download.text);
             } 
         }
 
         private void calculateRanking(string s)
         {
-            List<string> lines = new List<string>(s.Split(new string[] { "<br>" }, System.StringSplitOptions.RemoveEmptyEntries));
-            List<int> list = new List<int>();
+            var lines = new List<string>(s.Split(new string[] { "<br>" }, System.StringSplitOptions.RemoveEmptyEntries));
+            var list = new List<int>();
+
             for (int i = 0; i < lines.Count; i++)
                 list.Add(int.Parse(lines[i]));
 

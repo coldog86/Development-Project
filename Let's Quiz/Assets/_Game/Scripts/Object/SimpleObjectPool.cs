@@ -3,19 +3,30 @@ using UnityEngine;
 
 namespace _LetsQuiz
 {
+    #region pooled object class
     // Identifies the pool that a GameObject came from
     public class PooledObject : MonoBehaviour
     {
         public SimpleObjectPool objectPool;
     }
 
+    #endregion
+
     // Simple object pooling class
     public class SimpleObjectPool : MonoBehaviour
     {
+        #region variables
+
         [Header("Component")]
         public GameObject prefab;
 
         private Stack<GameObject> _inactivePrefabInstances = new Stack<GameObject>();
+
+        #endregion
+
+        #region methods
+
+        #region get object
 
         // Retrieve an instance of the prefab from the pool
         public GameObject GetObject()
@@ -37,6 +48,10 @@ namespace _LetsQuiz
             return spawnedGameObject;
         }
 
+        #endregion
+
+        #region return object
+
         // Return an instance of the prefab to the pool
         public void ReturnObject(GameObject gameObjectToReturn)
         {
@@ -53,6 +68,10 @@ namespace _LetsQuiz
                 Destroy(gameObjectToReturn);
             }
         }
+
+        #endregion
+
+        #endregion
     }
 }
 

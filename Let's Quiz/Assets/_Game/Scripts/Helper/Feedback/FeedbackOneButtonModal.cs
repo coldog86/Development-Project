@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
@@ -21,7 +19,6 @@ namespace _LetsQuiz
         private static Text _actionText;
 
         #endregion
-
 
         #region methods
 

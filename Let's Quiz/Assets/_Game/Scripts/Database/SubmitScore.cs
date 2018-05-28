@@ -1,32 +1,42 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 namespace _LetsQuiz
 {
     public class SubmitScore : MonoBehaviour
     {
+        #region variables
+
+        private float _connectionTimer = 0.0f;
+        private const float _connectionTimeLimit = 1000000.0f;
+
         private PlayerController _playerController;
+
+        #endregion
+
+        #region methods
+
+        #region unity
 
         private void Start()
         {
             DontDestroyOnLoad(gameObject);
         }
 
-        public void SubmitScores(string _name, int _playerScore)
+        #endregion
+
+        #region submit specific
+
+        public void SubmitScores(string name, int playerScore)
         {
-            StartCoroutine(Submit(_name, _playerScore));
+            StartCoroutine(Submit(name, playerScore));
         }
 
         private IEnumerator Submit(string username, int score)
         {
             WWWForm form = new WWWForm();
-            float _connectionTimer = 0.0f;
-            float _connectionTimeLimit = 1000000.0f;
-            string _playerString = "";
-            string s = score.ToString();
 
+            string s = score.ToString();
 
             form.AddField("usernamePost", username);
             form.AddField("scorePost", s);
@@ -67,5 +77,9 @@ namespace _LetsQuiz
                 DestroyObject(gameObject); 
             }
         }
+
+        #endregion
+
+        #endregion
     }
 }

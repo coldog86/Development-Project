@@ -1,13 +1,9 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Threading;
-using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
-using System;
 
 
 namespace _LetsQuiz
@@ -25,8 +21,6 @@ namespace _LetsQuiz
         public Color timerMid;
         public Color timerMax;
 
-        private float _timeRemaining = 20;
-
         [Header("Score")]
         public Text scoreDisplay;
 
@@ -34,7 +28,7 @@ namespace _LetsQuiz
         public Text questionText;
         public GameObject questionDisplay;
         public QuestionData questionData;
-        public PlayerController player;
+        public PlayerController playerController;
         public QuestionData currentQuestion;
 
         private QuestionData[] _questionPool;
@@ -51,19 +45,25 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private SubmitScore _submitScore;
 
+        private float _timeRemaining = 30;
+
         private bool _isRoundActive;
         //private int _questionIndex;
         private FeedbackClick _click;
         private FeedbackMusic _music;
 
+        private bool _isCorrect = false;
+        private AnswerButton _correctAnswerButton;
+        private AnswerData _correctAnswerData;
+
+        private List<GameObject> _answerButtonGameObjects = new List<GameObject>();
+        private AnswerButton _userSelection;
+
+        #endregion
+
+        #region properties
+
         public bool clicked { get; set; }
-
-        private bool isCorrect = false;
-        private AnswerButton correctAnswerButton;
-        private AnswerData correctAnswerData;
-
-        private List<GameObject> answerButtonGameObjects = new List<GameObject>();
-        private AnswerButton userSelection;
 
         #endregion
 
@@ -109,7 +109,7 @@ namespace _LetsQuiz
             //if all questions are asked, end round
             if (_questionPool.Length <= _numberOfQuestionsAsked)
             { 
-                Debug.Log("out of questions");
+                Debug.Log("GameController : Show Questions(): Out of Questions");
                 EndRound();
             }
             else
@@ -138,7 +138,7 @@ namespace _LetsQuiz
 
                 answerText.Add(n);
                 GameObject answerButtonGameObject = answerButtonObjectPool.GetObject(); // Spawn an AnswerButton from the object pool
-                answerButtonGameObjects.Add(answerButtonGameObject);
+                _answerButtonGameObjects.Add(answerButtonGameObject);
 
                 answerButtonGameObject.transform.SetParent(answerButtonParent);
                 answerButtonGameObject.transform.localScale = Vector3.one; //I was having an issue were the scale blew out, this fixed it...
@@ -147,9 +147,9 @@ namespace _LetsQuiz
 
                 if (answerButton.isCorrect(currentQuestionData.answers[n]))
                 {
-                    correctAnswerButton = answerButton;
-                    isCorrect = true;
-                    correctAnswerData = currentQuestionData.answers[n];
+                    _correctAnswerButton = answerButton;
+                    _isCorrect = true;
+                    _correctAnswerData = currentQuestionData.answers[n];
                 }
             }
         }
@@ -160,15 +160,15 @@ namespace _LetsQuiz
 
         public AnswerButton getCorrectAnswerButton() //getter used by the answerButton, I got an error when i tryed to declar with the variable at the top
         {
-            return correctAnswerButton;
+            return _correctAnswerButton;
         }
 
         private void RemoveAnswerButtons()  // Return all spawned AnswerButtons to the object pool
         {
-            while (answerButtonGameObjects.Count > 0)
+            while (_answerButtonGameObjects.Count > 0)
             {
-                answerButtonObjectPool.ReturnObject(answerButtonGameObjects[0]);
-                answerButtonGameObjects.RemoveAt(0);
+                answerButtonObjectPool.ReturnObject(_answerButtonGameObjects[0]);
+                _answerButtonGameObjects.RemoveAt(0);
             }
         }
 
@@ -196,7 +196,7 @@ namespace _LetsQuiz
 
         public void Score(bool answer)
         {
-            Debug.Log("score called bool = " + answer);
+            Debug.Log("GameController : Score(): score called bool = " + answer);
 
             if (answer)
                 _playerController.userScore = _playerController.userScore + 10;
@@ -234,7 +234,7 @@ namespace _LetsQuiz
 
             if (_playerController.userScore > _playerController.GetHighestScore())
             {
-                Debug.Log("new high score");
+                Debug.Log("GameController : EndRound(): New High Score");
                 _playerController.scoreStatus = "new high score";
                 _playerController.SetHighestScore(_playerController.userScore);
 
@@ -245,11 +245,15 @@ namespace _LetsQuiz
                 }
             }
             else
+            {
+                Debug.Log("GameController : EndRound(): No Score Change");
                 _playerController.scoreStatus = "no change";
+            }
+                
 
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
 
-            Debug.Log("end round");
+            Debug.Log("GameController : EndRound(): End of Round");
             Debug.Log(_playerController.scoreStatus);
         }
 

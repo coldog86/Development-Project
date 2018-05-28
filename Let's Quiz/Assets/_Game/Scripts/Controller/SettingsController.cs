@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -12,34 +10,30 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Settings")]
-        [Tooltip("Serialized for debug purposes.")]
-        [SerializeField]
-        private float unmutedVolume = -10.0f;
-        [Tooltip("Serialized for debug purposes.")]
-        [SerializeField]
-        private float mutedVolume = -80.0f;
+        private const float unmutedVolume = -10.0f;
+        private const float mutedVolume = -80.0f;
 
-        [Header("Componenets")]
+        [Header("Components")]
         public AudioMixer masterMixer;
         private Toggle _soundEffectSwitch;
         private Toggle _backgroundMusicSwitch;
         private Toggle _notificationSwitch;
 
         // AudioMixer parameters
-        private string _soundEffectParameter = "SoundEffectVolume";
-        private string _backgroundMusicParameter = "BackgroundMusicVolume";
+        private const string _soundEffectParameter = "SoundEffectVolume";
+        private const string _backgroundMusicParameter = "BackgroundMusicVolume";
 
         // PlayerPref keys
-        private string _effectVolumeKey = "SoundEffectVolume";
-        private string _effectToggleKey = "SoundEffectToggle";
-        private string _musicVolumeKey = "BackgroundMusicVolume";
-        private string _musicToggleKey = "BackgroundMusicToggle";
-        private string _notificationToggleKey = "NotificationToggle";
+        private const string _effectVolumeKey = "SoundEffectVolume";
+        private const string _effectToggleKey = "SoundEffectToggle";
+        private const string _musicVolumeKey = "BackgroundMusicVolume";
+        private const string _musicToggleKey = "BackgroundMusicToggle";
+        private const string _notificationToggleKey = "NotificationToggle";
 
 
         // int declartions of bools
-        private int _toggleActive = 1;
-        private int _toggleInactive = 0;
+        private const int _toggleActive = 1;
+        private const int _toggleInactive = 0;
 
         private PlayerSettings _playerSettings;
         private FeedbackClick _click;
@@ -149,7 +143,7 @@ namespace _LetsQuiz
             if (volume != _playerSettings.soundEffectVolume)
             {
                 _playerSettings.soundEffectVolume = volume;
-                masterMixer.SetFloat("SoundEffectVolume", volume);
+                masterMixer.SetFloat(_soundEffectParameter, volume);
                 SaveSoundEffectVolume();
             }
         }
@@ -210,7 +204,7 @@ namespace _LetsQuiz
             if (volume != _playerSettings.backgroundMusicVolume)
             {
                 _playerSettings.backgroundMusicVolume = volume;
-                masterMixer.SetFloat("BackgroundMusicVolume", volume);
+                masterMixer.SetFloat(_backgroundMusicParameter, volume);
                 SaveBackgroundMusicVolume();
             }
         }

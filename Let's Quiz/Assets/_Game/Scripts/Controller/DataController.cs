@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Events;
 
 namespace _LetsQuiz
 {
@@ -23,9 +21,8 @@ namespace _LetsQuiz
         private Player _player;
         private string _playerString = "";
 
-
         [Header("Connection")]
-        private float _connectionTimeLimit = 1000000.0f;
+        private const float _connectionTimeLimit = 1000000.0f;
         private float _connectionTimer = 0.0f;
 
         [Header("Validation Tests")]
@@ -170,6 +167,7 @@ namespace _LetsQuiz
 
         private void RetryPullData()
         {
+            Debug.Log("DataController : RetryPullData()");
             FeedbackAlert.Show("Retrying connection...", 1.0f);
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
         }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -40,7 +38,7 @@ namespace _LetsQuiz
 
         [Header("Connection")]
         [SerializeField]
-        private float _connectionTimeLimit = 10000.0f;
+        private const float _connectionTimeLimit = 10000.0f;
         [SerializeField]
         private float _connectionTimer = 0.0f;
 

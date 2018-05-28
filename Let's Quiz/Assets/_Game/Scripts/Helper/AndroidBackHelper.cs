@@ -1,13 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace _LetsQuiz
 {
     public class AndroidBackHelper : MonoBehaviour
     {
-        private GameController _gameController;
+        #region variables
+
+        GameController _gameController;
+
+        #endregion
+
+        #region methods
 
         #if PLATFORM_ANDROID
         public void Update()
@@ -43,6 +47,8 @@ namespace _LetsQuiz
         {
             _gameController.EndRound();
         }
+
+        #endregion
     }
 }
 

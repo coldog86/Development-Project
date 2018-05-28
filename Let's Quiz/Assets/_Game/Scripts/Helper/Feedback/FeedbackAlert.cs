@@ -1,8 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
 
 namespace _LetsQuiz
 {
@@ -13,7 +11,7 @@ namespace _LetsQuiz
         [Header("Component")]
         public GameObject prefab;
         public static FeedbackAlert instance;
-        private GameObject _alert;
+        GameObject _alert;
 
         private static Text _message;
 

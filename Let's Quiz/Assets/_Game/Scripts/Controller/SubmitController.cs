@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,7 +17,7 @@ namespace _LetsQuiz
 
         [Header("Connection")]
         public float connectionTimer = 0;
-        public float connectionTimeLimit = 10000.0f;
+        public const float connectionTimeLimit = 10000.0f;
 
         private FeedbackClick _click;
         private PlayerController _playerController;
@@ -54,24 +52,31 @@ namespace _LetsQuiz
             var wrong3Answer = wrong3Input.text;
 
             if (string.IsNullOrEmpty(question))
-                FeedbackAlert.Show("Question cannont be empty.");
+                FeedbackAlert.Show("Question cannot be empty.");
 
             if (string.IsNullOrEmpty(correctAnswer))
-                FeedbackAlert.Show("Correct Answer cannont be empty.");
+                FeedbackAlert.Show("Correct Answer cannot be empty.");
 
             if (string.IsNullOrEmpty(wrong1Answer))
-                FeedbackAlert.Show("Wrong Answer 1 cannont be empty.");
+                FeedbackAlert.Show("Wrong Answer 1 cannot be empty.");
 
             if (string.IsNullOrEmpty(wrong2Answer))
-                FeedbackAlert.Show("Wrong Answer 2 cannont be empty.");
+                FeedbackAlert.Show("Wrong Answer 2 cannot be empty.");
 
             if (string.IsNullOrEmpty(wrong3Answer))
-                FeedbackAlert.Show("Wrong Answer 3 cannont be empty.");
+                FeedbackAlert.Show("Wrong Answer 3 cannot be empty.");
 
             if (!string.IsNullOrEmpty(question) && !string.IsNullOrEmpty(correctAnswer) && !string.IsNullOrEmpty(wrong1Answer) && !string.IsNullOrEmpty(wrong2Answer) && !string.IsNullOrEmpty(wrong3Answer))
             {
                 if (ValidSubmission(question, correctAnswer, wrong1Answer, wrong2Answer, wrong3Answer))
+                {
                     FeedbackAlert.Show("Question submitted sucessfully.");
+                    questionInput.text = "";
+                    correctInput.text = "";
+                    wrong1Input.text = "";
+                    wrong2Input.text = "";
+                    wrong3Input.text = "";
+                }
                 else
                     FeedbackAlert.Show("Question submitted unucessfully.");
             }
@@ -79,7 +84,7 @@ namespace _LetsQuiz
 
         private bool ValidSubmission(string question, string correctAnswer, string wrong1Answer, string wrong2Answer, string wrong3Answer, string category = "User Submitted Question")
         {
-            Debug.Log("Attempting to submit");
+            Debug.Log("SubmitController: ValidSubmisstion() : Attempting to Submit");
 
             WWWForm form = new WWWForm();
 

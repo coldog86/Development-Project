@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using UnityEngine;
 
 namespace _LetsQuiz
 {
@@ -9,19 +6,19 @@ namespace _LetsQuiz
     {
         #region variables
 
-        private string _typeKey = "PlayerType";
-        private string _idKey = "PlayerId";
-        private string _usernameKey = "PlayerUsername";
-        private string _emailKey = "PlayerEmail";
-        private string _passwordKey = "PlayerPassword";
-        private string _dobKey = "PlayerDOB";
-        private string _questionsSubmittedKey = "PlayerQuestionsSubmitted";
-        private string _numberQuestionsSubmittedKey = "PlayerNumberQuestionsSubmitted";
-        private string _numberGamesPlayedKey = "PlayerNumberGamesPlayed";
-        private string _highestScoreKey = "PlayerHighestScore";
-        private string _numberCorrectAnswersKey = "PlayerNumberCorrectAnswers";
-        private string _totalQuestionsAnsweredKey = "PlayerTotalQuestionsAnswered";
-        private string _questionDataKey = "PlayerQuestionData";
+        private const string _typeKey = "PlayerType";
+        private const string _idKey = "PlayerId";
+        private const string _usernameKey = "PlayerUsername";
+        private const string _emailKey = "PlayerEmail";
+        private const string _passwordKey = "PlayerPassword";
+        private const string _dobKey = "PlayerDOB";
+        private const string _questionsSubmittedKey = "PlayerQuestionsSubmitted";
+        private const string _numberQuestionsSubmittedKey = "PlayerNumberQuestionsSubmitted";
+        private const string _numberGamesPlayedKey = "PlayerNumberGamesPlayed";
+        private const string _highestScoreKey = "PlayerHighestScore";
+        private const string _numberCorrectAnswersKey = "PlayerNumberCorrectAnswers";
+        private const string _totalQuestionsAnsweredKey = "PlayerTotalQuestionsAnswered";
+        private const string _questionDataKey = "PlayerQuestionData";
 
         [Header("Player Details")]
         [SerializeField]

@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 namespace _LetsQuiz
 {
@@ -20,7 +18,7 @@ namespace _LetsQuiz
 
         public void Load()
         {
-            Debug.Log("Load Question Controller");
+            Debug.Log("QuestionController : Load()");
             _playerController = FindObjectOfType<PlayerController>();
             _questionData = _playerController.GetQuestionData();
         }

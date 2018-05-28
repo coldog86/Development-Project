@@ -1,33 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using UnityEngine;
 
 namespace _LetsQuiz
 {
-	public class HighscoreController : MonoBehaviour
-	{
+    public class HighscoreController : MonoBehaviour
+    {
+        #region variables
 
-		[Header("Components")]
-		private PlayerController _playerController;
-		private string highScoreData;
-		private HighScoreData allHighscores;
+        [Header("Components")]
+        private PlayerController _playerController;
+        private string _highScoreData;
 
-		public void Load() {
+        #endregion
 
-			Debug.Log ("Load HighScore Controller");
-			_playerController = FindObjectOfType<PlayerController>();
-			highScoreData = _playerController.highScoreJSON;
-		}
+        #region methods
 
-		public HighScoresContainer extractHighScores() {
+        public void Load()
+        {
+            Debug.LogError("HighscoreController : Load()");
+            _playerController = FindObjectOfType<PlayerController>();
+            _highScoreData = _playerController.highScoreJSON;
+        }
 
-			HighScoresContainer allHighScorers = JsonUtility.FromJson<HighScoresContainer> (highScoreData);
-			return allHighScorers;
-		}
+        public HighScoresContainer extractHighScores()
+        {
+            HighScoresContainer allHighScorers = JsonUtility.FromJson<HighScoresContainer>(_highScoreData);
+            return allHighScorers;
+        }
 
-
-
-	}
+        #endregion
+    }
 }
-

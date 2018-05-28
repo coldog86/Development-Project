@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Runtime.Remoting.Messaging;
-
+using UnityEngine.SceneManagement;
 
 namespace _LetsQuiz
 {

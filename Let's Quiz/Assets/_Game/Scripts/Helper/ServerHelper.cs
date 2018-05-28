@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace _LetsQuiz
+﻿namespace _LetsQuiz
 {
     public static class ServerHelper
     {

@@ -3,6 +3,8 @@
     [System.Serializable]
     public class AllQuestions
     {
+        #region variables
+
         //DEBUG DATA
         public AnswerData[] answers;
         public QuestionData question1;
@@ -16,6 +18,10 @@
 
         //overall question pool, for categories have multiple question pools
         public QuestionData[] allQuestions;
+
+        #endregion
+
+        #region methods
 
         public void SetUp()
         {
@@ -59,5 +65,7 @@
         {
             return allQuestions;
         }
+
+        #endregion
     }
 }
