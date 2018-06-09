@@ -16,7 +16,7 @@ namespace _LetsQuiz
 
         public void Load()
         {
-            Debug.LogError("HighscoreController : Load()");
+            Debug.Log("HighscoreController : Load()");
             _playerController = FindObjectOfType<PlayerController>();
             _highScoreData = _playerController.highScoreJSON;
         }
