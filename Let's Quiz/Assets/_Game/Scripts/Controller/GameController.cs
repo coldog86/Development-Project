@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -107,7 +107,7 @@ namespace _LetsQuiz
             QuestionData currentQuestionData = null;
 
             //if all questions are asked, end round
-            if (_questionPool.Length <= _numberOfQuestionsAsked)
+            if (_questionPool.Length < 0)
             { 
                 Debug.Log("GameController : Show Questions(): Out of Questions");
                 EndRound();
@@ -116,7 +116,8 @@ namespace _LetsQuiz
             {
                 int randomNumber = Random.Range(0, _questionPool.Length - 1); //gets random number between 0 and total number of questions
                 currentQuestionData = _questionPool[randomNumber];// Get the QuestionData for the current question
-                questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
+				_questionPool = _questionController.removeQuestion(_questionPool, randomNumber); //remove question from list
+				questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
                 _questionController.addAskedQuestionToAskedQuestions(currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
                 _numberOfQuestionsAsked++;
                 ShowAnswers(currentQuestionData);
