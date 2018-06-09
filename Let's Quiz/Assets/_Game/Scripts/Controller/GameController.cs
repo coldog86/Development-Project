@@ -45,7 +45,7 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private SubmitScore _submitScore;
 
-        private float _timeRemaining = 30;
+        private float _timeRemaining = 20; //TODO the in game slider does not work until the timer is 20 or less 
 
         private bool _isRoundActive;
         //private int _questionIndex;
