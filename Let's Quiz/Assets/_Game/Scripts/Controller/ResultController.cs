@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +18,11 @@ namespace _LetsQuiz
         public Text rank;
         public Text worldText;
 
+		[Header("Connection")]
+		public float connectionTimer = 0;
+		public const float connectionTimeLimit = 10000.0f;
+
+		private int _ranking;
         private FeedbackClick _click;
         private FeedbackMusic _music;
         private PlayerController _playerController;
@@ -91,7 +96,7 @@ namespace _LetsQuiz
         {
             float _downloadTimer = 5.0f;
 
-            WWW download = new WWW(ServerHelper.Host + ServerHelper.Ranking);
+            WWW download = new WWW(ServerHelper.Host + ServerHelper.GetRanking);
 
             while (!download.isDone)
             {
@@ -130,16 +135,72 @@ namespace _LetsQuiz
             for (int i = 0; i < lines.Count; i++)
                 list.Add(int.Parse(lines[i]));
 
-            list.Sort();
-            int ranking = 0;
-            for (int i = 0; i < list.Count; i++)
+			list.Sort();
+			_ranking = 0;
+			for (int i = list.Count-1; i > 0; i--)
             {
-                if (list[i] < _playerController.userScore)
-                    ranking = i + 1;
+				Debug.Log (list [i]);
+				if (_playerController.userScore <= list[i])
+                    _ranking = i - 1;
             }
 
-            rank.text = ranking + " out of " + list.Count;
+			rank.text = (list.Count- _ranking) + " out of " + list.Count;
+			submitRanking ();
         }
+
+		private bool submitRanking()
+		{
+			WWWForm form = new WWWForm();
+
+			form.AddField("username", _playerController.GetUsername());
+			form.AddField("score", _playerController.userScore);
+
+			WWW submitRank = new WWW(ServerHelper.Host + ServerHelper.SetRanking, form);
+
+			while (!submitRank.isDone)
+			{ 
+				connectionTimer += Time.deltaTime;
+				FeedbackAlert.Show("Attempting to submit ranking.");
+
+				if (connectionTimer > connectionTimeLimit)
+				{
+					FeedbackAlert.Show("Server time out.");
+					Debug.LogError("ResultController : ValidSubmission() : " + submitRank.error);
+					Debug.Log(submitRank.text);
+					return false;
+				}
+
+				// extra check just to ensure a stream error doesn't come up
+				if (connectionTimer > connectionTimeLimit || submitRank.error != null)
+				{
+					FeedbackAlert.Show("Server time out.");
+					Debug.LogError("ResultController : ValidSubmission() : " + submitRank.error);
+					Debug.Log(submitRank.text);
+					return false;
+				}
+			}
+
+			if (submitRank.error != null)
+			{
+				FeedbackAlert.Show("Connection error. Please try again.");
+				Debug.Log("ResultController : ValidSubmission() : " + submitRank.error);
+				return false;
+			}
+
+			if (submitRank.isDone)
+			{
+				if (!string.IsNullOrEmpty(submitRank.text))
+				{
+					Debug.Log(submitRank.text);
+					return true;
+				}
+				else
+					return false;
+			}
+			return false;
+		}
+			
+
 
         #endregion
 
