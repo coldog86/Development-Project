@@ -371,6 +371,7 @@ GameObject:
   - component: {fileID: 1511502304}
   - component: {fileID: 1511502305}
   - component: {fileID: 1511502300}
+  - component: {fileID: 1511502306}
   m_Layer: 0
   m_Name: DataController
   m_TagString: Untagged
@@ -413,8 +414,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab091ffdff661b047ab4d11c73e5d25e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unmutedVolume: -10
-  mutedVolume: -80
   masterMixer: {fileID: 24100000, guid: bbedf9fbfe2254949967ae5b6be8b81a, type: 2}
 --- !u!114 &1511502301
 MonoBehaviour:
@@ -483,6 +482,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf88b0e37599242a5bf6b950698babff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1511502306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1511502297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d619429d3f75343a0c9fa49f60896b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1661182033

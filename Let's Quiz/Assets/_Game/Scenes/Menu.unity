@@ -313,6 +313,11 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2043729811}
+    - target: {fileID: 114321460321461172, guid: 43bfdf75afdc2944e8c2955658c7ae36,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoToGameLobby
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 43bfdf75afdc2944e8c2955658c7ae36, type: 2}
   m_IsPrefabParent: 0
@@ -368,7 +373,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87ef270cb47ec144da885e81c1f9518f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  navigationDrawer: {fileID: 0}
   accountButton: {fileID: 1825850148}
   leaderboardButton: {fileID: 1825850147}
   submitQuestionButton: {fileID: 725177950}
