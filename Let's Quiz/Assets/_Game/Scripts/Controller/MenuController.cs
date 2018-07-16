@@ -28,6 +28,7 @@ namespace _LetsQuiz
 
         private void Awake()
         {
+        	DontDestroyOnLoad(this.gameObject);
             _username = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
             _playerController = FindObjectOfType<PlayerController>();
 
@@ -44,7 +45,7 @@ namespace _LetsQuiz
             }  
         }
 
-        private void Start()
+        private void Start() //TODO what is this for, I have seen a few private start() methods, when are they called, do they behave like a public Start()?
         {
             //navigationDrawer.SetActive(false);
 
@@ -54,6 +55,7 @@ namespace _LetsQuiz
             _questionDownload = FindObjectOfType<GetAllQuestions>();
 
             Destroy(_questionDownload);
+
         }
 
         #endregion
@@ -62,9 +64,14 @@ namespace _LetsQuiz
 
         public void StartGame()
         {
-            _click.Play();
+			_click.Play();
             _music.PlayGameMusic();
             SceneManager.LoadScene(BuildIndex.Game, LoadSceneMode.Single);
+        }
+
+        public void GoToGameLobby()
+        {
+			SceneManager.LoadScene(BuildIndex.GameLobby, LoadSceneMode.Single);
         }
 
         // TASK : to be completed when multiplayer is implemented

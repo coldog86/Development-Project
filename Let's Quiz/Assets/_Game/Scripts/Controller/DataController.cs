@@ -30,6 +30,10 @@ namespace _LetsQuiz
         private string _password = "p";
         private int _status = -2;
 
+
+        public OngoingGamesData ongoingGameData {get; set;}
+        public int turnNumber {get; set;}
+
         #endregion
 
         #region properties
@@ -49,7 +53,7 @@ namespace _LetsQuiz
         private void Start()
         {
             DontDestroyOnLoad(gameObject);
-
+			turnNumber = 0;
             _settingsController = GetComponent<SettingsController>();
             _settingsController.Load();
 
@@ -67,6 +71,8 @@ namespace _LetsQuiz
 
             _highScoreController = GetComponent<HighscoreController>();
             _highScoreController.Load();
+
+
 
             // retrive player username and password from PlayerPrefs if they have an id
             if (PlayerPrefs.HasKey(_playerController.idKey))
@@ -186,5 +192,8 @@ namespace _LetsQuiz
         #endregion
 
         #endregion
+
+		
+
     }
 }

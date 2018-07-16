@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace _LetsQuiz
 {
@@ -11,6 +12,7 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private string _questionData;
         private GameData _allQuestions;
+		private List<QuestionData> _AskedQuestions;
 
         #endregion
 
@@ -23,13 +25,19 @@ namespace _LetsQuiz
             _questionData = _playerController.GetQuestionData();
         }
 
-        public GameData extractQuestions()
+        public GameData extractQuestionsFromJSON()
         {
             GameData allQ = JsonUtility.FromJson<GameData>(_questionData);
             return allQ;
         }
 
-        public QuestionData[] extractQuestions(int catagory)
+		public RoundData extractQuestionsFromJSON(string json) //TODO Pick up from here. not sure what we need to deserialize this into, probably Round data but there is no name so maybe a new object....
+        {
+			RoundData allQ = JsonUtility.FromJson<RoundData>(json);
+            return allQ;
+        }
+
+        public QuestionData[] extractQuestionsFromJSON(int catagory)
         {
             GameData allQ = JsonUtility.FromJson<GameData>(_questionData);
             QuestionData[] allQuestionsInCatagory = allQ.allRoundData[catagory].questions;
@@ -69,17 +77,46 @@ namespace _LetsQuiz
             return questionPool;
         }
 
-        // TODO : when multi player is a thing we need to record the "player's" questions so we can ask the opponent
         public void addAskedQuestionToAskedQuestions(QuestionData currentQuestion)
         {
-		
+        	try
+        	{
+        		_AskedQuestions.Add(currentQuestion);
+    		}
+    		catch(Exception e)
+    		{
+				_AskedQuestions = new List<QuestionData>();
+				_AskedQuestions.Add(currentQuestion);
+    		}
         }
 
-        // TODO : for multi player we will need to update the quetion pool so a user is not asked the same questions in different rounds of the same game
-        public void removeFromAllQuestionsLeft(QuestionData currentQuestion)
+
+
+        public string getAskedQuestions()
         {
-			
+			RoundData _RoundQuestions = new RoundData();
+			_RoundQuestions.name = "question list for opponent"; 
+			_RoundQuestions.questions = _AskedQuestions.ToArray();
+			string askedQuestionsAsJSON = JsonUtility.ToJson(_RoundQuestions);
+			Debug.Log("askedQuestionsJSON = " + askedQuestionsAsJSON);
+			_AskedQuestions = new List<QuestionData>(); //clear the list
+			return askedQuestionsAsJSON;
         }
+
+		public string getRemainingQuestions(QuestionData[] questionPool)
+        {
+			RoundData _RemainingQuestions = new RoundData();
+			_RemainingQuestions.name = "remaining questions in catagory, incase opponent answers all the 'askedQuestions' "; 
+			_RemainingQuestions.questions = questionPool;
+			string remainingQuestionsAsJSON = JsonUtility.ToJson(_RemainingQuestions);
+			Debug.Log("_RemainingQuestions = " + remainingQuestionsAsJSON);
+			return remainingQuestionsAsJSON;
+        }
+
+
+
+
+
 
         #endregion
     }

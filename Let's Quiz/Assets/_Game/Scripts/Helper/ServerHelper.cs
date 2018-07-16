@@ -11,6 +11,12 @@
         public static string HighScores = "viewHighScores.php";
         public static string SubmitHighScore = "submitHighScore.php";
         public static string SubmitUserQuestion = "submitQuestion.php";
+        public static string SubmitGameData = "submitGameData.php";
+		public static string CheckForOpenGames = "checkForOpenGames.php";
+		public static string SubmitRound1Data = "SubmitRound1Data.php";
+		public static string SubmitRound2Data = "submitRound2Data.php";
+
+
     }
 }
 

@@ -11,6 +11,7 @@
         public static int Leaderboard = 6;
         public static int SubmitQuestion = 7;
         public static int Settings = 8;
+        public static int GameLobby = 9;
     }
 }
 
