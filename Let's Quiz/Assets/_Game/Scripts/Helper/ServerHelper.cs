@@ -13,8 +13,13 @@
         public static string SubmitUserQuestion = "submitQuestion.php";
         public static string SubmitGameData = "submitGameData.php";
 		public static string CheckForOpenGames = "checkForOpenGames.php";
+		public static string GetPlayersOpenGames = "CheckUsersOpenGames.php";
 		public static string SubmitRound1Data = "SubmitRound1Data.php";
 		public static string SubmitRound2Data = "submitRound2Data.php";
+		public static string SubmitRound3Data = "submitRound3Data.php";
+		public static string SubmitRound4Data = "submitRound4Data.php";
+		public static string SubmitRound5Data = "submitRound5Data.php";
+		public static string SubmitRound6Data = "submitRound6Data.php";
 
 
     }

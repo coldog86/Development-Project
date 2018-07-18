@@ -17,6 +17,7 @@ namespace _LetsQuiz
         public Text rankText;
         public Text rank;
         public Text worldText;
+        public GameObject finalResultsPanel;
 
 		[Header("Connection")]
 		public float connectionTimer = 0;
@@ -26,6 +27,7 @@ namespace _LetsQuiz
         private FeedbackClick _click;
         private FeedbackMusic _music;
         private PlayerController _playerController;
+        private DataController _dataController;
 
         #endregion
 
@@ -37,7 +39,8 @@ namespace _LetsQuiz
         {
             _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
-            _playerController = FindObjectOfType<PlayerController>();                
+            _playerController = FindObjectOfType<PlayerController>();      
+			_dataController = FindObjectOfType<DataController>();          
         }
 
         private void Start()
@@ -58,6 +61,9 @@ namespace _LetsQuiz
                 rankText.enabled = true;
                 worldText.enabled = false;
             }
+			if(_dataController.turnNumber == 6){
+				finalResultsPanel.SetActive(true);
+			}
 
             StartCoroutine(FindRanking());
             Display();
@@ -139,7 +145,6 @@ namespace _LetsQuiz
 			_ranking = 0;
 			for (int i = list.Count-1; i > 0; i--)
             {
-				Debug.Log (list [i]);
 				if (_playerController.userScore <= list[i])
                     _ranking = i - 1;
             }

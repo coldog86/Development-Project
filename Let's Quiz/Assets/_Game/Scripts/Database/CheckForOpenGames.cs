@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _LetsQuiz
 {
@@ -50,7 +51,6 @@ namespace _LetsQuiz
                     break;
                 }
                 _downloadTimer -= Time.deltaTime;
-
                 yield return null;
             }
 
@@ -93,6 +93,9 @@ namespace _LetsQuiz
 				Debug.Log("no open games - turn = 1");
 				//continueExistingGame = false;
 				_dataController.turnNumber = 1;
+				int rand = Random.Range (1, 100000);
+				Debug.Log("game number = " + rand);
+				_dataController.gameNumber = rand;
 			}
 
 			if (n > -1) { 
@@ -105,10 +108,25 @@ namespace _LetsQuiz
 				Debug.Log("****asked questions = " + og.dataForOpenGame[n].askedQuestions);
 				Debug.Log("****remaining questions = " + og.dataForOpenGame[n].QuestionsLeftInCatagory);
 
+				if(PlayerPrefs.HasKey(_playerController.GetUsername())){
+					string games = PlayerPrefs.GetString(_playerController.GetUsername());
+					games = games + "," + _dataController.gameNumber.ToString();
+					PlayerPrefs.SetString(_playerController.GetUsername(), games);
+					Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
+				}
+				if(!PlayerPrefs.HasKey(_playerController.GetUsername())){
+					PlayerPrefs.SetString(_playerController.GetUsername(), _dataController.gameNumber.ToString());
+					Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
+				}
+
 				_dataController.ongoingGameData = og.dataForOpenGame[n];
+				_dataController.gameNumber = og.dataForOpenGame[n].gameNumber;
 
 			
 			}
+			MenuController _MenuController;
+			_MenuController = FindObjectOfType<MenuController>();
+			_MenuController.StartGame();
 				
         }
 

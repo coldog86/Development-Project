@@ -88,6 +88,17 @@ namespace _LetsQuiz
 
 			_questionPool = GetQuestionPool();
 
+
+			if (PlayerPrefs.HasKey(_playerController.GetUsername())){
+				string numbers = PlayerPrefs.GetString(_playerController.GetUsername());
+				numbers = numbers + "," + _dataController.gameNumber;
+				PlayerPrefs.SetString(_playerController.GetUsername(), numbers);
+				Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
+			}
+			else{
+				PlayerPrefs.SetString(_playerController.GetUsername(), _dataController.gameNumber.ToString());
+				Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
+			}
 			ShowQuestion ();
         }
 
@@ -115,21 +126,21 @@ namespace _LetsQuiz
 				return _questionPool;
         	}
 
-			if(_dataController.turnNumber == 1)
+			if(_dataController.turnNumber == 1 || _dataController.turnNumber == 3 || _dataController.turnNumber == 5)
 			{
 				//there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
 				_questionPool = _questionController.getAllQuestionsAllCatagories (); 
 				return _questionPool;
 			}
-			if(_dataController.turnNumber == 2)
+			if(_dataController.turnNumber == 2 || _dataController.turnNumber == 4 || _dataController.turnNumber == 6)
 			{
 				//there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
 				string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
-				_dataController.ongoingGameData.QuestionsLeftInCatagory = ""; 
 				RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
 				_questionPool = rd.questions;
 				return _questionPool;
 			}
+
 
 			else
 			{
@@ -164,14 +175,14 @@ namespace _LetsQuiz
 						EndRound ();
 
 					string roundDataJSON = _dataController.ongoingGameData.QuestionsLeftInCatagory;
-					Debug.Log("out of asked questons, asking remaining questions: " + roundDataJSON);
+					Debug.Log("out of asked questons, asking remaining questions: " + _dataController.ongoingGameData.QuestionsLeftInCatagory);
 					_dataController.ongoingGameData.QuestionsLeftInCatagory = ""; 
 					RoundData rd = JsonUtility.FromJson<RoundData> (roundDataJSON);
 					_questionPool = rd.questions;
 					ShowQuestion ();
 				}
 			} else { //ask the question
-				if (_dataController.turnNumber == 0 | _dataController.turnNumber == 1) {
+				if (_dataController.turnNumber == 0 | _dataController.turnNumber == 1 | _dataController.turnNumber == 3 | _dataController.turnNumber == 5) {
 					//if user is player then quesitons should be asked in random order
 					int randomNumber = Random.Range (0, _questionPool.Length - 1); //gets random number between 0 and total number of questions
 					currentQuestionData = _questionPool [randomNumber];// Get the QuestionData for the current question
@@ -180,7 +191,7 @@ namespace _LetsQuiz
 					_questionController.addAskedQuestionToAskedQuestions (currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
 
 				}
-				if (_dataController.turnNumber == 2) {
+				if (_dataController.turnNumber == 2 | _dataController.turnNumber == 4 | _dataController.turnNumber == 6) {
 				//if user is oppoent questions should be asked in the same order they were asked of player
 					currentQuestionData = _questionPool [0];// Get the QuestionData for the current question
 					_questionPool = _questionController.removeQuestion (_questionPool, 0); //remove question from list
@@ -299,6 +310,7 @@ namespace _LetsQuiz
         public void EndRound ()
 		{
 			_music.Stop ();
+
 
 			SubmitToOngoingGamesDB ();
            

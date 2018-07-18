@@ -33,6 +33,7 @@ namespace _LetsQuiz
 
         public OngoingGamesData ongoingGameData {get; set;}
         public int turnNumber {get; set;}
+        public int gameNumber { get; set; }
 
         #endregion
 
@@ -52,6 +53,7 @@ namespace _LetsQuiz
 
         private void Start()
         {
+			//PlayerPrefs.DeleteKey("col"); PlayerPrefs.DeleteKey("col2"); 
             DontDestroyOnLoad(gameObject);
 			turnNumber = 0;
             _settingsController = GetComponent<SettingsController>();
@@ -75,18 +77,21 @@ namespace _LetsQuiz
 
 
             // retrive player username and password from PlayerPrefs if they have an id
-            if (PlayerPrefs.HasKey(_playerController.idKey))
-            {
+            if (PlayerPrefs.HasKey(_playerController.idKey)) 
+			{//TODO is any of these ever used?
                 _status = _playerController.GetPlayerType();
                 _username = _playerController.GetUsername();
                 _password = _playerController.GetPassword();
             }
+			
+
+
         }
 
         #endregion
 
         #region server specific
-
+       
         public void Init()
         {
             if (serverConnected)
@@ -103,67 +108,63 @@ namespace _LetsQuiz
                 DisplayErrorModal("Error connecting to the server.");
         }
 
-        private IEnumerator Login(string username, string password)
-        {
-            WWWForm form = new WWWForm();
+        private IEnumerator Login (string username, string password)
+		{
+			WWWForm form = new WWWForm ();
 
-            form.AddField("usernamePost", username);
-            form.AddField("passwordPost", password);
+			form.AddField ("usernamePost", username);
+			form.AddField ("passwordPost", password);
 
-            WWW loginRequest = new WWW(ServerHelper.Host + ServerHelper.Login, form);
+			WWW loginRequest = new WWW (ServerHelper.Host + ServerHelper.Login, form);
 
-            while (!loginRequest.isDone)
-            {
-                _connectionTimer += Time.deltaTime;
+			while (!loginRequest.isDone) {
+				_connectionTimer += Time.deltaTime;
 
-                if (_connectionTimer > _connectionTimeLimit)
-                {
-                    FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("DataController : Login() : " + loginRequest.error);
-                    yield return null;
-                }
+				if (_connectionTimer > _connectionTimeLimit) {
+					FeedbackAlert.Show ("Server time out.");
+					Debug.LogError ("DataController : Login() : " + loginRequest.error);
+					yield return null;
+				}
 
-                // extra check just to ensure a stream error doesn't come up
-                if (_connectionTimer > _connectionTimeLimit || loginRequest.error != null)
-                {
-                    FeedbackAlert.Show("Server error.");
-                    Debug.LogError("DataController : Login() : " + loginRequest.error);
-                    yield return null;
-                }    
-            }
+				// extra check just to ensure a stream error doesn't come up
+				if (_connectionTimer > _connectionTimeLimit || loginRequest.error != null) {
+					FeedbackAlert.Show ("Server error.");
+					Debug.LogError ("DataController : Login() : " + loginRequest.error);
+					yield return null;
+				}    
+			}
 
-            if (loginRequest.error != null)
-            {
-                FeedbackAlert.Show("Connection error. Please try again.");
-                Debug.Log("DataController : Login() : " + loginRequest.error);
-                yield return null;
-            }
+			if (loginRequest.error != null) {
+				FeedbackAlert.Show ("Connection error. Please try again.");
+				Debug.Log ("DataController : Login() : " + loginRequest.error);
+				yield return null;
+			}
 
-            if (loginRequest.isDone)
-            {
-                // check that the login request returned something
-                if (!String.IsNullOrEmpty(loginRequest.text))
-                {
-                    _playerString = loginRequest.text;
-                    Debug.Log(_playerString);
-
-                    // if the retrieved login text doesn't have "ID" load login scene
-                    if (!_playerString.Contains("ID"))
-                    {
-                        SceneManager.LoadScene(BuildIndex.Login);
-                        yield return null;
-                    }
+			if (loginRequest.isDone) {
+				// check that the login request returned something
+				if (!String.IsNullOrEmpty (loginRequest.text)) {
+					_playerString = loginRequest.text;
+					Debug.Log (_playerString);
+					
+					// if the retrieved login text doesn't have "ID" load login scene
+					if (!_playerString.Contains ("ID")) {
+						SceneManager.LoadScene (BuildIndex.Login);
+						yield return null;
+					}
                     // otherwise save the player information to PlayerPrefs and load menu scene
-                    else
-                    {
-                        _player = PlayerJsonHelper.LoadPlayerFromServer(_playerString);
+                    else {
+						_player = PlayerJsonHelper.LoadPlayerFromServer (_playerString);
+						
 
-                        if (_player != null)
-                            _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted, 
-                                _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.highestScore, 
-                                _player.numCorrectAnswers, _player.totalQuestionsAnswered);
+						if (_player != null) {
+							_playerController.Save (_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted, 
+								_player.numQuestionsSubmitted, _player.numGamesPlayed, _player.highestScore, 
+								_player.numCorrectAnswers, _player.totalQuestionsAnswered);
 
-                        FeedbackAlert.Show("Welcome back " + _username);
+							FeedbackAlert.Show ("Welcome back " + _username);
+
+
+						}
                         SceneManager.LoadScene(BuildIndex.Menu);
                         yield return loginRequest;
                     }
@@ -188,6 +189,8 @@ namespace _LetsQuiz
         {
             FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Application.Quit);
         }
+
+
 
         #endregion
 

@@ -19,6 +19,7 @@ namespace _LetsQuiz
         private const string _numberCorrectAnswersKey = "PlayerNumberCorrectAnswers";
         private const string _totalQuestionsAnsweredKey = "PlayerTotalQuestionsAnswered";
         private const string _questionDataKey = "PlayerQuestionData";
+		private const string _ongoingGamesKey = "OngoingGamesKey";
 
         [Header("Player Details")]
         [SerializeField]
@@ -36,6 +37,7 @@ namespace _LetsQuiz
         #endregion
 
         #region properties
+		public string ongoingGamesKey { get { return _ongoingGamesKey; } }
 
         public string typeKey { get { return _typeKey; } }
 
