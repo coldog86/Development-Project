@@ -14,6 +14,7 @@
 		public int opponentScore;
 		public bool gameRequiresOppoent;
 		public int turnNumber;
+		public int overAllScore;
 
     }
 }

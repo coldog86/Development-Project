@@ -41,15 +41,18 @@ namespace _LetsQuiz
 			{	
 				form.AddField ("gameNumberPost", _dataController.gameNumber); //TODO need a better way to generate unique game numbers for the first game
 				form.AddField ("playerNamePost", _playerController.GetUsername ());
-				form.AddField ("opponentNamePost", "not yet assigned");
 				form.AddField ("askedQuestionsPost", _questionController.getAskedQuestions ());
 				form.AddField ("QuestionsLeftInCatagoryPost", _questionPool);
 				form.AddField ("Round1CatagoryPost", "catagories not yet set");
-				form.AddField ("Round2CatagoryPost", "catagories not yet set");
-				form.AddField ("playerScorePost", _playerController.userScore);
-				form.AddField ("opponentScorePost", 0);
-				form.AddField ("gameRequiresOppoentPost", 1);
+				form.AddField ("scorePost", _playerController.userScore);
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
+
+				Debug.Log(_playerController.GetId().ToString() + " " + _playerController.GetGamesPlayed().ToString() + " " + _playerController.GetTotalQuestionsAnswered().ToString() + " " + _playerController.GetNumberCorrectAnswers().ToString());
+				form.AddField("userIDPost", _playerController.GetId().ToString());
+				form.AddField("totalGamesPlayedPost", _playerController.GetGamesPlayed().ToString());
+				form.AddField("totalQuestionsPost", _playerController.GetTotalQuestionsAnswered().ToString());
+				form.AddField("totalCorrectQuestionsPost", _playerController.GetNumberCorrectAnswers().ToString());
+
 				address = ServerHelper.Host + ServerHelper.SubmitRound1Data;
 			}
 
@@ -58,12 +61,19 @@ namespace _LetsQuiz
 				Debug.Log("Submitting round 2 data");
 				form.AddField ("gameNumberPost", _dataController.ongoingGameData.gameNumber); //TODO need a better way to generate unique game numbers for the first game
 				form.AddField ("opponentNamePost", _playerController.GetUsername ());
-				form.AddField ("Round2CatagoryPost", "catagories not yet set");
-				form.AddField ("opponentScorePost", _playerController.userScore);
+				form.AddField ("scorePost", _playerController.userScore);
 				form.AddField ("gameRequiresOppoentPost", 0);
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
+				form.AddField ("overAllScorePost", _dataController.getOverAllScore());
+
+				Debug.Log(_playerController.GetId().ToString() + " " + _playerController.GetGamesPlayed().ToString() + " " + _playerController.GetTotalQuestionsAnswered().ToString() + " " + _playerController.GetNumberCorrectAnswers().ToString());
+				form.AddField("userIDPost", _playerController.GetId().ToString());
+				form.AddField("totalGamesPlayedPost", _playerController.GetGamesPlayed().ToString());
+				form.AddField("totalQuestionsPost", _playerController.GetTotalQuestionsAnswered().ToString());
+				form.AddField("totalCorrectQuestionsPost", _playerController.GetNumberCorrectAnswers().ToString());
 	            
 				address = ServerHelper.Host + ServerHelper.SubmitRound2Data;
+
 
 			}
 
@@ -72,8 +82,14 @@ namespace _LetsQuiz
 				Debug.Log("Submitting round 3 data");
 				form.AddField ("gameNumberPost", _dataController.ongoingGameData.gameNumber); 
 				form.AddField ("Round2CatagoryPost", "catagories not yet set");
-				form.AddField ("opponentScorePost", _playerController.userScore);
+				form.AddField ("scorePost", _playerController.userScore);
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
+
+				Debug.Log(_playerController.GetId().ToString() + " " + _playerController.GetGamesPlayed().ToString() + " " + _playerController.GetTotalQuestionsAnswered().ToString() + " " + _playerController.GetNumberCorrectAnswers().ToString());
+				form.AddField("userIDPost", _playerController.GetId().ToString());
+				form.AddField("totalGamesPlayedPost", _playerController.GetGamesPlayed().ToString());
+				form.AddField("totalQuestionsPost", _playerController.GetTotalQuestionsAnswered().ToString());
+				form.AddField("totalCorrectQuestionsPost", _playerController.GetNumberCorrectAnswers().ToString());
 	            
 				address = ServerHelper.Host + ServerHelper.SubmitRound3Data;
 
@@ -82,8 +98,9 @@ namespace _LetsQuiz
 			{
 				Debug.Log("Submitting round 4 data");
 				form.AddField ("gameNumberPost", _dataController.ongoingGameData.gameNumber); 
-				form.AddField ("playerScorePost", _playerController.userScore);
+				form.AddField ("scorePost", _playerController.userScore);
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
+				form.AddField ("overAllScorePost", _dataController.getOverAllScore());
 	            
 				address = ServerHelper.Host + ServerHelper.SubmitRound4Data;
 
@@ -92,7 +109,7 @@ namespace _LetsQuiz
 			{
 				Debug.Log("Submitting round 5 data");
 				form.AddField ("gameNumberPost", _dataController.ongoingGameData.gameNumber); 
-				form.AddField ("opponentScorePost", _playerController.userScore);
+				form.AddField ("scorePost", _playerController.userScore);
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
 	            
 				address = ServerHelper.Host + ServerHelper.SubmitRound5Data;

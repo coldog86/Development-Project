@@ -145,7 +145,10 @@ namespace _LetsQuiz
 				if (!String.IsNullOrEmpty (loginRequest.text)) {
 					_playerString = loginRequest.text;
 					Debug.Log (_playerString);
-					
+					_player = new Player();  //TODO Chanes can you look at the whole player and playercontroller and get rid of what we don't need please?
+					_player = JsonUtility.FromJson<Player>(_playerString);
+					Debug.Log(_player.ID);
+
 					// if the retrieved login text doesn't have "ID" load login scene
 					if (!_playerString.Contains ("ID")) {
 						SceneManager.LoadScene (BuildIndex.Login);
@@ -158,8 +161,8 @@ namespace _LetsQuiz
 
 						if (_player != null) {
 							_playerController.Save (_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted, 
-								_player.numQuestionsSubmitted, _player.numGamesPlayed, _player.highestScore, 
-								_player.numCorrectAnswers, _player.totalQuestionsAnswered);
+								_player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore, 
+								_player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
 							FeedbackAlert.Show ("Welcome back " + _username);
 
@@ -190,6 +193,15 @@ namespace _LetsQuiz
             FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Application.Quit);
         }
 
+		public int getOverAllScore()
+		{
+			if(_playerController.userScore > ongoingGameData.playerScore)
+				ongoingGameData.overAllScore =-1; //opponent won the round
+			if(_playerController.userScore < ongoingGameData.playerScore)
+				ongoingGameData.overAllScore =+1; //player won the round
+
+			return ongoingGameData.overAllScore;
+		}
 
 
         #endregion

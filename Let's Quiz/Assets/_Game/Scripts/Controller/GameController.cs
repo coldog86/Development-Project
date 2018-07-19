@@ -82,7 +82,7 @@ namespace _LetsQuiz
 			_questionController = FindObjectOfType<QuestionController> ();
 			_playerController = FindObjectOfType<PlayerController> ();
 			_dataController = FindObjectOfType<DataController>();
-
+			_playerController.AddToGamesPlayed();
 			_playerController.userScore = 0;
 			_questionController.Load (); //TODO what is this??
 
@@ -158,6 +158,7 @@ namespace _LetsQuiz
 			scoreDisplay.text = _playerController.userScore.ToString ();
 			clicked = false;
 			RemoveAnswerButtons ();
+			_playerController.AddToTotalQuestionsAnswered();
 
 			QuestionData currentQuestionData = null;
 
@@ -226,6 +227,7 @@ namespace _LetsQuiz
 
                 if (answerButton.isCorrect(currentQuestionData.answers[n]))
                 {
+                	_playerController.AddToNumberCorrectAnswers();
                     _correctAnswerButton = answerButton;
                     _isCorrect = true;
                     _correctAnswerData = currentQuestionData.answers[n];
@@ -313,7 +315,7 @@ namespace _LetsQuiz
 
 
 			SubmitToOngoingGamesDB ();
-           
+			/* //TODO do we need this?
 			if (_playerController.userScore > _playerController.GetHighestScore ()) 
 			{
 				Debug.Log ("GameController : EndRound(): New High Score");
@@ -326,7 +328,7 @@ namespace _LetsQuiz
 					_submitScore.SubmitScores (_playerController.GetUsername (), _playerController.GetHighestScore ());
 				}
 			} 
-			else 
+			else */
 			{
 				Debug.Log ("GameController : EndRound(): No Score Change");
 				_playerController.scoreStatus = "no change";
