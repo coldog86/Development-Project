@@ -20,6 +20,7 @@
 		public static string SubmitRound4Data = "submitRound4Data.php";
 		public static string SubmitRound5Data = "submitRound5Data.php";
 		public static string SubmitRound6Data = "submitRound6Data.php";
+		public static string GetQuestionSubmissionStuff = "GetQuestionSubmissionData.php";
 
 
     }

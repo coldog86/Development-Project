@@ -68,6 +68,8 @@ namespace _LetsQuiz
             _highscoreDownload = FindObjectOfType<GetHighScores>();
             StartCoroutine(_highscoreDownload.PullAllHighScoresFromServer());
 
+			//add in for the Submitted Questions Highscore table. 
+
             _questionController = GetComponent<QuestionController>();
             _questionController.Load();
 

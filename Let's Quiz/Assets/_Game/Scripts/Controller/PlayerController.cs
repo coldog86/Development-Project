@@ -33,6 +33,7 @@ namespace _LetsQuiz
         [SerializeField]
         private string _questionData = "";
         private string _highScoreData = "";
+		private QuestAndSub[] _questandSub;
 
         private DataController _dataController;
 
@@ -469,6 +470,18 @@ namespace _LetsQuiz
             return _highScoreData;
         }
 
+		//set questandSub
+		public void SetQuestandSubData(QuestAndSub[] questandSub) {
+
+			_questandSub = questandSub;
+		}
+
+		//get questandSub
+		public QuestAndSub[] GetQuestandSubData() {
+
+			return _questandSub;
+		}
+			
 
         #endregion
 

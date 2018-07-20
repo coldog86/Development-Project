@@ -15,6 +15,7 @@ namespace _LetsQuiz
         public Transform highScorerParent;
         private HighscoreController _highScoreController;
         private string highScoreData;
+		private QuestAndSub[] _questandSub;
 
         private PlayerController _playerController;
         private DataController _dataController;
@@ -41,9 +42,12 @@ namespace _LetsQuiz
             _highScoreController.Load();
             allHighScores = _highScoreController.extractHighScores();
 
-            Debug.Log(allHighScores.allHighScorers.Length);
-
             ShowHighScorers(allHighScores);
+
+			//get the QuestandSub highscorers
+			_questandSub = _playerController.GetQuestandSubData();
+			Debug.Log (_questandSub);
+
         }
 
         #endregion
