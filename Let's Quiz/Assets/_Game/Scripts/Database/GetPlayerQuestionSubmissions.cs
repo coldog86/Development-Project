@@ -71,6 +71,7 @@ namespace _LetsQuiz
 			json = "{\"dataForQuestAndSub\":" + json + "}"; //you have to do this because you cannot serialize directly into an array, you need an object that holds the array
 			qsc = JsonUtility.FromJson<QuestAndSubContainer> (json);//now we have an object that holds our array of questAndSub objects
 			QuestAndSub[] _questAndSub = qsc.dataForQuestAndSub; //fuck off the container and there is your array of stuff
+			_playerController.SetQuestandSubData(_questAndSub);
 
 		}
 
