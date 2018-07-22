@@ -46,7 +46,7 @@ namespace _LetsQuiz
 
 			//get the QuestandSub highscorers
 			_questandSub = _playerController.GetQuestandSubData();
-			Debug.Log (_questandSub);
+			ShowQuestionHighScorers (_questandSub);
 
         }
 
@@ -86,9 +86,25 @@ namespace _LetsQuiz
             }
         }
 
+
+		//show/sort  Player Questions by rating
+		private void ShowQuestionHighScorers(QuestAndSub[] unsortedQuestions) {
+
+			QuestAndSub[] sortedQuestionsByRating = unsortedQuestions.OrderBy(c => c.getRating()).ToArray();
+
+			Debug.Log("Rating " + sortedQuestionsByRating[20].Rating);
+
+		}
+
+
+
         #endregion
 
-        #region navigatin specific
+
+
+
+
+        #region navigation specific
 
         public void BackToMenu()
         {

@@ -372,6 +372,7 @@ GameObject:
   - component: {fileID: 1511502305}
   - component: {fileID: 1511502300}
   - component: {fileID: 1511502306}
+  - component: {fileID: 1511502307}
   m_Layer: 0
   m_Name: DataController
   m_TagString: Untagged
@@ -457,8 +458,8 @@ MonoBehaviour:
     questionsSubmitted: questions
     numQuestionsSubmitted: 0
     numGamesPlayed: 0
-    highestScore: 0
-    numCorrectAnswers: 0
+    totalPointsScore: 0
+    TotalCorrectAnswers: 0
     totalQuestionsAnswered: 0
   _type: 0
   _questionData: 
@@ -493,6 +494,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2d619429d3f75343a0c9fa49f60896b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1511502307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1511502297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3979ca403e5b3a47805621529c33674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1661182033

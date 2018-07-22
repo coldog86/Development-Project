@@ -22,14 +22,15 @@ namespace _LetsQuiz
 		{
 			_dataController = FindObjectOfType<DataController>();
 			_playerController = FindObjectOfType<PlayerController>();
-			StartCoroutine (PullQuesionSubmitters ());
+			//StartCoroutine (PullQuesionSubmitters ());
+			Debug.Log ("Player Submissions Stuff Load()");
 		}
 
 		#endregion
 
 		#region download specific
 
-		public IEnumerator PullQuesionSubmitters()
+		public IEnumerator PullQuestionSubmitters()
 		{
 			WWW download = new WWW(ServerHelper.Host + ServerHelper.GetQuestionSubmissionStuff);
 			while (!download.isDone)

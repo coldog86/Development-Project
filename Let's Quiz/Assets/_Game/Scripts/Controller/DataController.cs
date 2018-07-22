@@ -12,7 +12,7 @@ namespace _LetsQuiz
         [Header("Components")]
         private GetAllQuestions _questionDownload;
         private GetHighScores _highscoreDownload;
-		public GetPlayerQuestionSubmissions _questandSub;
+		private GetPlayerQuestionSubmissions _questandSub;
         private PlayerController _playerController;
         private SettingsController _settingsController;
         private QuestionController _questionController;
@@ -70,8 +70,8 @@ namespace _LetsQuiz
             StartCoroutine(_highscoreDownload.PullAllHighScoresFromServer());
 
 			//add in for the Submitted Questions Highscore table. 
-			_questandSub = FindObjectOfType<GetPlayerQuestionSubmissions>();
-			StartCoroutine (_questandSub.PullQuesionSubmitters ());
+			_questandSub = GetComponent<GetPlayerQuestionSubmissions>();
+			//StartCoroutine (_questandSub.PullQuestionSubmitters ());
 
             _questionController = GetComponent<QuestionController>();
             _questionController.Load();
