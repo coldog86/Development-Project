@@ -9,19 +9,28 @@ namespace _LetsQuiz
     {
         #region variables
 
-        [Header("High Scorers")]
+        [Header("Playe High Scorers")]
         private HighScoresContainer allHighScores;
         public SimpleObjectPool highScorerObjectPool;
         public Transform highScorerParent;
         private HighscoreController _highScoreController;
         private string highScoreData;
-		private QuestAndSub[] _questandSub;
 
         private PlayerController _playerController;
         private DataController _dataController;
         private FeedbackClick _click;
 
+		[Header("Question High Scorers")]
+		private QuestAndSub[] _questandSub;
+		public SimpleObjectPool questionHighscoreObjectPool;
+		public Transform questionHighscoreParent;
+
+
+		//gameobject for overall highscore
         private List<GameObject> highScorerGameObjects = new List<GameObject>();
+
+		//gameobject for submitted questions
+		private List<GameObject> questionHighscoreObjects = new List<GameObject>();
 
         #endregion
 
@@ -76,7 +85,7 @@ namespace _LetsQuiz
             }
         }
 
-        //removes all LeaderboardEntry Objects from the scene
+        //removes all Player Highscore LeaderboardEntry Objects from the scene
         void RemoveHighScorers()
         {
             while (highScorerGameObjects.Count > 0)
@@ -92,10 +101,34 @@ namespace _LetsQuiz
 
 			QuestAndSub[] sortedQuestionsByRating = unsortedQuestions.OrderBy(c => c.getRating()).ToArray();
 
-			Debug.Log("Rating " + sortedQuestionsByRating[20].Rating);
+			//for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items. 
+			for (int i = sortedQuestionsByRating.Length - 1; i > sortedQuestionsByRating.Length - 11; i--)
+			{
+				GameObject questionHighScoreObject = questionHighscoreObjectPool.GetObject(); //create new GameObejct
+				QuestAndSub currentQuestionHighscore = sortedQuestionsByRating[i]; 						//get current highscorer
+
+				questionHighscoreObjects.Add(questionHighScoreObject);  
+				questionHighScoreObject.transform.SetParent(questionHighscoreParent);
+				LeaderboardEntry leaderBoardEntry = questionHighScoreObject.GetComponent<LeaderboardEntry>();   
+
+				leaderBoardEntry.SetUp(currentQuestionHighscore.Catagory, currentQuestionHighscore.Rating.ToString()); //pass in the data of current HighScorer
+			}
+
+
+
 
 		}
 
+
+		//removes all Question Highscore Obejcts from the scene
+		void RemoveQuestionHighscores() {
+
+			while (questionHighscoreObjects.Count > 0) {
+
+				questionHighscoreObjectPool.ReturnObject (questionHighscoreObjects [0]);
+				questionHighscoreObjects.RemoveAt (0);
+			}
+		}
 
 
         #endregion
