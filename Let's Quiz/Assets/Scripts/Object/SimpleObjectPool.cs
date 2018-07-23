@@ -1,54 +1,77 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-// Identifies the pool that a GameObject came from
-public class PooledObject : MonoBehaviour
+namespace _LetsQuiz
 {
-    public SimpleObjectPool objectPool;
-}
-
-// Simple object pooling class
-public class SimpleObjectPool : MonoBehaviour
-{
-    [Header("Component")]
-    public GameObject answerButtonPrefab;
-
-    private Stack<GameObject> _inactivePrefabInstances = new Stack<GameObject>();
-
-    // Retrieve an instance of the prefab from the pool
-    public GameObject GetObject()
+    #region pooled object class
+    // Identifies the pool that a GameObject came from
+    public class PooledObject : MonoBehaviour
     {
-        GameObject spawnedGameObject = null;
-
-        if (_inactivePrefabInstances.Count > 0)
-            spawnedGameObject = _inactivePrefabInstances.Pop();
-        else
-        {
-            spawnedGameObject = Instantiate(answerButtonPrefab);
-
-            var pooledObject = spawnedGameObject.AddComponent<PooledObject>();
-            pooledObject.objectPool = this;
-        }
-
-        spawnedGameObject.SetActive(true);
-
-        return spawnedGameObject;
+        public SimpleObjectPool objectPool;
     }
 
-    // Return an instance of the prefab to the pool
-    public void ReturnObject(GameObject gameObjectToReturn)
-    {
-        var pooledObject = gameObjectToReturn.GetComponent<PooledObject>();
+    #endregion
 
-        if (pooledObject && pooledObject.objectPool == this)
+    // Simple object pooling class
+    public class SimpleObjectPool : MonoBehaviour
+    {
+        #region variables
+
+        [Header("Component")]
+        public GameObject prefab;
+
+        private Stack<GameObject> _inactivePrefabInstances = new Stack<GameObject>();
+
+        #endregion
+
+        #region methods
+
+        #region get object
+
+        // Retrieve an instance of the prefab from the pool
+        public GameObject GetObject()
         {
-            gameObjectToReturn.SetActive(false);
-            _inactivePrefabInstances.Push(gameObjectToReturn);
+            GameObject spawnedGameObject = null;
+
+            if (_inactivePrefabInstances.Count > 0)
+                spawnedGameObject = _inactivePrefabInstances.Pop();
+            else
+            {
+                spawnedGameObject = Instantiate(prefab);
+
+                var pooledObject = spawnedGameObject.AddComponent<PooledObject>();
+                pooledObject.objectPool = this;
+            }
+
+            spawnedGameObject.SetActive(true);
+
+            return spawnedGameObject;
         }
-        else
+
+        #endregion
+
+        #region return object
+
+        // Return an instance of the prefab to the pool
+        public void ReturnObject(GameObject gameObjectToReturn)
         {
-            Debug.LogWarning(gameObjectToReturn.name + " was returned to a pool.");
-            Destroy(gameObjectToReturn);
+            var pooledObject = gameObjectToReturn.GetComponent<PooledObject>();
+
+            if (pooledObject && pooledObject.objectPool == this)
+            {
+                gameObjectToReturn.SetActive(false);
+                _inactivePrefabInstances.Push(gameObjectToReturn);
+            }
+            else
+            {
+                Debug.LogWarning(gameObjectToReturn.name + " was returned to a pool.");
+                Destroy(gameObjectToReturn);
+            }
         }
+
+        #endregion
+
+        #endregion
     }
 }
+

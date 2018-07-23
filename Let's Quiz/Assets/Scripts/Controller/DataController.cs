@@ -1,80 +1,219 @@
 ﻿using System;
 using System.Collections;
-using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DataController : MonoBehaviour
+namespace _LetsQuiz
 {
-    [Header("Component")]
-    public RoundData[] allRoundData;
-    
-    [Header("Setting")]
-    public int menuSceneIndex = 1;
-    public string highestScoreKey = "HighestScore";
-
-    public string scoreKey { get { return highestScoreKey; } }
-
-    private PlayerProgress _playerProgress;
-    private string _gameDataFileName = "data.json";
-
-    private void Start()
+    public class DataController : MonoBehaviour
     {
-        DontDestroyOnLoad(gameObject);
-        LoadGameData();
-        LoadPlayerProgress();
-        SceneManager.LoadScene(menuSceneIndex, LoadSceneMode.Single);
-    }
+        #region variables
 
-    public RoundData GetCurrentRoundData()
-    {
-        return allRoundData[0];
-    }
+        [Header("Components")]
+        private GetAllQuestions _questionDownload;
+        private GetHighScores _highscoreDownload;
+		private GetPlayerQuestionSubmissions _questandSub;
+        private PlayerController _playerController;
+        private SettingsController _settingsController;
+        private QuestionController _questionController;
+        private HighscoreController _highScoreController;
 
-    private void LoadGameData()
-    {
-        string filePath = Path.Combine(Application.streamingAssetsPath, _gameDataFileName);
+        [Header("Player")]
+        private Player _player;
+        private string _playerString = "";
 
-        if (File.Exists(filePath))
+        [Header("Connection")]
+        private const float _connectionTimeLimit = 1000000.0f;
+        private float _connectionTimer = 0.0f;
+
+        [Header("Validation Tests")]
+        private string _username = "u";
+        private string _password = "p";
+        private int _status = -2;
+
+
+        public OngoingGamesData ongoingGameData {get; set;}
+        public int turnNumber {get; set;}
+        public int gameNumber { get; set; }
+
+        #endregion
+
+        #region properties
+
+        public bool serverConnected { get; set; }
+
+        public string allQuestionJSON { get; set; }
+
+        public string allHighScoreJSON { get; set; }
+
+        #endregion
+
+        #region methods
+
+        #region unity
+
+        private void Start()
         {
-            string jsonData = File.ReadAllText(filePath);
-            GameData loadedData = JsonUtility.FromJson<GameData>(jsonData);
+			//PlayerPrefs.DeleteKey("col"); PlayerPrefs.DeleteKey("col2"); 
+            DontDestroyOnLoad(gameObject);
+			turnNumber = 0;
+            _settingsController = GetComponent<SettingsController>();
+            _settingsController.Load();
 
-            if (loadedData != null)
-                allRoundData = loadedData.allRoundData;
+            _playerController = GetComponent<PlayerController>();
+            _playerController.Load();
+
+            _questionDownload = FindObjectOfType<GetAllQuestions>();
+            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+
+            _highscoreDownload = FindObjectOfType<GetHighScores>();
+            StartCoroutine(_highscoreDownload.PullAllHighScoresFromServer());
+
+			//add in for the Submitted Questions Highscore table. 
+			_questandSub = GetComponent<GetPlayerQuestionSubmissions>();
+			//StartCoroutine (_questandSub.PullQuestionSubmitters ());
+
+            _questionController = GetComponent<QuestionController>();
+            _questionController.Load();
+
+            _highScoreController = GetComponent<HighscoreController>();
+            _highScoreController.Load();
+
+
+
+            // retrive player username and password from PlayerPrefs if they have an id
+            if (PlayerPrefs.HasKey(_playerController.idKey)) 
+			{//TODO is any of these ever used?
+                _status = _playerController.GetPlayerType();
+                _username = _playerController.GetUsername();
+                _password = _playerController.GetPassword();
+            }
+			
+
+
+        }
+
+        #endregion
+
+        #region server specific
+       
+        public void Init()
+        {
+            if (serverConnected)
+            {
+                // check if username and password are stored in PlayerPrefs
+                // if it is login, otherwise load login scene
+                if (_username != "u" && _password != "p" && (_status == PlayerStatus.LoggedIn || _status == PlayerStatus.Guest))
+                    StartCoroutine(Login(_username, _password));
+                else
+                    SceneManager.LoadScene(BuildIndex.Login);
+            }
+            // prompt user if they wish to retry
             else
-                Debug.LogError("DataContoller : LoadGameData() - Could not find data to load.");
-               
+                DisplayErrorModal("Error connecting to the server.");
         }
-        else
-            Debug.LogError("DataContoller : LoadGameData() - Could not find data file.");
 
-    }
+        private IEnumerator Login (string username, string password)
+		{
+			WWWForm form = new WWWForm ();
 
-    public void SetPlayerHighestScore(int score)
-    {
-        if (score > _playerProgress.highestScore)
+			form.AddField ("usernamePost", username);
+			form.AddField ("passwordPost", password);
+
+			WWW loginRequest = new WWW (ServerHelper.Host + ServerHelper.Login, form);
+
+			while (!loginRequest.isDone) {
+				_connectionTimer += Time.deltaTime;
+
+				if (_connectionTimer > _connectionTimeLimit) {
+					FeedbackAlert.Show ("Server time out.");
+					Debug.LogError ("DataController : Login() : " + loginRequest.error);
+					yield return null;
+				}
+
+				// extra check just to ensure a stream error doesn't come up
+				if (_connectionTimer > _connectionTimeLimit || loginRequest.error != null) {
+					FeedbackAlert.Show ("Server error.");
+					Debug.LogError ("DataController : Login() : " + loginRequest.error);
+					yield return null;
+				}    
+			}
+
+			if (loginRequest.error != null) {
+				FeedbackAlert.Show ("Connection error. Please try again.");
+				Debug.Log ("DataController : Login() : " + loginRequest.error);
+				yield return null;
+			}
+
+			if (loginRequest.isDone) {
+				// check that the login request returned something
+				if (!String.IsNullOrEmpty (loginRequest.text)) {
+					_playerString = loginRequest.text;
+					Debug.Log (_playerString);
+					_player = new Player();  //TODO Chanes can you look at the whole player and playercontroller and get rid of what we don't need please?
+					_player = JsonUtility.FromJson<Player>(_playerString);
+					Debug.Log(_player.ID);
+
+					// if the retrieved login text doesn't have "ID" load login scene
+					if (!_playerString.Contains ("ID")) {
+						SceneManager.LoadScene (BuildIndex.Login);
+						yield return null;
+					}
+                    // otherwise save the player information to PlayerPrefs and load menu scene
+                    else {
+						_player = PlayerJsonHelper.LoadPlayerFromServer (_playerString);
+						
+
+						if (_player != null) {
+							_playerController.Save (_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted, 
+								_player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore, 
+								_player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
+
+							FeedbackAlert.Show ("Welcome back " + _username);
+
+
+						}
+                        SceneManager.LoadScene(BuildIndex.Menu);
+                        yield return loginRequest;
+                    }
+                }
+            }
+        }
+
+        private void RetryPullData()
         {
-            _playerProgress.highestScore = score;
-            SavePlayerProgress();
+            Debug.Log("DataController : RetryPullData()");
+            FeedbackAlert.Show("Retrying connection...", 1.0f);
+            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
         }
-    }
 
-    public int GetPlayerHighestScore()
-    {
-        return _playerProgress.highestScore;
-    }
+        #endregion
 
-    private void LoadPlayerProgress()
-    {
-        _playerProgress = new PlayerProgress();
+        #region feedback specific
 
-        if (PlayerPrefs.HasKey(highestScoreKey))
-            _playerProgress.highestScore = PlayerPrefs.GetInt(highestScoreKey);
-    }
+        // positive action - retry question download
+        // negative action - quit application
+        private void DisplayErrorModal(string message)
+        {
+            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Application.Quit);
+        }
 
-    private void SavePlayerProgress()
-    {
-        PlayerPrefs.SetInt(highestScoreKey, _playerProgress.highestScore);
+		public int getOverAllScore()
+		{
+			if(_playerController.userScore > ongoingGameData.playerScore)
+				ongoingGameData.overAllScore =-1; //opponent won the round
+			if(_playerController.userScore < ongoingGameData.playerScore)
+				ongoingGameData.overAllScore =+1; //player won the round
+
+			return ongoingGameData.overAllScore;
+		}
+
+
+        #endregion
+
+        #endregion
+
+		
+
     }
 }
