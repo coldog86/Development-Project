@@ -1025,7 +1025,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11bff68253741604783a3f3554bc261f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameButton: {fileID: 1685414565078202, guid: c20370cb1b808b44dbb310aa5216fe20, type: 2}
+  gameButton: {fileID: 1991676904502388, guid: cc9f7e0471529df4ebb2c77f516ccf6c, type: 2}
   buttonContainer: {fileID: 1661582292}
 --- !u!1 &1661582291
 GameObject:
@@ -1039,7 +1039,7 @@ GameObject:
   - component: {fileID: 1661582293}
   - component: {fileID: 1661582295}
   m_Layer: 5
-  m_Name: OnGoingGamePanel
+  m_Name: GameButton Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1112,7 +1112,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 1
+  m_ChildAlignment: 0
   m_Spacing: 25
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
