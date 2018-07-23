@@ -338,13 +338,13 @@ namespace _LetsQuiz
         // set the player highest score value
         public void SetHighestScore(int score)
         {
-            Debug.LogError("not set");
+			_player.HighestScore = score;
         }
 
         // get the player number questions submitted value
-		/* public int GetHighestScore()
+		public int GetHighestScore()
         {
-            return _player.highestScore;
+			return _player.HighestScore;
         }
 	
 	
@@ -352,10 +352,10 @@ namespace _LetsQuiz
         // save the player number questions submitted value in playerprefs
         private void SaveHighestScore()
         {
-            PlayerPrefs.SetInt(_highestScoreKey, _player.highestScore);
+			PlayerPrefs.SetInt(_highestScoreKey, _player.HighestScore);
             PlayerPrefs.Save();
         }
-        */
+        
         #endregion
 
         #region number correct answers
@@ -496,7 +496,7 @@ namespace _LetsQuiz
             SetQuestionsSubmitted(questionsSubmitted);
             SetNumberQuestionsSubmitted(numQuestionsSubmitted);
             SetGamesPlayed(numGamesPlayed);
-            SetHighestScore(highestScore);
+            //SetHighestScore(highestScore);
             //SetNumberCorrectAnswers(numCorrectAnswers);
             SetTotalQuestionsAnswered(totalQuestionsAnswered);
         }
@@ -537,8 +537,7 @@ namespace _LetsQuiz
             SetQuestionsSubmitted(p.questionsSubmitted);
             SetNumberQuestionsSubmitted(p.numQuestionsSubmitted);
             SetGamesPlayed(p.numGamesPlayed);
-            //SetHighestScore();
-            //SetNumberCorrectAnswers(numCorrectAnswers);
+			SetHighestScore(p.HighestScore);
 			SetTotalQuestionsAnswered(p.totalQuestionsAnswered);
 			setTotalPointsScored(p.totalPointsScore);
 			setTotalCorrectAnswers(p.TotalCorrectAnswers);
