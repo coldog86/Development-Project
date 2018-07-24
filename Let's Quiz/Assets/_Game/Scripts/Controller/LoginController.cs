@@ -28,7 +28,7 @@ namespace _LetsQuiz
         public InputField existingUsernameInput;
         public InputField existingPasswordInput;
         public GameObject loginButton;
-       
+
         [Header("Register")]
         public InputField newUsernameInput;
         public InputField newEmailInput;
@@ -39,6 +39,7 @@ namespace _LetsQuiz
         [Header("Connection")]
         [SerializeField]
         private const float _connectionTimeLimit = 10000.0f;
+
         [SerializeField]
         private float _connectionTimer = 0.0f;
 
@@ -51,7 +52,7 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private SettingsController _settingsController;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -83,7 +84,7 @@ namespace _LetsQuiz
             _click = FindObjectOfType<FeedbackClick>();
         }
 
-        #endregion
+        #endregion unity
 
         #region register specific
 
@@ -99,26 +100,26 @@ namespace _LetsQuiz
 
             if (string.IsNullOrEmpty(username))
                 FeedbackAlert.Show("Username cannont be empty.");
-            
+
             if (string.IsNullOrEmpty(email))
                 FeedbackAlert.Show("Email cannont be empty.");
-            
+
             if (string.IsNullOrEmpty(password))
                 FeedbackAlert.Show("Password cannont be empty.");
-            
+
             if (string.IsNullOrEmpty(confirmPassword))
                 FeedbackAlert.Show("Confirm password cannont be empty.");
-            
+
             if (!string.IsNullOrEmpty(confirmPassword) && !string.IsNullOrEmpty(password) && (confirmPassword != password))
                 FeedbackAlert.Show("Passwords don't match. Please try again");
-            
+
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(confirmPassword) && confirmPassword == password)
             {
                 if (ValidRegister(username, email, password))
                 {
                     _playerController.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
-                }      
+                }
             }
         }
 
@@ -132,32 +133,37 @@ namespace _LetsQuiz
 
             WWW registerRequest = new WWW(ServerHelper.Host + ServerHelper.Register, form);
 
-            while (!registerRequest.isDone)
-            { 
-                _connectionTimer += Time.deltaTime;
+            _connectionTimer += Time.deltaTime;
 
+            while (!registerRequest.isDone)
+            {
                 FeedbackAlert.Show("Attempting to create your account.");
 
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("LoginController : ValidRegister() : " + registerRequest.error);
+                    Debug.LogError("[LoginController] ValidRegister() : " + registerRequest.error);
                     return false;
                 }
-
+                else if (registerRequest.error != null)
+                {
+                    FeedbackAlert.Show("Connection error. Please try again.");
+                    Debug.Log("[LoginController] ValidRegister() : " + registerRequest.error);
+                    return false;
+                }
                 // extra check just to ensure a stream error doesn't come up
-                if (_connectionTimer > _connectionTimeLimit || registerRequest.error != null)
+                else if (_connectionTimer > _connectionTimeLimit && registerRequest.error != null)
                 {
                     FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("LoginController : ValidRegister() : " + registerRequest.error);
+                    Debug.LogError("[LoginController] ValidRegister() : " + registerRequest.error);
                     return false;
                 }
             }
 
-            if (registerRequest.error != null)
+            if (registerRequest.isDone && registerRequest.error != null)
             {
                 FeedbackAlert.Show("Connection error. Please try again.");
-                Debug.Log("LoginController : ValidRegister() : " + registerRequest.error);
+                Debug.Log("[LoginController] ValidRegister() : " + registerRequest.error);
                 return false;
             }
 
@@ -181,9 +187,9 @@ namespace _LetsQuiz
                         _player = PlayerJsonHelper.LoadPlayerFromServer(_playerString);
 
                         if (_player != null)
-                            _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted, 
-								_player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore, 
-								_player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
+                            _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
+                                _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
+                                _player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
                         FeedbackAlert.Show("Welcome " + username + "!");
                         return true;
@@ -193,7 +199,7 @@ namespace _LetsQuiz
             return false;
         }
 
-        #endregion
+        #endregion register specific
 
         #region skip
 
@@ -215,10 +221,10 @@ namespace _LetsQuiz
             {
                 _playerController.SetPlayerType(PlayerStatus.Guest);
                 LoadMenu();
-            } 
+            }
         }
 
-        #endregion
+        #endregion skip
 
         #region login specific
 
@@ -253,32 +259,38 @@ namespace _LetsQuiz
             form.AddField("passwordPost", password);
 
             WWW loginRequest = new WWW(ServerHelper.Host + ServerHelper.Login, form);
-          
+
+            _connectionTimer += Time.deltaTime;
+
             while (!loginRequest.isDone)
             {
                 FeedbackAlert.Show("Validating to credentials...");
-                _connectionTimer += Time.deltaTime;
 
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("LoginController : ValidLogin() : " + loginRequest.error);
+                    Debug.LogError("[LoginController] ValidLogin() : " + loginRequest.text);
                     return false;
                 }
-
+                else if (loginRequest.error != null)
+                {
+                    FeedbackAlert.Show("Connection error. Please try again.");
+                    Debug.Log("[LoginController] ValidLogin() : " + loginRequest.text);
+                    return false;
+                }
                 // extra check just to ensure a stream error doesn't come up
-                if (_connectionTimer > _connectionTimeLimit || loginRequest.error != null)
+                else if (_connectionTimer > _connectionTimeLimit && loginRequest.error != null)
                 {
                     FeedbackAlert.Show("Server error.");
-                    Debug.LogError("LoginController : ValidLogin() : " + loginRequest.error);
+                    Debug.LogError("[LoginController] ValidLogin() : " + loginRequest.text);
                     return false;
-                }    
+                }
             }
 
-            if (loginRequest.error != null)
+            if (loginRequest.isDone && loginRequest.error != null)
             {
                 FeedbackAlert.Show("Connection error. Please try again.");
-                Debug.Log("LoginController : ValidLogin() : " + loginRequest.error);
+                Debug.LogError("[LoginController] Login() : Server error " + loginRequest.error);
                 return false;
             }
 
@@ -288,7 +300,7 @@ namespace _LetsQuiz
                 if (!String.IsNullOrEmpty(loginRequest.text))
                 {
                     _playerString = loginRequest.text;
-                    Debug.Log(_playerString);
+                    Debug.Log("[LoginController] ValidLogin() : " + _playerString);
 
                     // if the retrieved login text doesn't have "ID" load login scene
                     if (!_playerString.Contains("ID"))
@@ -302,9 +314,9 @@ namespace _LetsQuiz
                         _player = PlayerJsonHelper.LoadPlayerFromServer(_playerString);
 
                         if (_player != null)
-                            _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted, 
-								_player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore, 
-								_player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
+                            _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
+                                _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
+                                _player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
                         FeedbackAlert.Show("Welcome back " + username + "!");
                         return true;
@@ -314,7 +326,7 @@ namespace _LetsQuiz
             return false;
         }
 
-        #endregion
+        #endregion login specific
 
         #region social media specific
 
@@ -332,7 +344,7 @@ namespace _LetsQuiz
             FeedbackAlert.Show("Not implemented yet.");
         }
 
-        #endregion
+        #endregion social media specific
 
         #region navigation specific
 
@@ -375,9 +387,8 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
-        #endregion
+        #endregion navigation specific
 
-        #endregion
+        #endregion methods
     }
 }
-

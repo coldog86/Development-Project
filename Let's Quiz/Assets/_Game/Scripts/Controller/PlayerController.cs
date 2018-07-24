@@ -19,7 +19,7 @@ namespace _LetsQuiz
         private const string _numberCorrectAnswersKey = "PlayerNumberCorrectAnswers";
         private const string _totalQuestionsAnsweredKey = "PlayerTotalQuestionsAnswered";
         private const string _questionDataKey = "PlayerQuestionData";
-		private const string _ongoingGamesKey = "OngoingGamesKey";
+        private const string _ongoingGamesKey = "OngoingGamesKey";
 
         [Header("Player Details")]
         [SerializeField]
@@ -33,14 +33,15 @@ namespace _LetsQuiz
         [SerializeField]
         private string _questionData = "";
         private string _highScoreData = "";
-		private QuestAndSub[] _questandSub;
+        private QuestAndSub[] _questandSub;
 
         private DataController _dataController;
 
-        #endregion
+        #endregion variables
 
         #region properties
-		public string ongoingGamesKey { get { return _ongoingGamesKey; } }
+
+        public string ongoingGamesKey { get { return _ongoingGamesKey; } }
 
         public string typeKey { get { return _typeKey; } }
 
@@ -74,14 +75,13 @@ namespace _LetsQuiz
 
         public string scoreStatus { get; set; }
 
-        #endregion
-
+        #endregion properties
 
         #region id
 
-        void Start()
+        private void Start()
         {
-			_dataController = FindObjectOfType<DataController>();
+            _dataController = FindObjectOfType<DataController>();
         }
 
         // set the player id value
@@ -107,7 +107,7 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion id
 
         #region status
 
@@ -134,7 +134,7 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion status
 
         #region username
 
@@ -161,7 +161,7 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion username
 
         #region email
 
@@ -188,7 +188,7 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion email
 
         #region password
 
@@ -215,7 +215,7 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion password
 
         #region dob
 
@@ -242,7 +242,7 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion dob
 
         #region questions submitted
 
@@ -269,7 +269,7 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion questions submitted
 
         #region number questions submitted
 
@@ -296,7 +296,7 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion number questions submitted
 
         #region number games played
 
@@ -305,16 +305,15 @@ namespace _LetsQuiz
         {
             if (gamesPlayed != _player.numGamesPlayed)
             {
-				SaveGamesPlayed(gamesPlayed);
+                SaveGamesPlayed(gamesPlayed);
             }
         }
 
-		public void AddToGamesPlayed()
+        public void AddToGamesPlayed()
         {
-			_player.numGamesPlayed =_player.numGamesPlayed++;
-			Debug.Log("games played: " + _player.numGamesPlayed);
-			SaveGamesPlayed(_player.numGamesPlayed);
-
+            _player.numGamesPlayed = _player.numGamesPlayed++;
+            Debug.Log("games played: " + _player.numGamesPlayed);
+            SaveGamesPlayed(_player.numGamesPlayed);
         }
 
         // get the player games played value
@@ -326,43 +325,41 @@ namespace _LetsQuiz
         // save the player games played value in playerprefs
         private void SaveGamesPlayed(int num)
         {
-			_player.numGamesPlayed = num;
+            _player.numGamesPlayed = num;
             PlayerPrefs.SetInt(_numberGamesPlayedKey, _player.numGamesPlayed);
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion number games played
 
         #region highest score
 
         // set the player highest score value
         public void SetHighestScore(int score)
         {
-			_player.HighestScore = score;
+            _player.HighestScore = score;
         }
 
         // get the player number questions submitted value
-		public int GetHighestScore()
+        public int GetHighestScore()
         {
-			return _player.HighestScore;
+            return _player.HighestScore;
         }
-	
-	
 
         // save the player number questions submitted value in playerprefs
         private void SaveHighestScore()
         {
-			PlayerPrefs.SetInt(_highestScoreKey, _player.HighestScore);
+            PlayerPrefs.SetInt(_highestScoreKey, _player.HighestScore);
             PlayerPrefs.Save();
         }
-        
-        #endregion
+
+        #endregion highest score
 
         #region number correct answers
 
         // set the player correct answers value
 
-		/* 
+        /*
 		public void SetNumberCorrectAnswers(int answers)
         {
             if (answers > _player.numCorrectAnswers)
@@ -372,28 +369,28 @@ namespace _LetsQuiz
             }
         }
 */
-		public void AddToNumberCorrectAnswers()
+
+        public void AddToNumberCorrectAnswers()
         {
-			_player.TotalCorrectAnswers = _player.TotalCorrectAnswers++;
-			SaveNumberCorrectAnswers(_player.TotalCorrectAnswers);
-            
+            _player.TotalCorrectAnswers = _player.TotalCorrectAnswers++;
+            SaveNumberCorrectAnswers(_player.TotalCorrectAnswers);
         }
 
         // get the player correct answers value
         public int GetNumberCorrectAnswers()
         {
-			return _player.TotalCorrectAnswers;
+            return _player.TotalCorrectAnswers;
         }
 
         // save the player correct answers value in playerprefs
         private void SaveNumberCorrectAnswers(int number)
-        {	
-			_player.TotalCorrectAnswers = number;
-			PlayerPrefs.SetInt(_numberCorrectAnswersKey, _player.TotalCorrectAnswers);
+        {
+            _player.TotalCorrectAnswers = number;
+            PlayerPrefs.SetInt(_numberCorrectAnswersKey, _player.TotalCorrectAnswers);
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion number correct answers
 
         #region total questions answered
 
@@ -403,15 +400,14 @@ namespace _LetsQuiz
             if (questionsAnswered > _player.totalQuestionsAnswered)
             {
                 _player.totalQuestionsAnswered = questionsAnswered;
-				SaveTotalQuestionsAnswered(questionsAnswered);
+                SaveTotalQuestionsAnswered(questionsAnswered);
             }
         }
 
-		public void AddToTotalQuestionsAnswered()
+        public void AddToTotalQuestionsAnswered()
         {
-			_player.totalQuestionsAnswered =_player.totalQuestionsAnswered++;
-			SaveTotalQuestionsAnswered(_player.totalQuestionsAnswered);
-            
+            _player.totalQuestionsAnswered = _player.totalQuestionsAnswered++;
+            SaveTotalQuestionsAnswered(_player.totalQuestionsAnswered);
         }
 
         // get the player number questions answered value
@@ -423,12 +419,12 @@ namespace _LetsQuiz
         // save the player number questions answered value in playerprefs
         private void SaveTotalQuestionsAnswered(int total)
         {
-			_player.totalQuestionsAnswered = total;
+            _player.totalQuestionsAnswered = total;
             PlayerPrefs.SetInt(_totalQuestionsAnsweredKey, _player.totalQuestionsAnswered);
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion total questions answered
 
         #region question data
 
@@ -470,22 +466,21 @@ namespace _LetsQuiz
             return _highScoreData;
         }
 
-		//set questandSub
-		public void SetQuestandSubData(QuestAndSub[] questandSub) {
+        //set questandSub
+        public void SetQuestandSubData(QuestAndSub[] questandSub)
+        {
+            _questandSub = questandSub;
+        }
 
-			_questandSub = questandSub;
-		}
+        //get questandSub
+        public QuestAndSub[] GetQuestandSubData()
+        {
+            return _questandSub;
+        }
 
-		//get questandSub
-		public QuestAndSub[] GetQuestandSubData() {
+        #endregion question data
 
-			return _questandSub;
-		}
-			
-
-        #endregion
-
-        public void Save(int id, string username, string email, string password, string dob, string questionsSubmitted, 
+        public void Save(int id, string username, string email, string password, string dob, string questionsSubmitted,
                          int numQuestionsSubmitted, int numGamesPlayed, int highestScore, int numCorrectAnswers, int totalQuestionsAnswered)
         {
             SetId(id);
@@ -524,12 +519,11 @@ namespace _LetsQuiz
             // load player question data
             if (PlayerPrefs.HasKey(_questionDataKey))
                 _questionData = PlayerPrefs.GetString(_questionDataKey);
-
         }
 
         public void Load(Player p)
         {
-			SetId(p.ID);
+            SetId(p.ID);
             SetUsername(p.username);
             SetEmail(p.email);
             SetPassword(p.password);
@@ -537,24 +531,22 @@ namespace _LetsQuiz
             SetQuestionsSubmitted(p.questionsSubmitted);
             SetNumberQuestionsSubmitted(p.numQuestionsSubmitted);
             SetGamesPlayed(p.numGamesPlayed);
-			SetHighestScore(p.HighestScore);
-			SetTotalQuestionsAnswered(p.totalQuestionsAnswered);
-			setTotalPointsScored(p.totalPointsScore);
-			setTotalCorrectAnswers(p.TotalCorrectAnswers);
-
-
-        }
-		private void setTotalCorrectAnswers(int tot){
-        	_player.TotalCorrectAnswers = tot;
+            SetHighestScore(p.HighestScore);
+            SetTotalQuestionsAnswered(p.totalQuestionsAnswered);
+            setTotalPointsScored(p.totalPointsScore);
+            setTotalCorrectAnswers(p.TotalCorrectAnswers);
         }
 
-        private void setTotalPointsScored(int points){
-        	_player.totalPointsScore = points;
+        private void setTotalCorrectAnswers(int tot)
+        {
+            _player.TotalCorrectAnswers = tot;
+        }
+
+        private void setTotalPointsScored(int points)
+        {
+            _player.totalPointsScore = points;
         }
 
         //method to take raw question data and create local pool of questions inside the playercontroller.
-
     }
-			
 }
-

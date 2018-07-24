@@ -12,7 +12,7 @@ namespace _LetsQuiz
         private DataController _dataController;
         private PlayerController _playerController;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -24,7 +24,7 @@ namespace _LetsQuiz
             _playerController = FindObjectOfType<PlayerController>();
         }
 
-        #endregion
+        #endregion unity
 
         #region download specific
 
@@ -35,7 +35,7 @@ namespace _LetsQuiz
             {
                 if (_downloadTimer < 0)
                 {
-                    Debug.LogError("Server time out.");
+                    Debug.LogError("[GetHighScores] PullAllHighScoresFromServer() : Server time out.");
                     _dataController.serverConnected = false;
                     break;
                 }
@@ -46,17 +46,17 @@ namespace _LetsQuiz
 
             if (!download.isDone || download.error != null)
             {
-                /* if we cannot connect to the server or there is some error in the data, 
+                /* if we cannot connect to the server or there is some error in the data,
                  * check the prefs for previously saved questions */
                 Debug.LogError(download.error);
-                Debug.Log("Failed to hit the server.");
-                _dataController.serverConnected = false;               
+                Debug.Log("[GetHighScores] PullAllHighScoresFromServer() : Failed to hit the server.");
+                _dataController.serverConnected = false;
             }
             else
-            { 
+            {
                 // we got the string from the server, it is every question in JSON format
-                Debug.Log("Vox transmition recieved");
-                Debug.Log(download.text);
+                Debug.Log("[GetHighScores] PullAllHighScoresFromServer() : Vox transmition recieved");
+                //Debug.Log(download.text);
 
                 _dataController.serverConnected = true;
                 _dataController.allHighScoreJSON = download.text;
@@ -66,13 +66,11 @@ namespace _LetsQuiz
 
                 _playerController.SetHighscoreData(download.text);
                 _dataController.Init();
-            } 
+            }
         }
 
-        #endregion
+        #endregion download specific
 
-        #endregion
-
+        #endregion methods
     }
 }
-

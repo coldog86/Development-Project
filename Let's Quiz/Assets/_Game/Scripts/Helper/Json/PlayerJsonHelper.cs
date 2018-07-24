@@ -11,7 +11,6 @@ namespace _LetsQuiz
             return !string.IsNullOrEmpty(playerString) ? JsonUtility.FromJson<Player>(playerString) : null;
         }
 
-        #endregion
+        #endregion methods
     }
 }
-

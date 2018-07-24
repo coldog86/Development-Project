@@ -460,9 +460,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9242969ab3c7f540abb7f880e43c080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sprite1x: {fileID: 21300000, guid: dbff92f1b8a40614d921db111864b240, type: 3}
-  sprite2x: {fileID: 21300000, guid: b339f074cd119c04c993454a904e8e16, type: 3}
-  sprite4x: {fileID: 21300000, guid: 9a020cf439c10d6468a3627ec808f196, type: 3}
+  sprite1x: {fileID: 21300000, guid: f2cb6bf061cd50a4b84822c9625c502f, type: 3}
+  sprite2x: {fileID: 21300000, guid: 74dee18995875a940af265fc217434cb, type: 3}
+  sprite4x: {fileID: 21300000, guid: 0c0dfa92e1c69654a9377919e3643398, type: 3}
 --- !u!114 &114219670186725534
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -559,7 +559,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: dbff92f1b8a40614d921db111864b240, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f2cb6bf061cd50a4b84822c9625c502f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -578,9 +578,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9242969ab3c7f540abb7f880e43c080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sprite1x: {fileID: 21300000, guid: 877ef15367b5cc24697c9f98c68d0460, type: 3}
-  sprite2x: {fileID: 21300000, guid: 94b2f1e927750b545a46c0cfa27c4257, type: 3}
-  sprite4x: {fileID: 21300000, guid: 689c480a9f59cc84488383a79a9c9d1a, type: 3}
+  sprite1x: {fileID: 21300000, guid: d4e92c82c34f7554da34d222dc1716f3, type: 3}
+  sprite2x: {fileID: 21300000, guid: d442516292ec453418f26f77c623a870, type: 3}
+  sprite4x: {fileID: 21300000, guid: 1bb75705f476c504985cce31e3f6ad2b, type: 3}
 --- !u!114 &114283441811040334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1071,7 +1071,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 877ef15367b5cc24697c9f98c68d0460, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d4e92c82c34f7554da34d222dc1716f3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

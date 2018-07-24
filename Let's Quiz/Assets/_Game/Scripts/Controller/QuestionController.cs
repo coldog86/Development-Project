@@ -12,15 +12,15 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private string _questionData;
         private GameData _allQuestions;
-		private List<QuestionData> _AskedQuestions;
+        private List<QuestionData> _AskedQuestions;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
         public void Load()
         {
-            Debug.Log("QuestionController : Load()");
+            Debug.Log("[QuestionController] Load()");
             _playerController = FindObjectOfType<PlayerController>();
             _questionData = _playerController.GetQuestionData();
         }
@@ -31,9 +31,9 @@ namespace _LetsQuiz
             return allQ;
         }
 
-		public RoundData extractQuestionsFromJSON(string json) //TODO Pick up from here. not sure what we need to deserialize this into, probably Round data but there is no name so maybe a new object....
+        public RoundData extractQuestionsFromJSON(string json) //TODO Pick up from here. not sure what we need to deserialize this into, probably Round data but there is no name so maybe a new object....
         {
-			RoundData allQ = JsonUtility.FromJson<RoundData>(json);
+            RoundData allQ = JsonUtility.FromJson<RoundData>(json);
             return allQ;
         }
 
@@ -72,52 +72,49 @@ namespace _LetsQuiz
             for (int i = 0; i < questionPool.Length; i++)
                 poolAsList.Add(questionPool[i]);
 
-            poolAsList.RemoveAt(remove); 
+            poolAsList.RemoveAt(remove);
             questionPool = poolAsList.ToArray();
             return questionPool;
         }
 
         public void addAskedQuestionToAskedQuestions(QuestionData currentQuestion)
         {
-        	try
-        	{
-        		_AskedQuestions.Add(currentQuestion);
-    		}
-    		catch(Exception e)
-    		{
-				_AskedQuestions = new List<QuestionData>();
-				_AskedQuestions.Add(currentQuestion);
-    		}
+            try
+            {
+                _AskedQuestions.Add(currentQuestion);
+            }
+            catch (Exception e)
+            {
+                Debug.Log("[QuestionController] addAskedQuestionToAskedQuestions() Error : " + e.StackTrace);
+
+                _AskedQuestions = new List<QuestionData>
+                {
+                    currentQuestion
+                };
+            }
         }
-
-
 
         public string getAskedQuestions()
         {
-			RoundData _RoundQuestions = new RoundData();
-			_RoundQuestions.name = "question list for opponent"; 
-			_RoundQuestions.questions = _AskedQuestions.ToArray();
-			string askedQuestionsAsJSON = JsonUtility.ToJson(_RoundQuestions);
-			Debug.Log("askedQuestionsJSON = " + askedQuestionsAsJSON);
-			_AskedQuestions = new List<QuestionData>(); //clear the list
-			return askedQuestionsAsJSON;
+            RoundData _RoundQuestions = new RoundData();
+            _RoundQuestions.name = "question list for opponent";
+            _RoundQuestions.questions = _AskedQuestions.ToArray();
+            string askedQuestionsAsJSON = JsonUtility.ToJson(_RoundQuestions);
+            Debug.Log("askedQuestionsJSON = " + askedQuestionsAsJSON);
+            _AskedQuestions = new List<QuestionData>(); //clear the list
+            return askedQuestionsAsJSON;
         }
 
-		public string getRemainingQuestions(QuestionData[] questionPool)
+        public string getRemainingQuestions(QuestionData[] questionPool)
         {
-			RoundData _RemainingQuestions = new RoundData();
-			_RemainingQuestions.name = "remaining questions in catagory, incase opponent answers all the 'askedQuestions' "; 
-			_RemainingQuestions.questions = questionPool;
-			string remainingQuestionsAsJSON = JsonUtility.ToJson(_RemainingQuestions);
-			Debug.Log("_RemainingQuestions = " + remainingQuestionsAsJSON);
-			return remainingQuestionsAsJSON;
+            RoundData _RemainingQuestions = new RoundData();
+            _RemainingQuestions.name = "remaining questions in catagory, incase opponent answers all the 'askedQuestions' ";
+            _RemainingQuestions.questions = questionPool;
+            string remainingQuestionsAsJSON = JsonUtility.ToJson(_RemainingQuestions);
+            Debug.Log("_RemainingQuestions = " + remainingQuestionsAsJSON);
+            return remainingQuestionsAsJSON;
         }
 
-
-
-
-
-
-        #endregion
+        #endregion methods
     }
 }

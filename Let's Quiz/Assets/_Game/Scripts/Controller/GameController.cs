@@ -6,8 +6,6 @@ using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 using System.Collections;
 
-
-
 namespace _LetsQuiz
 {
     public class GameController : MonoBehaviour
@@ -47,9 +45,10 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private SubmitScore _submitScore;
 
-        private float _timeRemaining = 8; //TODO the in game slider does not work until the timer is 20 or less 
+        private float _timeRemaining = 8; //TODO the in game slider does not work until the timer is 20 or less
 
         private bool _isRoundActive;
+
         //private int _questionIndex;
         private FeedbackClick _click;
         private FeedbackMusic _music;
@@ -61,45 +60,44 @@ namespace _LetsQuiz
         private List<GameObject> _answerButtonGameObjects = new List<GameObject>();
         private AnswerButton _userSelection;
 
-		
-        #endregion
+        #endregion variables
 
         #region properties
 
         public bool clicked { get; set; }
 
-        #endregion
+        #endregion properties
 
         #region methods
 
         #region unity
 
-        private void Start ()
-		{
-        	
-			_click = FindObjectOfType<FeedbackClick> ();
-			_music = FindObjectOfType<FeedbackMusic> ();
-			_questionController = FindObjectOfType<QuestionController> ();
-			_playerController = FindObjectOfType<PlayerController> ();
-			_dataController = FindObjectOfType<DataController>();
-			_playerController.AddToGamesPlayed();
-			_playerController.userScore = 0;
-			_questionController.Load (); //TODO what is this??
+        private void Start()
+        {
+            _click = FindObjectOfType<FeedbackClick>();
+            _music = FindObjectOfType<FeedbackMusic>();
+            _questionController = FindObjectOfType<QuestionController>();
+            _playerController = FindObjectOfType<PlayerController>();
+            _dataController = FindObjectOfType<DataController>();
+            _playerController.AddToGamesPlayed();
+            _playerController.userScore = 0;
+            _questionController.Load(); //TODO what is this??
 
-			_questionPool = GetQuestionPool();
+            _questionPool = GetQuestionPool();
 
-
-			if (PlayerPrefs.HasKey(_playerController.GetUsername())){
-				string numbers = PlayerPrefs.GetString(_playerController.GetUsername());
-				numbers = numbers + "," + _dataController.gameNumber;
-				PlayerPrefs.SetString(_playerController.GetUsername(), numbers);
-				Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
-			}
-			else{
-				PlayerPrefs.SetString(_playerController.GetUsername(), _dataController.gameNumber.ToString());
-				Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
-			}
-			ShowQuestion ();
+            if (PlayerPrefs.HasKey(_playerController.GetUsername()))
+            {
+                string numbers = PlayerPrefs.GetString(_playerController.GetUsername());
+                numbers = numbers + "," + _dataController.gameNumber;
+                PlayerPrefs.SetString(_playerController.GetUsername(), numbers);
+                Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
+            }
+            else
+            {
+                PlayerPrefs.SetString(_playerController.GetUsername(), _dataController.gameNumber.ToString());
+                Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
+            }
+            ShowQuestion();
         }
 
         private void Update()
@@ -111,106 +109,109 @@ namespace _LetsQuiz
                 EndRound();
         }
 
-        #endregion
+        #endregion unity
 
-
-        #region questionpool 
+        #region questionpool
 
         private QuestionData[] GetQuestionPool()
         {
-        	if(_dataController.turnNumber == 0)
-        	{
-			//this should not actually happen as CheckForOpenGames() should have set the turn number to at least 1
-			// treat this as a brand new game
-				_questionPool = _questionController.getAllQuestionsAllCatagories (); 
-				return _questionPool;
-        	}
+            if (_dataController.turnNumber == 0)
+            {
+                //this should not actually happen as CheckForOpenGames() should have set the turn number to at least 1
+                // treat this as a brand new game
+                _questionPool = _questionController.getAllQuestionsAllCatagories();
+                return _questionPool;
+            }
 
-			if(_dataController.turnNumber == 1 || _dataController.turnNumber == 3 || _dataController.turnNumber == 5)
-			{
-				//there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
-				_questionPool = _questionController.getAllQuestionsAllCatagories (); 
-				return _questionPool;
-			}
-			if(_dataController.turnNumber == 2 || _dataController.turnNumber == 4 || _dataController.turnNumber == 6)
-			{
-				//there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
-				string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
-				RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
-				_questionPool = rd.questions;
-				return _questionPool;
-			}
-
-
-			else
-			{
-				Debug.Log("something went wrong");
-				_questionPool = _questionController.getAllQuestionsAllCatagories (); 
-				return _questionPool;
-			}
+            if (_dataController.turnNumber == 1 || _dataController.turnNumber == 3 || _dataController.turnNumber == 5)
+            {
+                //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
+                _questionPool = _questionController.getAllQuestionsAllCatagories();
+                return _questionPool;
+            }
+            if (_dataController.turnNumber == 2 || _dataController.turnNumber == 4 || _dataController.turnNumber == 6)
+            {
+                //there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
+                string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
+                RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
+                _questionPool = rd.questions;
+                return _questionPool;
+            }
+            else
+            {
+                Debug.Log("something went wrong");
+                _questionPool = _questionController.getAllQuestionsAllCatagories();
+                return _questionPool;
+            }
         }
 
-		#endregion
+        #endregion questionpool
+
         #region display question & answers
 
-        public void ShowQuestion ()
-		{	
-			scoreDisplay.text = _playerController.userScore.ToString ();
-			clicked = false;
-			RemoveAnswerButtons ();
-			_playerController.AddToTotalQuestionsAnswered();
+        public void ShowQuestion()
+        {
+            scoreDisplay.text = _playerController.userScore.ToString();
+            clicked = false;
+            RemoveAnswerButtons();
+            _playerController.AddToTotalQuestionsAnswered();
 
-			QuestionData currentQuestionData = null;
+            QuestionData currentQuestionData = null;
 
-			//if all questions are asked
-			if (_questionPool.Length <= 0) { 
-				if (_dataController.turnNumber == 0 | _dataController.turnNumber == 1) {
-					//the user is the player so if they have finished the question pool they have answered all the questions in the catagory.
-					Debug.Log ("GameController : Show Questions(): Out of Questions");
-					EndRound ();
-				}
-				if (_dataController.turnNumber == 2) {
-					//the user is the oppenent so if they have finished the question pool they have answered all the questions asked of the player, go on to the remaining questions in the catagory
+            //if all questions are asked
+            if (_questionPool.Length <= 0)
+            {
+                if (_dataController.turnNumber == 0 | _dataController.turnNumber == 1)
+                {
+                    //the user is the player so if they have finished the question pool they have answered all the questions in the catagory.
+                    Debug.Log("GameController : Show Questions(): Out of Questions");
+                    EndRound();
+                }
+                if (_dataController.turnNumber == 2)
+                {
+                    //the user is the oppenent so if they have finished the question pool they have answered all the questions asked of the player, go on to the remaining questions in the catagory
 
-					if (_dataController.ongoingGameData.QuestionsLeftInCatagory.Length < 5)
-						EndRound ();
+                    if (_dataController.ongoingGameData.QuestionsLeftInCatagory.Length < 5)
+                        EndRound();
 
-					string roundDataJSON = _dataController.ongoingGameData.QuestionsLeftInCatagory;
-					Debug.Log("out of asked questons, asking remaining questions: " + _dataController.ongoingGameData.QuestionsLeftInCatagory);
-					_dataController.ongoingGameData.QuestionsLeftInCatagory = ""; 
-					RoundData rd = JsonUtility.FromJson<RoundData> (roundDataJSON);
-					_questionPool = rd.questions;
-					ShowQuestion ();
-				}
-			} else { //ask the question
-				if (_dataController.turnNumber == 0 | _dataController.turnNumber == 1 | _dataController.turnNumber == 3 | _dataController.turnNumber == 5) {
-					//if user is player then quesitons should be asked in random order
-					int randomNumber = Random.Range (0, _questionPool.Length - 1); //gets random number between 0 and total number of questions
-					currentQuestionData = _questionPool [randomNumber];// Get the QuestionData for the current question
-					_questionPool = _questionController.removeQuestion (_questionPool, randomNumber); //remove question from list
-					questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
-					_questionController.addAskedQuestionToAskedQuestions (currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
-
-				}
-				if (_dataController.turnNumber == 2 | _dataController.turnNumber == 4 | _dataController.turnNumber == 6) {
-				//if user is oppoent questions should be asked in the same order they were asked of player
-					currentQuestionData = _questionPool [0];// Get the QuestionData for the current question
-					_questionPool = _questionController.removeQuestion (_questionPool, 0); //remove question from list
-					questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
-				}
-				_numberOfQuestionsAsked++;
-				ShowAnswers (currentQuestionData);
-            }			
+                    string roundDataJSON = _dataController.ongoingGameData.QuestionsLeftInCatagory;
+                    Debug.Log("out of asked questons, asking remaining questions: " + _dataController.ongoingGameData.QuestionsLeftInCatagory);
+                    _dataController.ongoingGameData.QuestionsLeftInCatagory = "";
+                    RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
+                    _questionPool = rd.questions;
+                    ShowQuestion();
+                }
+            }
+            else
+            { //ask the question
+                if (_dataController.turnNumber == 0 | _dataController.turnNumber == 1 | _dataController.turnNumber == 3 | _dataController.turnNumber == 5)
+                {
+                    //if user is player then quesitons should be asked in random order
+                    int randomNumber = Random.Range(0, _questionPool.Length - 1); //gets random number between 0 and total number of questions
+                    currentQuestionData = _questionPool[randomNumber];// Get the QuestionData for the current question
+                    _questionPool = _questionController.removeQuestion(_questionPool, randomNumber); //remove question from list
+                    questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
+                    _questionController.addAskedQuestionToAskedQuestions(currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
+                }
+                if (_dataController.turnNumber == 2 | _dataController.turnNumber == 4 | _dataController.turnNumber == 6)
+                {
+                    //if user is oppoent questions should be asked in the same order they were asked of player
+                    currentQuestionData = _questionPool[0];// Get the QuestionData for the current question
+                    _questionPool = _questionController.removeQuestion(_questionPool, 0); //remove question from list
+                    questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
+                }
+                _numberOfQuestionsAsked++;
+                ShowAnswers(currentQuestionData);
+            }
         }
 
         private void ShowAnswers(QuestionData currentQuestionData)
         {
             List<int> answerText = new List<int>();
-            Random rnd = new Random();
 
             // For every AnswerData in the current QuestionData...
             for (int i = 0; i < currentQuestionData.answers.Length; i++)
-            {		
+            {
                 int n = Random.Range(0, currentQuestionData.answers.Length);
 
                 while (answerText.Contains(n))
@@ -222,12 +223,12 @@ namespace _LetsQuiz
 
                 answerButtonGameObject.transform.SetParent(answerButtonParent);
                 answerButtonGameObject.transform.localScale = Vector3.one; //I was having an issue were the scale blew out, this fixed it...
-                AnswerButton answerButton = answerButtonGameObject.GetComponent<AnswerButton>();	
+                AnswerButton answerButton = answerButtonGameObject.GetComponent<AnswerButton>();
                 answerButton.SetUp(currentQuestionData.answers[n]); // Pass the AnswerData to the AnswerButton to check if it correct
 
                 if (answerButton.isCorrect(currentQuestionData.answers[n]))
                 {
-                	_playerController.AddToNumberCorrectAnswers();
+                    _playerController.AddToNumberCorrectAnswers();
                     _correctAnswerButton = answerButton;
                     _isCorrect = true;
                     _correctAnswerData = currentQuestionData.answers[n];
@@ -235,7 +236,7 @@ namespace _LetsQuiz
             }
         }
 
-        #endregion
+        #endregion display question & answers
 
         #region button set up
 
@@ -253,7 +254,7 @@ namespace _LetsQuiz
             }
         }
 
-        #endregion
+        #endregion button set up
 
         #region like & dislike buttons
 
@@ -271,7 +272,7 @@ namespace _LetsQuiz
             FeedbackAlert.Show("Like question");
         }
 
-        #endregion
+        #endregion like & dislike buttons
 
         #region scoring specific
 
@@ -288,7 +289,7 @@ namespace _LetsQuiz
             ShowQuestion();
         }
 
-        #endregion
+        #endregion scoring specific
 
         #region timer specific
 
@@ -305,56 +306,49 @@ namespace _LetsQuiz
                 timerImage.color = timerMin;
         }
 
-        #endregion
+        #endregion timer specific
 
         #region navigation specific
 
-        public void EndRound ()
-		{
-			_music.Stop ();
+        public void EndRound()
+        {
+            _music.Stop();
 
-
-			SubmitToOngoingGamesDB ();
-			/* //TODO do we need this?
-			if (_playerController.userScore > _playerController.GetHighestScore ()) 
+            SubmitToOngoingGamesDB();
+            /* //TODO do we need this?
+			if (_playerController.userScore > _playerController.GetHighestScore ())
 			{
 				Debug.Log ("GameController : EndRound(): New High Score");
 				_playerController.scoreStatus = "new high score";
 				_playerController.SetHighestScore (_playerController.userScore);
 
-				if (_playerController.GetPlayerType () == PlayerStatus.LoggedIn) 
+				if (_playerController.GetPlayerType () == PlayerStatus.LoggedIn)
 				{
 					_submitScore = FindObjectOfType<SubmitScore> ();
 					_submitScore.SubmitScores (_playerController.GetUsername (), _playerController.GetHighestScore ());
 				}
-			} 
-			else */
-			{
-				Debug.Log ("GameController : EndRound(): No Score Change");
-				_playerController.scoreStatus = "no change";
 			}
-                
+			else */
+            {
+                Debug.Log("GameController : EndRound(): No Score Change");
+                _playerController.scoreStatus = "no change";
+            }
 
-			SceneManager.LoadScene (BuildIndex.Result, LoadSceneMode.Single);
+            SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
 
-			Debug.Log ("GameController : EndRound(): End of Round");
-			Debug.Log (_playerController.scoreStatus);
-		}
-
-		public void SubmitToOngoingGamesDB()
-        {  
-    	      
-			SubmitGame submitGame;
-			submitGame = FindObjectOfType<SubmitGame>();
-			submitGame.SubmitGameToDB(_questionController.getRemainingQuestions(_questionPool));
-
+            Debug.Log("GameController : EndRound(): End of Round");
+            Debug.Log(_playerController.scoreStatus);
         }
 
-      
+        public void SubmitToOngoingGamesDB()
+        {
+            SubmitGame submitGame;
+            submitGame = FindObjectOfType<SubmitGame>();
+            submitGame.SubmitGameToDB(_questionController.getRemainingQuestions(_questionPool));
+        }
 
+        #endregion navigation specific
 
-        #endregion
-
-        #endregion
+        #endregion methods
     }
 }

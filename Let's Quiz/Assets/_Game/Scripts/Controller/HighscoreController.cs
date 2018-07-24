@@ -10,13 +10,13 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private string _highScoreData;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
         public void Load()
         {
-            Debug.Log("HighscoreController : Load()");
+            Debug.Log("[HighscoreController] Load()");
             _playerController = FindObjectOfType<PlayerController>();
             _highScoreData = _playerController.highScoreJSON;
         }
@@ -27,6 +27,6 @@ namespace _LetsQuiz
             return allHighScorers;
         }
 
-        #endregion
+        #endregion methods
     }
 }
