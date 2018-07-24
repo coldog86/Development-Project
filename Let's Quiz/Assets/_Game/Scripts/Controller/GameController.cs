@@ -346,7 +346,22 @@ namespace _LetsQuiz
             submitGame = FindObjectOfType<SubmitGame>();
             submitGame.SubmitGameToDB(_questionController.getRemainingQuestions(_questionPool));
         }
+	
+	 	public void UpvoteButton()
+	 	{
+			Upvote _upvote;
+			_upvote = FindObjectOfType<Upvote>();
+			Debug.Log("****current question is: " + currentQuestionData.questionText);
+			_upvote.Uvote(currentQuestionData);	
+		}
 
+		public void DownvoteButton()
+	 	{
+			Downvote _downvote;
+			_downvote = FindObjectOfType<Downvote>();
+			Debug.Log("****current question is: " + currentQuestionData.questionText);
+			_downvote.Dvote(currentQuestionData);	
+		}
         #endregion navigation specific
 
         #endregion methods
