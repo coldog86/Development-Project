@@ -30,6 +30,7 @@ namespace _LetsQuiz
         public QuestionData questionData;
         public PlayerController playerController;
         public QuestionData currentQuestion;
+		public QuestionData currentQuestionData;
 
         private QuestionData[] _questionPool;
         private int _numberOfQuestionsAsked;
@@ -45,7 +46,12 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private SubmitScore _submitScore;
 
-        private float _timeRemaining = 8; //TODO the in game slider does not work until the timer is 20 or less
+		[Header("Other")]
+		private Upvote _upVote;
+		private Downvote _downVote;
+
+
+        private float _timeRemaining = 20; //TODO the in game slider does not work until the timer is 20 or less
 
         private bool _isRoundActive;
 
@@ -79,6 +85,8 @@ namespace _LetsQuiz
             _questionController = FindObjectOfType<QuestionController>();
             _playerController = FindObjectOfType<PlayerController>();
             _dataController = FindObjectOfType<DataController>();
+			_upVote = FindObjectOfType<Upvote>();
+			_downVote = FindObjectOfType<Downvote>();
             _playerController.AddToGamesPlayed();
             _playerController.userScore = 0;
             _questionController.Load(); //TODO what is this??
@@ -156,7 +164,7 @@ namespace _LetsQuiz
             RemoveAnswerButtons();
             _playerController.AddToTotalQuestionsAnswered();
 
-            QuestionData currentQuestionData = null;
+            currentQuestionData = null;
 
             //if all questions are asked
             if (_questionPool.Length <= 0)
@@ -263,6 +271,7 @@ namespace _LetsQuiz
         {
             _click.Play();
             FeedbackAlert.Show("Report question");
+			DownvoteButton ();
         }
 
         // TASK : to be completed when multiplayer is implemented
@@ -270,6 +279,7 @@ namespace _LetsQuiz
         {
             _click.Play();
             FeedbackAlert.Show("Like question");
+			UpvoteButton ();
         }
 
         #endregion like & dislike buttons
@@ -349,18 +359,14 @@ namespace _LetsQuiz
 	
 	 	public void UpvoteButton()
 	 	{
-			Upvote _upvote;
-			_upvote = FindObjectOfType<Upvote>();
 			Debug.Log("****current question is: " + currentQuestionData.questionText);
-			_upvote.Uvote(currentQuestionData);	
+			_upVote.Uvote(currentQuestionData);	
 		}
 
 		public void DownvoteButton()
 	 	{
-			Downvote _downvote;
-			_downvote = FindObjectOfType<Downvote>();
 			Debug.Log("****current question is: " + currentQuestionData.questionText);
-			_downvote.Dvote(currentQuestionData);	
+			_downVote.Dvote(currentQuestionData);	
 		}
         #endregion navigation specific
 

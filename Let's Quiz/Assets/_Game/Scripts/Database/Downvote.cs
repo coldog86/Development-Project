@@ -34,7 +34,7 @@ namespace _LetsQuiz
 
             form.AddField("questionPost", currentQuestion.questionText);
 
-            WWW submitRequest = new WWW(ServerHelper.Host + ServerHelper.Upvote, form);
+            WWW submitRequest = new WWW(ServerHelper.Host + ServerHelper.Downvote, form);
 
             while (!submitRequest.isDone)
             {
