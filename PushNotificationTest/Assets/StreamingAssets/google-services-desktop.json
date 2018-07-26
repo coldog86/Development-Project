@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "58138349333",
+    "firebase_url": "https://pushnotificationtest-fd3de.firebaseio.com",
+    "project_id": "pushnotificationtest-fd3de",
+    "storage_bucket": "pushnotificationtest-fd3de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:58138349333:android:6e5c0f10ec60e74e",
+        "android_client_info": {
+          "package_name": "com.Charnes.PushNotificationTest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "58138349333-b9qq7uk2r3crd3m95rnkhfouimt868ao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZHo3dvcQpwn3zVdmKr7k2sF5JiA4vTvA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
