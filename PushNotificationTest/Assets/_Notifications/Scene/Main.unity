@@ -275,7 +275,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Notification Message:'
+  m_Text: 
 --- !u!222 &496736851
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -349,7 +349,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Your Token:'
+  m_Text: 
 --- !u!222 &578648731
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -364,6 +364,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1054299983}
+  - component: {fileID: 1054299984}
   m_Layer: 0
   m_Name: FirebaseController
   m_TagString: Untagged
@@ -384,6 +385,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1054299984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1054299982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69dd8ac15baaa5342aa21132ac09fe41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tokenText: {fileID: 578648730}
+  messageText: {fileID: 496736850}
 --- !u!1 &1351812624
 GameObject:
   m_ObjectHideFlags: 0
