@@ -1,28 +1,64 @@
-﻿using UnityEngine;
+﻿using Firebase.Messaging;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class FirebaseController : MonoBehaviour
 {
     [Header("Compoenents")]
+    [SerializeField] private string _token;
+    [SerializeField] private string _message;
     public Text tokenText;
     public Text messageText;
 
-    public void Start()
+    private bool _hasToken;
+    private bool _hasMessage;
+
+    private void Start()
     {
-        Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
-        Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
+        FirebaseMessaging.TokenReceived += OnTokenReceived;
+        FirebaseMessaging.MessageReceived += OnMessageReceived;
     }
 
-    public void OnTokenReceived(object sender, Firebase.Messaging.TokenReceivedEventArgs token)
+    private void Update()
+    {
+        if (!_hasToken)
+            SetToken();
+
+        if (!_hasMessage)
+            SetMessage();
+    }
+
+    private void OnTokenReceived(object sender, TokenReceivedEventArgs token)
     {
         Debug.Log("Received Registration Token: " + token.Token);
-        tokenText.text = "Device token: " + token.Token;
+        _token = token.Token;
+        SetToken();
     }
 
-    public void OnMessageReceived(object sender, Firebase.Messaging.MessageReceivedEventArgs e)
+    private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
         Debug.Log("Received a new message from: " + e.Message.From);
-        Debug.Log("Received a new message: " + e.Message.Notification.Body);
-        messageText.text = "Notification message: " + e.Message.Notification.Body;
+        _message = e.Message.Notification.Body;
+        SetMessage();
+    }
+
+    private void SetToken()
+    {
+        _hasToken = false;
+        if (!string.IsNullOrEmpty(_token))
+        {
+            tokenText.text = _token;
+            _hasToken = true;
+        }
+    }
+
+    private void SetMessage()
+    {
+        _hasMessage = false;
+        if (!string.IsNullOrEmpty(_message))
+        {
+            messageText.text = _message;
+            _hasMessage = true;
+        }
     }
 }
