@@ -25,11 +25,18 @@ namespace _LetsQuiz
         public SimpleObjectPool questionHighscoreObjectPool;
         public Transform questionHighscoreParent;
 
+		[Header("Total Correct Answers Scorers")]
+		public SimpleObjectPool TotalCorrectObjectPool;
+		public Transform TotalCorrectParent;
+
         //gameobject for overall highscore
         private List<GameObject> highScorerGameObjects = new List<GameObject>();
 
         //gameobject for submitted questions
         private List<GameObject> questionHighscoreObjects = new List<GameObject>();
+
+		//gameobjecy for total questions correct by players
+		private List<GameObject> totalQuestionsCorrectObjects = new List<GameObject>();
 
         #endregion variables
 
@@ -52,9 +59,12 @@ namespace _LetsQuiz
 
             ShowHighScorers(allHighScores);
 
+
             //get the QuestandSub highscorers
             _questandSub = _playerController.GetQuestandSubData();
             ShowQuestionHighScorers(_questandSub);
+
+			ShowTotalQuestionsCorrect(allHighScores);
         }
 
         #endregion unity
@@ -98,6 +108,7 @@ namespace _LetsQuiz
         {
             QuestAndSub[] sortedQuestionsByRating = unsortedQuestions.OrderBy(c => c.getRating()).ToArray();
 
+
             //for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items.
             for (int i = sortedQuestionsByRating.Length - 1; i > sortedQuestionsByRating.Length - 11; i--)
             {
@@ -108,7 +119,7 @@ namespace _LetsQuiz
                 questionHighScoreObject.transform.SetParent(questionHighscoreParent);
                 LeaderboardEntry leaderBoardEntry = questionHighScoreObject.GetComponent<LeaderboardEntry>();
 
-                leaderBoardEntry.SetUp(currentQuestionHighscore.Catagory, currentQuestionHighscore.Rating.ToString()); //pass in the data of current HighScorer
+				leaderBoardEntry.SetUp(currentQuestionHighscore.QuestionText, currentQuestionHighscore.Rating.ToString()); //pass in the data of current HighScorer
             }
         }
 
@@ -121,6 +132,40 @@ namespace _LetsQuiz
                 questionHighscoreObjects.RemoveAt(0);
             }
         }
+
+
+		//show most correct answers
+		private void ShowTotalQuestionsCorrect(HighScoresContainer allHighScorers)
+		{
+			RemoveTotalQuestionsCorrect(); //clear leaderboard to start
+
+			//sort scores by totalScore.
+			HighScoresObject[] sorted = allHighScorers.allHighScorers.OrderBy(c => c.getTotalCorrect()).ToArray();
+
+			//for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items.
+			for (int i = sorted.Length - 1; i > sorted.Length - 11; i--)
+			{
+				GameObject totalCorrectgameObject = TotalCorrectObjectPool.GetObject(); //create new GameObejct
+				HighScoresObject currentHighScore = sorted[i]; 						//get current highscorer
+
+				highScorerGameObjects.Add(totalCorrectgameObject);
+				totalCorrectgameObject.transform.SetParent(TotalCorrectParent);
+				LeaderboardEntry leaderBoardEntry = totalCorrectgameObject.GetComponent<LeaderboardEntry>();
+
+				leaderBoardEntry.SetUp(currentHighScore.userName, currentHighScore.questionsRight); //pass in the data of current HighScorer
+			}
+		}
+
+		//remove most correct answers objects
+		private void RemoveTotalQuestionsCorrect()
+		{
+			while (totalQuestionsCorrectObjects.Count > 0)
+			{
+				TotalCorrectObjectPool.ReturnObject(totalQuestionsCorrectObjects[0]);
+				totalQuestionsCorrectObjects.RemoveAt(0);
+			}
+		}
+
 
         #endregion high score specific
 

@@ -70,7 +70,7 @@ namespace _LetsQuiz
 
             //add in for the Submitted Questions Highscore table.
             _questandSub = GetComponent<GetPlayerQuestionSubmissions>();
-            //StartCoroutine (_questandSub.PullQuestionSubmitters ());
+            StartCoroutine (_questandSub.PullQuestionSubmitters ());
 
             _questionController = GetComponent<QuestionController>();
             _questionController.Load();
