@@ -328,7 +328,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\_Notifications\Script\FirebaseController.cs" />
+    <Compile Include="Assets\_Notifications\Script\Controller\FirebaseController.cs" />
+    <Compile Include="Assets\_Notifications\Script\Feedback\Alert.cs" />
+    <Compile Include="Assets\_Notifications\Script\Utility\Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Firebase\Editor\AppDependencies.xml" />
