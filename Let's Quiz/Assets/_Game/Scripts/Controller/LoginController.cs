@@ -3,6 +3,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using System.Collections;
+using System.Collections.Generic;
+using Facebook.Unity;
+using GooglePlayGames;
+using GooglePlayGames.BasicApi;
+using UnityEngine.EventSystems;
 
 namespace _LetsQuiz
 {
@@ -21,8 +27,8 @@ namespace _LetsQuiz
         public GameObject toogleLoginPanelButton;
         public GameObject toggleRegisterPanelButton;
         public GameObject skipButton;
-        //public GameObject googleButton;
-        //public GameObject facebookButton;
+        public GameObject googleButton;
+        public GameObject facebookButton;
 
         [Header("Login")]
         public InputField existingUsernameInput;
@@ -52,6 +58,13 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private SettingsController _settingsController;
 
+		public GameObject dialogLoggedIn;
+		public GameObject dialogLoggedOut;
+		public GameObject dialogUsername;
+		//public GameObject dialogProfilePic;
+
+
+
         #endregion variables
 
         #region methods
@@ -60,6 +73,9 @@ namespace _LetsQuiz
 
         private void Awake()
         {
+			FaceBookController.Instance.InitFB();
+			DealWithFBMenus (FB.IsLoggedIn);
+
             subHeading.text = "";
 
             entryPanel.SetActive(true);
@@ -71,17 +87,30 @@ namespace _LetsQuiz
             buttonPanel.SetActive(false);
             //googleButton.SetActive(false);
             //facebookButton.SetActive(false);
+
+
         }
 
         private void Start()
         {
             _settingsController = FindObjectOfType<SettingsController>();
-            _settingsController.Load();
+			_settingsController.Load();
 
             _playerController = FindObjectOfType<PlayerController>();
             _playerController.Load();
 
             _click = FindObjectOfType<FeedbackClick>();
+
+			googleButton = GameObject.Find ("Google");
+			EventSystem.current.firstSelectedGameObject = googleButton;
+
+			PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder ().Build ();
+
+			PlayGamesPlatform.DebugLogEnabled = true;
+			PlayGamesPlatform.InitializeInstance (config);
+			PlayGamesPlatform.Activate();
+
+			PlayGamesPlatform.Instance.Authenticate (LoginCallBack, true);
         }
 
         #endregion unity
@@ -333,16 +362,116 @@ namespace _LetsQuiz
         // TASK : to be completed when social media is integrated
         public void FacebookLogin()
         {
-            _click.Play();
-            FeedbackAlert.Show("Not implemented yet.");
-        }
+           _click.Play();
+			List<string> permissions = new List<string> ();
+			permissions.Add ("public_profile");
+			FB.LogInWithReadPermissions (permissions, AuthCallBack);
+		}
+
+		void AuthCallBack(IResult result)
+		{
+			if (result.Error != null) {
+				Debug.Log (result.Error);
+			} else {
+				if (FB.IsLoggedIn) {
+					FaceBookController.Instance.isLoggedIn = true;
+					FaceBookController.Instance.GetProfile ();
+					Debug.Log ("FB is logged in");
+				} else {
+					Debug.Log ("FB is not logged in");
+				}
+
+				DealWithFBMenus (FB.IsLoggedIn);
+			}
+
+		}
+
+		void DealWithFBMenus(bool isLoggedIn)
+		{
+			if (isLoggedIn) {
+				dialogLoggedIn.SetActive (true);
+				dialogLoggedOut.SetActive (false);
+				entryPanel.SetActive (false);
+				loginPanel.SetActive (false);
+				registerPanel.SetActive (false);
+				buttonPanel.SetActive (false);
+				subHeading.text = "";
+				googleButton.SetActive (false);
+				facebookButton.SetActive(false);
+
+
+
+				if (FaceBookController.Instance.profileName != null) {
+					Text userName = dialogUsername.GetComponent<Text> ();
+					userName.text =  FaceBookController.Instance.profileName;
+
+					FeedbackAlert.Show("Welcome " + userName.text + "!");
+					if (isLoggedIn)
+					{
+						
+						LoadMenu();
+					}
+				} else {
+					StartCoroutine ("waitForProfileName");
+				}
+
+				//if (FaceBookController.Instance.profilePic != null) {
+				//Image profilePic = DialogProfilePic.GetComponent<Image> ();
+				//profilePic.sprite = FaceBookController.Instance.profilePic;
+				//} else {
+
+				//StartCoroutine ("waitForProfilePic");
+				//}
+			}else{
+				dialogLoggedIn.SetActive (false);
+				dialogLoggedOut.SetActive (true);
+			}
+		}
+
+		IEnumerator waitForProfileName()
+		{
+			while (FaceBookController.Instance.profileName == null) {
+				yield return null;
+			}
+			DealWithFBMenus (FB.IsLoggedIn);
+		}
+
+		//IEnumerator waitForProfilePic()
+		//{
+		//while (FaceBookController.Instance.profilePic == null) {
+		//yield return null;
+		//}
+		//DealWithFBMenus (FB.IsLoggedIn);
+		//}
+
 
         // TASK : to be completed when social media is integrated
         public void GoogleLogin()
         {
             _click.Play();
-            FeedbackAlert.Show("Not implemented yet.");
+            
+			if (PlayGamesPlatform.Instance.localUser.authenticated) {
+				PlayGamesPlatform.Instance.Authenticate (LoginCallBack, false);
+
+				FeedbackAlert.Show ("Welcome, " + Social.localUser.userName);
+			} else {
+				PlayGamesPlatform.Instance.SignOut ();
+				FeedbackAlert.Show ("Log in was not successful ");
+			}
         }
+
+		public void LoginCallBack(bool isLoggedIn)
+		{
+			if (isLoggedIn) {
+				Debug.Log ("User logged in");
+
+
+			} else {
+				Debug.Log ("User logged in failed ");
+
+
+			}
+		}
 
         #endregion social media specific
 
