@@ -17,8 +17,11 @@
       </intent-filter>
       <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
     </activity>
+    <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
+             android:resource="@drawable/app_notification" />
+    <meta-data android:name="com.google.firebase.messaging.default_notification_color"
+               android:resource="@color/icon_default" />
     <service android:name="com.google.firebase.messaging.MessageForwardingService"
-             android:exported="false"/>
+             android:exported="false" />
   </application>
-
 </manifest>

@@ -80,6 +80,7 @@ public class FirebaseController : MonoBehaviour
         if (!string.IsNullOrEmpty(_message))
         {
             _messageText.text = _message;
+            Alert.Show(_message);
             _hasMessage = true;
         }
         else
@@ -99,7 +100,6 @@ public class FirebaseController : MonoBehaviour
 
             if (_sendTimer > _sendTimeLimit)
             {
-                Debug.Log("[FirebaseController] SendNotification() : Error");
                 _dataText.text = "Error : Server time out.";
                 _failed = true;
                 break;
@@ -108,38 +108,27 @@ public class FirebaseController : MonoBehaviour
 
         if (!send.isDone || send.error != null)
         {
-            Debug.Log("[FirebaseController] SendNotification() : Error");
             _dataText.text = "Error : " + send.error;
         }
         else
         {
             if (!_failed)
             {
-                Debug.Log("[FirebaseController] SendNotification() : Sent");
                 _dataText.text = send.text;
-                Debug.Log("[FirebaseController] SendNotification() : " + send.text);
             }
         }
     }
 
     private void SendNotificationPost()
     {
-        Debug.Log("[FirebaseController] SendDelayNotification() : Click");
-        StartCoroutine(NotificationPost());
-        Alert.Show("Delaying..", 10.0f);
-    }
+        Debug.Log("[FirebaseController] SendNotificationPost()");
 
-    private IEnumerator NotificationPost()
-    {
-        yield return new WaitForSeconds(10.0f);
         WWWForm notification = new WWWForm();
         notification.AddField("recipient", "/topics/all");
         notification.AddField("title", "Title set in code");
-        notification.AddField("body", "message set in code");
+        notification.AddField("body", "Message set in code");
 
         WWW send = new WWW(Server.CONNECTION + Server.NOTIFICATION, notification);
-
-        Alert.Show("Sending..", 1.0f);
 
         while (!send.isDone)
         {
@@ -161,6 +150,7 @@ public class FirebaseController : MonoBehaviour
         {
             if (!_failed)
             {
+                Alert.Show("Sent");
                 _dataText.text = send.text;
             }
         }
