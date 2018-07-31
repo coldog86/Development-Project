@@ -6,21 +6,21 @@ using UnityEngine.UI;
 public class FirebaseController : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private Text _tokenText;
+    [SerializeField] private Text _headerText;
     [SerializeField] private Text _messageText;
-    [SerializeField] private Text _dataText;
+    [SerializeField] private InputField _headerInput;
+    [SerializeField] private InputField _messageInput;
     [SerializeField] private Button _sendButton;
     [SerializeField] private Button _sendDelayButton;
 
     private float _sendTimer;
-    private float _sendTimeLimit = 50000.0f;
+    private const float _sendTimeLimit = 50000.0f;
     private bool _failed = false;
 
     private string _token;
+    private string _header;
     private string _message;
-    private string _data;
 
-    private bool _hasToken;
     private bool _hasMessage;
 
     private void Start()
@@ -29,48 +29,29 @@ public class FirebaseController : MonoBehaviour
         FirebaseMessaging.MessageReceived += OnMessageReceived;
 
         _sendButton.onClick.AddListener(SendNotification);
-        _sendDelayButton.onClick.AddListener(SendNotificationPost);
+        _sendDelayButton.onClick.AddListener(GetNotificationContent);
     }
 
     private void Update()
     {
-        if (!_hasToken)
-            SetToken();
-
         if (!_hasMessage)
             SetMessage();
     }
 
     private void OnTokenReceived(object sender, TokenReceivedEventArgs token)
     {
-        FirebaseMessaging.Subscribe("/topics/all");
+        FirebaseMessaging.SubscribeAsync("/topics/all");
 
         _token = token.Token;
-        SetToken();
+
+        Alert.Show("Token Recieved");
     }
 
     private void OnMessageReceived(object sender, MessageReceivedEventArgs message)
     {
-        message.Message.Data.TryGetValue("dataString", out _data);
-
+        _header = message.Message.Notification.Title;
         _message = message.Message.Notification.Body;
-
-        _dataText.text = _data;
-
         SetMessage();
-    }
-
-    private void SetToken()
-    {
-        _hasToken = false;
-
-        if (!string.IsNullOrEmpty(_token))
-        {
-            _tokenText.text = _token;
-            _hasToken = true;
-        }
-        else
-            _tokenText.text = "No token recieved.";
     }
 
     private void SetMessage()
@@ -79,12 +60,10 @@ public class FirebaseController : MonoBehaviour
 
         if (!string.IsNullOrEmpty(_message))
         {
+            _headerText.text = _header;
             _messageText.text = _message;
-            Alert.Show(_message);
             _hasMessage = true;
         }
-        else
-            _messageText.text = "No message recieved.";
     }
 
     private void SendNotification()
@@ -100,7 +79,6 @@ public class FirebaseController : MonoBehaviour
 
             if (_sendTimer > _sendTimeLimit)
             {
-                _dataText.text = "Error : Server time out.";
                 _failed = true;
                 break;
             }
@@ -108,25 +86,37 @@ public class FirebaseController : MonoBehaviour
 
         if (!send.isDone || send.error != null)
         {
-            _dataText.text = "Error : " + send.error;
+            _failed = true;
         }
         else
         {
             if (!_failed)
-            {
-                _dataText.text = send.text;
-            }
+                _messageText.text = send.text;
         }
     }
 
-    private void SendNotificationPost()
+    private void GetNotificationContent()
+    {
+        _header = _headerInput.text;
+        _message = _messageInput.text;
+
+        if (string.IsNullOrEmpty(_header))
+            _header = "empty header";
+
+        if (string.IsNullOrEmpty(_message))
+            _message = "empty message";
+
+        SendNotificationPost(_token, _header, _message);
+    }
+
+    private void SendNotificationPost(string token, string header, string message)
     {
         Debug.Log("[FirebaseController] SendNotificationPost()");
 
         WWWForm notification = new WWWForm();
-        notification.AddField("recipient", "/topics/all");
-        notification.AddField("title", "Title set in code");
-        notification.AddField("body", "Message set in code");
+        notification.AddField("recipient", token);
+        notification.AddField("title", header);
+        notification.AddField("body", message);
 
         WWW send = new WWW(Server.CONNECTION + Server.NOTIFICATION, notification);
 
@@ -136,22 +126,38 @@ public class FirebaseController : MonoBehaviour
 
             if (_sendTimer > _sendTimeLimit)
             {
-                _dataText.text = "Error : Server time out.";
+                Alert.Show("Server Time Out.");
+                Debug.Log("[FirebaseController] SendNotificationPost() : Server time out.");
+                _messageText.text = "";
                 _failed = true;
+                break;
+            }
+            else if (send.error != null)
+            {
+                Alert.Show("Server Error.");
+                Debug.Log("[FirebaseController] SendNotificationPost() : Server error.");
+                _messageText.text = "";
+                break;
+            }
+            else if (_sendTimer > _sendTimeLimit && send.error != null)
+            {
+                Alert.Show("Critical Error.");
+                Debug.Log("[FirebaseController] SendNotificationPost() : Critical error.");
+                _messageText.text = "";
                 break;
             }
         }
 
         if (!send.isDone || send.error != null)
         {
-            _dataText.text = "Error : " + send.error;
+            _messageText.text = "";
         }
         else
         {
             if (!_failed)
             {
                 Alert.Show("Sent");
-                _dataText.text = send.text;
+                _messageText.text = send.text;
             }
         }
     }
