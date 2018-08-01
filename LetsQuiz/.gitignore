@@ -47,16 +47,6 @@ Thumbs.dbb
 
 #=== Third Party Assets ===#
 MaterialUI/
-!FacebookSDK/
-!Firebase/
-!GooglePlayGames/
-!Parse/
-!PlayServicesResolver/
-!Plugins/
-
-
-#=== .dll ===#
-!.dll
 
 #=== Builds ===#
 *.apk
