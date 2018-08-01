@@ -10,8 +10,8 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Settings")]
-        private const float unmutedVolume = -10.0f;
-        private const float mutedVolume = -80.0f;
+        private const int unmutedVolume = -10;
+        private const int mutedVolume = -80;
 
         [Header("Components")]
         public AudioMixer masterMixer;
@@ -134,7 +134,7 @@ namespace _LetsQuiz
         #region mixer specific
 
         // set the sound effect mixer value
-        public void SetSoundEffectVolume(float volume)
+        public void SetSoundEffectVolume(int volume)
         {
             if (volume != _playerSettings.soundEffectVolume)
             {
@@ -195,7 +195,7 @@ namespace _LetsQuiz
         #region mixer specific
 
         // set the background music mixer value
-        public void SetBackgroundMusicVolume(float volume)
+        public void SetBackgroundMusicVolume(int volume)
         {
             if (volume != _playerSettings.backgroundMusicVolume)
             {
@@ -260,6 +260,7 @@ namespace _LetsQuiz
 
             if (toggleStatus != _playerSettings.notificationsToggled)
             {
+                FirebaseController.Instance.ToogleSubscription(status);
                 _playerSettings.notificationsToggled = toggleStatus;
                 SaveNotificationToggle();
             }
@@ -291,14 +292,14 @@ namespace _LetsQuiz
             // load sound effect volume
             if (PlayerPrefs.HasKey(_effectVolumeKey))
             {
-                _playerSettings.soundEffectVolume = PlayerPrefs.GetFloat(_effectVolumeKey);
+                _playerSettings.soundEffectVolume = PlayerPrefs.GetInt(_effectVolumeKey);
                 masterMixer.SetFloat(_soundEffectParameter, GetSoundEffectVolume());
             }
 
             // load background music volume
             if (PlayerPrefs.HasKey(_musicVolumeKey))
             {
-                _playerSettings.backgroundMusicVolume = PlayerPrefs.GetFloat(_musicVolumeKey);
+                _playerSettings.backgroundMusicVolume = PlayerPrefs.GetInt(_musicVolumeKey);
                 masterMixer.SetFloat(_backgroundMusicParameter, GetBackgroundMusicVolume());
             }
 

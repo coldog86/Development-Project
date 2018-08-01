@@ -43,8 +43,9 @@ namespace _LetsQuiz
                 submitQuestionButton.gameObject.SetActive(false);
             }  
         }
-
-        private void Start() //TODO what is this for, I have seen a few private start() methods, when are they called, do they behave like a public Start()?
+        //TODO what is this for, I have seen a few private start() methods, when are they called, do they behave like a public Start()?
+        // NOTE : does the same as public start() - just better programming pratise
+        private void Start()
         {
             //navigationDrawer.SetActive(false);
 
@@ -63,40 +64,14 @@ namespace _LetsQuiz
         public void StartGame()
         {
             FeedbackClick.Play();
-            _music.PlayGameMusic();
             SceneManager.LoadScene(BuildIndex.Game, LoadSceneMode.Single);
         }
 
         public void GoToGameLobby()
         {
+            FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.GameLobby, LoadSceneMode.Single);
         }
-
-        // TASK : to be completed when multiplayer is implemented
-        public void LoadActiveGames()
-        {
-        }
-
-        // TASK : to be completed when multiplayer is implemented
-        public void ContinueGame(int gameId)
-        {
-        }
-
-        #endregion
-
-        #region navigation drawer specific
-
-        //        public void OpenNavDrawer()
-        //        {
-        //            FeedbackClick.Instance.Play();
-        //            navigationDrawer.SetActive(true);
-        //        }
-        //
-        //        public void CloseNavDrawer()
-        //        {
-        //            FeedbackClick.Instance.Play();
-        //            navigationDrawer.SetActive(false);
-        //        }
 
         #endregion
 

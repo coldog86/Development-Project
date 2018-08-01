@@ -37,6 +37,7 @@ namespace _LetsQuiz
         private void Awake()
         {
             _music = FindObjectOfType<FeedbackMusic>();
+            _music.PlayBackgroundMusic();
             _playerController = FindObjectOfType<PlayerController>();      
             _dataController = FindObjectOfType<DataController>();          
         }

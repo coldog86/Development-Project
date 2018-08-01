@@ -82,7 +82,9 @@ namespace _LetsQuiz
 
             // retrive player username and password from PlayerPrefs if they have an id
             if (PlayerPrefs.HasKey(_playerController.idKey))
-            {//TODO is any of these ever used?
+            {
+                //TODO is any of these ever used?
+                // NOTE : Used to determine if player has already logged in or not for automatic login
                 _status = _playerController.GetPlayerType();
                 _username = _playerController.GetUsername();
                 _password = _playerController.GetPassword();

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 using System.Collections;
+using Facebook.Unity.Example;
 
 namespace _LetsQuiz
 {
@@ -78,9 +79,14 @@ namespace _LetsQuiz
 
         #region unity
 
-        private void Start()
+        private void Awake()
         {
             _music = FindObjectOfType<FeedbackMusic>();
+            _music.PlayGameMusic();
+        }
+
+        private void Start()
+        {            
             _questionController = FindObjectOfType<QuestionController>();
             _playerController = FindObjectOfType<PlayerController>();
             _dataController = FindObjectOfType<DataController>();
@@ -134,6 +140,7 @@ namespace _LetsQuiz
             {
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
                 _questionPool = _questionController.getAllQuestionsAllCatagories();
+                FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
                 return _questionPool;
             }
             if (_dataController.turnNumber == 2 || _dataController.turnNumber == 4 || _dataController.turnNumber == 6)
@@ -142,6 +149,7 @@ namespace _LetsQuiz
                 string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
                 RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                 _questionPool = rd.questions;
+                FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent");
                 return _questionPool;
             }
             else
@@ -172,6 +180,7 @@ namespace _LetsQuiz
                 {
                     //the user is the player so if they have finished the question pool they have answered all the questions in the catagory.
                     Debug.Log("GameController : Show Questions(): Out of Questions");
+
                     EndRound();
                 }
                 if (_dataController.turnNumber == 2)
@@ -183,6 +192,8 @@ namespace _LetsQuiz
 
                     string roundDataJSON = _dataController.ongoingGameData.QuestionsLeftInCatagory;
                     Debug.Log("out of asked questons, asking remaining questions: " + _dataController.ongoingGameData.QuestionsLeftInCatagory);
+
+                    // TODO : is this finished?
                     _dataController.ongoingGameData.QuestionsLeftInCatagory = "";
                     RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                     _questionPool = rd.questions;
@@ -267,7 +278,6 @@ namespace _LetsQuiz
 
         #region like & dislike buttons
 
-        // TASK : to be completed when multiplayer is implemented
         public void ReportQuestion()
         {
             FeedbackClick.Play();
@@ -275,7 +285,6 @@ namespace _LetsQuiz
             DownvoteButton();
         }
 
-        // TASK : to be completed when multiplayer is implemented
         public void LikeQuestion()
         {
             FeedbackClick.Play();

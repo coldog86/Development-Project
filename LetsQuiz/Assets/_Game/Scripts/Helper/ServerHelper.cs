@@ -23,7 +23,7 @@
         public const string GetQuestionSubmissionStuff = "GetQuestionSubmissionData.php";
         public const string Upvote = "upvote.php";
         public const string Downvote = "downvote.php";
-        public const string SendNotification = "sendNotification.php";
+        public const string SendNotification = " sendNotification.php";
+        public const string SendDebugNotification = "sendNotificationDebug.php ";
     }
 }
-
