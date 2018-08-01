@@ -59,6 +59,8 @@ MonoBehaviour:
   toogleLoginPanelButton: {fileID: 0}
   toggleRegisterPanelButton: {fileID: 0}
   skipButton: {fileID: 0}
+  googleButton: {fileID: 0}
+  facebookButton: {fileID: 0}
   existingUsernameInput: {fileID: 0}
   existingPasswordInput: {fileID: 0}
   loginButton: {fileID: 0}
@@ -68,3 +70,6 @@ MonoBehaviour:
   confirmPasswordInput: {fileID: 0}
   registerButton: {fileID: 0}
   _connectionTimer: 0
+  dialogLoggedIn: {fileID: 0}
+  dialogLoggedOut: {fileID: 0}
+  dialogUsername: {fileID: 0}

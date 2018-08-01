@@ -424,68 +424,6 @@ RectTransform:
   m_AnchoredPosition: {x: -240, y: 300}
   m_SizeDelta: {x: 300, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &832504403
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 832504405}
-  - component: {fileID: 832504404}
-  m_Layer: 0
-  m_Name: SMHolder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &832504404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 832504403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ca55436678aefd4fa0cd6594c3f2c71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entryPanel: {fileID: 554099741}
-  loginPanel: {fileID: 265245514}
-  registerPanel: {fileID: 265245511}
-  buttonPanel: {fileID: 265245506}
-  subHeading: {fileID: 664543452}
-  toogleLoginPanelButton: {fileID: 265245500}
-  toggleRegisterPanelButton: {fileID: 265245515}
-  skipButton: {fileID: 265245503}
-  googleButton: {fileID: 1728636908}
-  facebookButton: {fileID: 1531372874}
-  existingUsernameInput: {fileID: 265245513}
-  existingPasswordInput: {fileID: 265245512}
-  loginButton: {fileID: 265245505}
-  newUsernameInput: {fileID: 0}
-  newEmailInput: {fileID: 0}
-  newPasswordInput: {fileID: 0}
-  confirmPasswordInput: {fileID: 0}
-  registerButton: {fileID: 265245504}
-  _connectionTimer: 0
-  dialogLoggedIn: {fileID: 330063414}
-  dialogLoggedOut: {fileID: 554099741}
-  dialogUsername: {fileID: 740818178}
---- !u!4 &832504405
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 832504403}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &928619793
 Prefab:
   m_ObjectHideFlags: 0
@@ -621,102 +559,102 @@ Prefab:
     - target: {fileID: 224937254846398848, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 366.7342
+      value: 362.87134
       objectReference: {fileID: 0}
     - target: {fileID: 224937254846398848, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 58.17163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224217622314064036, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 409.73062
+      value: 406.9851
       objectReference: {fileID: 0}
     - target: {fileID: 224217622314064036, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 58.17163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224919056652664740, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: -69.82837
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224520096334142542, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: -69.82837
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224992837006627152, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: -69.82837
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224595678611892640, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: -69.82837
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224874713794009808, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: -69.82837
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224409670749245928, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: -69.82837
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224585652294240034, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 108.75566
+      value: 108.149895
       objectReference: {fileID: 0}
     - target: {fileID: 224585652294240034, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 58.17163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224673771831897486, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 78.40524
+      value: 82.535446
       objectReference: {fileID: 0}
     - target: {fileID: 224673771831897486, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 58.17163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224889189490410666, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 171.9857
+      value: 167.91693
       objectReference: {fileID: 0}
     - target: {fileID: 224889189490410666, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 58.17163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224569482163687844, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 108.75566
+      value: 108.149895
       objectReference: {fileID: 0}
     - target: {fileID: 224569482163687844, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 58.17163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224954357740215078, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 171.9857
+      value: 167.91693
       objectReference: {fileID: 0}
     - target: {fileID: 224954357740215078, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 58.17163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114712146742597664, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
@@ -732,7 +670,7 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 832504404}
+      objectReference: {fileID: 0}
     - target: {fileID: 114712146742597664, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -757,7 +695,7 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 832504404}
+      objectReference: {fileID: 0}
     - target: {fileID: 114464125001557544, guid: 7e162f947fc1bd647a9d4f489a994739,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -891,7 +829,7 @@ Prefab:
         type: 2}
       propertyPath: entryPanel
       value: 
-      objectReference: {fileID: 265245500}
+      objectReference: {fileID: 554099741}
     - target: {fileID: 114975790865445574, guid: 201e3000af5b43a47afec6aa7fc74aca,
         type: 2}
       propertyPath: loginPanel
@@ -927,6 +865,16 @@ Prefab:
       propertyPath: skipButton
       value: 
       objectReference: {fileID: 265245503}
+    - target: {fileID: 114975790865445574, guid: 201e3000af5b43a47afec6aa7fc74aca,
+        type: 2}
+      propertyPath: googleButton
+      value: 
+      objectReference: {fileID: 1728636908}
+    - target: {fileID: 114975790865445574, guid: 201e3000af5b43a47afec6aa7fc74aca,
+        type: 2}
+      propertyPath: facebookButton
+      value: 
+      objectReference: {fileID: 1531372874}
     - target: {fileID: 114975790865445574, guid: 201e3000af5b43a47afec6aa7fc74aca,
         type: 2}
       propertyPath: existingUsernameInput
@@ -982,21 +930,6 @@ Prefab:
       propertyPath: dialogUsername
       value: 
       objectReference: {fileID: 740818178}
-    - target: {fileID: 114975790865445574, guid: 201e3000af5b43a47afec6aa7fc74aca,
-        type: 2}
-      propertyPath: googleButton
-      value: 
-      objectReference: {fileID: 1728636908}
-    - target: {fileID: 114975790865445574, guid: 201e3000af5b43a47afec6aa7fc74aca,
-        type: 2}
-      propertyPath: facebookButton
-      value: 
-      objectReference: {fileID: 1531372874}
-    - target: {fileID: 114975790865445574, guid: 201e3000af5b43a47afec6aa7fc74aca,
-        type: 2}
-      propertyPath: dialogId
-      value: 
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 201e3000af5b43a47afec6aa7fc74aca, type: 2}
   m_IsPrefabParent: 0
