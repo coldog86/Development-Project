@@ -62,12 +62,18 @@ namespace _LetsQuiz
 
         #region subscription
 
-        public void ToogleSubscription(int subscribeStatus)
+        public void ToogleSubscription(bool subscribeStatus)
         {
-            if (subscribeStatus == 1)
+            if (subscribeStatus)
+            {
                 FirebaseMessaging.SubscribeAsync("/topics/all");
+                FirebaseMessaging.SubscribeAsync(Token);
+            }
             else
+            {
                 FirebaseMessaging.UnsubscribeAsync("/topics/all");
+                FirebaseMessaging.UnsubscribeAsync(Token);
+            }
         }
 
         #endregion
@@ -77,11 +83,16 @@ namespace _LetsQuiz
             StartCoroutine(SendNotification(token, header, message));
         }
 
+        public void CreateDebugNotification(string header, string message)
+        {
+            StartCoroutine(SendDebugNotification(header, message));
+        }
+
         private IEnumerator SendNotification(string token, string header, string message)
         {
             WWWForm form = new WWWForm();
 
-            form.AddField("token", token);
+            form.AddField("recipient", token);
             form.AddField("title", header);
             form.AddField("body", message);
 
@@ -124,6 +135,57 @@ namespace _LetsQuiz
                     yield return notificationRequest;
                 }
                     
+
+            }
+
+        }
+
+        private IEnumerator SendDebugNotification(string header, string message)
+        {
+            WWWForm form = new WWWForm();
+
+            form.AddField("title", header);
+            form.AddField("body", message);
+
+            WWW notificationRequest = new WWW(ServerHelper.Host + ServerHelper.SendDebugNotification, form);
+
+            _connectionTimer += Time.deltaTime;
+
+            while (!notificationRequest.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                {
+                    Debug.LogError("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                    yield return null;
+                }
+                else if (notificationRequest.error != null)
+                {
+                    Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                    yield return null;
+                }
+                // extra check just to ensure a stream error doesn't come up
+                else if (_connectionTimer > _connectionTimeLimit && notificationRequest.error != null)
+                {
+                    Debug.LogError("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                    yield return null;
+                }
+            }
+
+            if (notificationRequest.isDone && notificationRequest.error != null)
+            {
+                Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                yield return null;
+            }
+
+            if (notificationRequest.isDone)
+            {
+                // check that the notification request returned something
+                if (!string.IsNullOrEmpty(notificationRequest.text))
+                {
+                    Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.text);
+                    yield return notificationRequest;
+                }
+
 
             }
 
