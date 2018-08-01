@@ -199,6 +199,7 @@ namespace _LetsQuiz
                     _questionPool = _questionController.removeQuestion(_questionPool, randomNumber); //remove question from list
                     questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
                     _questionController.addAskedQuestionToAskedQuestions(currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn against " + _dataController.ongoingGameData.opponent);
                 }
                 if (_dataController.turnNumber == 2 | _dataController.turnNumber == 4 | _dataController.turnNumber == 6)
                 {
@@ -206,6 +207,7 @@ namespace _LetsQuiz
                     currentQuestionData = _questionPool[0];// Get the QuestionData for the current question
                     _questionPool = _questionController.removeQuestion(_questionPool, 0); //remove question from list
                     questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", _dataController.ongoingGameData.opponent + " is taking their turn");
                 }
                 _numberOfQuestionsAsked++;
                 ShowAnswers(currentQuestionData);
@@ -324,25 +326,27 @@ namespace _LetsQuiz
             _music.Stop();
 
             SubmitToOngoingGamesDB();
-            /* //TODO do we need this?
-			if (_playerController.userScore > _playerController.GetHighestScore ())
-			{
-				Debug.Log ("GameController : EndRound(): New High Score");
-				_playerController.scoreStatus = "new high score";
-				_playerController.SetHighestScore (_playerController.userScore);
+            //TODO do we need this?
+            // NOTE : saves highscore to player prefs
+//			if (_playerController.userScore > _playerController.GetHighestScore ())
+//			{
+//				Debug.Log ("GameController : EndRound(): New High Score");
+//				_playerController.scoreStatus = "new high score";
+//				_playerController.SetHighestScore (_playerController.userScore);
+//
+//				if (_playerController.GetPlayerType () == PlayerStatus.LoggedIn)
+//				{
+//					_submitScore = FindObjectOfType<SubmitScore> ();
+//					_submitScore.SubmitScores (_playerController.GetUsername (), _playerController.GetHighestScore ());
+//				}
+//			}
+//			else
+//            {
+//                Debug.Log("GameController : EndRound(): No Score Change");
+//                _playerController.scoreStatus = "no change";
+//            }
 
-				if (_playerController.GetPlayerType () == PlayerStatus.LoggedIn)
-				{
-					_submitScore = FindObjectOfType<SubmitScore> ();
-					_submitScore.SubmitScores (_playerController.GetUsername (), _playerController.GetHighestScore ());
-				}
-			}
-			else */
-            {
-                Debug.Log("GameController : EndRound(): No Score Change");
-                _playerController.scoreStatus = "no change";
-            }
-
+            FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "That's a wrap, folks!", "Your game against " + _dataController.ongoingGameData.opponent + " has ended.");
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
 
             Debug.Log("GameController : EndRound(): End of Round");
