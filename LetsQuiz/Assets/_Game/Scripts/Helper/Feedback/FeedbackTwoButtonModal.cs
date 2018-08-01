@@ -9,9 +9,7 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Component")]
-        public GameObject prefab;
-        public static FeedbackTwoButtonModal instance;
-        private GameObject _modal;
+        private static GameObject _instance;
 
         private static Text _heading;
         private static Text _message;
@@ -25,14 +23,10 @@ namespace _LetsQuiz
         #region methods
 
         // creates the modal instance
-        private void Awake()
+        private static void Create()
         {
             // create instance of modal prefab as gameobject
-            _modal = (GameObject)Instantiate(prefab);
-
-            // ensure everything sticks around like a bad smell
-            DontDestroyOnLoad(gameObject);
-            DontDestroyOnLoad(_modal);
+            _instance = Instantiate(Resources.Load<GameObject>("Feedback/ModalTwoButton"));
 
             // find all the required components
             _heading = GameObject.FindGameObjectWithTag("Modal_Heading").GetComponent<Text>();
@@ -42,17 +36,16 @@ namespace _LetsQuiz
             _negativeButton = GameObject.FindGameObjectWithTag("Modal_Negative").GetComponentInChildren<Button>();
             _negativeText = _negativeButton.GetComponentInChildren<Text>();
 
-            // set instance
-            instance = this;
-
             // deactivate modal
-            instance._modal.SetActive(false);
+            _instance.SetActive(false);
         }
 
         // used to show the modal from external sources
         // closeOnAction is optional - might wish to not close it on action
         public static void Show(string heading, string message, string postive, string negative, UnityAction positiveAction, UnityAction negativeAction, bool closeOnAction = true)
         {
+            Create();
+
             // set the heading, message, and button text 
             _heading.text = heading;
             _message.text = message;
@@ -71,14 +64,16 @@ namespace _LetsQuiz
             }
 
             // after everything has been set, show the modal
-            instance._modal.SetActive(true);
+            _instance.SetActive(true);
         }
 
         // used to hide the modal from external sources
         public static void Hide()
         {
             // hide the modal
-            instance._modal.SetActive(false);
+            _instance.SetActive(false);
+            if (!_instance.activeInHierarchy)
+                Destroy(_instance);
         }
 
         #endregion

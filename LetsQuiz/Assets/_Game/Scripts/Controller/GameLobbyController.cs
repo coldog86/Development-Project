@@ -19,14 +19,9 @@ namespace _LetsQuiz
         public Button ongoingGame3;
         public Button ongoingGame4;
 
-        private FeedbackClick _click;
-
         // Use this for initialization
         private void Start()
         {
-            // reference to play annoying clicky sound
-            _click = FindObjectOfType<FeedbackClick>();
-
             _CheckForOpenGames = FindObjectOfType<CheckForOpenGames>();
             _MenuController = FindObjectOfType<MenuController>();
             _checkForPlayerExistingGames = FindObjectOfType<CheckForPlayerExistingGames>();
@@ -58,7 +53,7 @@ namespace _LetsQuiz
 
         public void BackToMenu()
         {
-            _click.Play();
+            FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
     }

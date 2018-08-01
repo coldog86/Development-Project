@@ -19,7 +19,6 @@ namespace _LetsQuiz
         public float connectionTimer = 0;
         public const float connectionTimeLimit = 10000.0f;
 
-        private FeedbackClick _click;
         private PlayerController _playerController;
 
         #endregion
@@ -30,8 +29,6 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            _click = FindObjectOfType<FeedbackClick>();
-
             _playerController = FindObjectOfType<PlayerController>();
 
             _playerController.Load();
@@ -43,7 +40,7 @@ namespace _LetsQuiz
 
         public void Submit()
         {
-            _click.Play();
+            FeedbackClick.Play();
 
             var question = questionInput.text;
             var correctAnswer = correctInput.text;
@@ -148,7 +145,7 @@ namespace _LetsQuiz
 
         public void BackToMenu()
         {
-            _click.Play();
+            FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 

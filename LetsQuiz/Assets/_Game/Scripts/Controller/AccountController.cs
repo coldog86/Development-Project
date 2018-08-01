@@ -8,7 +8,6 @@ namespace _LetsQuiz
     {
         #region variables
 
-        private FeedbackClick _click;
         private PlayerController _playerController;
 
         [Header("Components")]
@@ -23,8 +22,6 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            _click = FindObjectOfType<FeedbackClick>();
-
             _playerController = FindObjectOfType<PlayerController>();
 
             if (!username)
@@ -45,7 +42,7 @@ namespace _LetsQuiz
 
         public void BackToMenu()
         {
-            _click.Play();
+            FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 

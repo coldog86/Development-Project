@@ -36,7 +36,6 @@ namespace _LetsQuiz
         private const int _toggleInactive = 0;
 
         private PlayerSettings _playerSettings;
-        private FeedbackClick _click;
 
         #endregion
 
@@ -68,9 +67,6 @@ namespace _LetsQuiz
                 _backgroundMusicSwitch = GameObject.FindGameObjectWithTag("Toggle_Background").GetComponent<Toggle>();
                 _notificationSwitch = GameObject.FindGameObjectWithTag("Toggle_Notification").GetComponent<Toggle>();
             }
-
-            // reference to play annoying clicky sound
-            _click = FindObjectOfType<FeedbackClick>();
         }
 
         private void Start()
@@ -95,7 +91,7 @@ namespace _LetsQuiz
 
         public void BackToMenu()
         {
-            _click.Play();
+            FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 

@@ -15,7 +15,6 @@ namespace _LetsQuiz
         public Button submitQuestionButton;
        
         private Text _username;
-        private FeedbackClick _click;
         private FeedbackMusic _music;
         private PlayerController _playerController;
         private GetAllQuestions _questionDownload;
@@ -28,7 +27,7 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-        	DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(this.gameObject);
             _username = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
             _playerController = FindObjectOfType<PlayerController>();
 
@@ -49,7 +48,6 @@ namespace _LetsQuiz
         {
             //navigationDrawer.SetActive(false);
 
-            _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
 
             _questionDownload = FindObjectOfType<GetAllQuestions>();
@@ -64,14 +62,14 @@ namespace _LetsQuiz
 
         public void StartGame()
         {
-			_click.Play();
+            FeedbackClick.Play();
             _music.PlayGameMusic();
             SceneManager.LoadScene(BuildIndex.Game, LoadSceneMode.Single);
         }
 
         public void GoToGameLobby()
         {
-			SceneManager.LoadScene(BuildIndex.GameLobby, LoadSceneMode.Single);
+            SceneManager.LoadScene(BuildIndex.GameLobby, LoadSceneMode.Single);
         }
 
         // TASK : to be completed when multiplayer is implemented
@@ -90,13 +88,13 @@ namespace _LetsQuiz
 
         //        public void OpenNavDrawer()
         //        {
-        //            _click.Play();
+        //            FeedbackClick.Instance.Play();
         //            navigationDrawer.SetActive(true);
         //        }
         //
         //        public void CloseNavDrawer()
         //        {
-        //            _click.Play();
+        //            FeedbackClick.Instance.Play();
         //            navigationDrawer.SetActive(false);
         //        }
 
@@ -106,44 +104,44 @@ namespace _LetsQuiz
 
         public void OpenAccount()
         {
-            _click.Play();
+            FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.Account, LoadSceneMode.Single);
         }
 
         public void OpenLeaderboard()
         {
-            _click.Play();
+            FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.Leaderboard, LoadSceneMode.Single);
         }
 
         public void OpenSubmitQuestion()
         {
-            _click.Play();
+            FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.SubmitQuestion, LoadSceneMode.Single);
         }
 
         public void OpenSetting()
         {
-            _click.Play();
+            FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.Settings, LoadSceneMode.Single);
         }
 
         public void Logout()
         {
-            _click.Play();
+            FeedbackClick.Play();
             FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
         }
 
         private void OpenLogin()
         {
-            _click.Play();
+            FeedbackClick.Play();
             _playerController.SetPlayerType(PlayerStatus.LoggedOut);
             SceneManager.LoadScene(BuildIndex.Login, LoadSceneMode.Single);
         }
 
         public void Quit()
         {
-            _click.Play();
+            FeedbackClick.Play();
             FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", Application.Quit, FeedbackTwoButtonModal.Hide);
         }
 

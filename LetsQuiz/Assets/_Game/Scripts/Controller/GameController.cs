@@ -30,7 +30,7 @@ namespace _LetsQuiz
         public QuestionData questionData;
         public PlayerController playerController;
         public QuestionData currentQuestion;
-		public QuestionData currentQuestionData;
+        public QuestionData currentQuestionData;
 
         private QuestionData[] _questionPool;
         private int _numberOfQuestionsAsked;
@@ -46,17 +46,17 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private SubmitScore _submitScore;
 
-		[Header("Other")]
-		private Upvote _upVote;
-		private Downvote _downVote;
+        [Header("Other")]
+        private Upvote _upVote;
+        private Downvote _downVote;
 
 
-        private float _timeRemaining = 20; //TODO the in game slider does not work until the timer is 20 or less
+        private float _timeRemaining = 20;
+        //TODO the in game slider does not work until the timer is 20 or less
 
         private bool _isRoundActive;
 
         //private int _questionIndex;
-        private FeedbackClick _click;
         private FeedbackMusic _music;
 
         private bool _isCorrect = false;
@@ -80,13 +80,12 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
             _questionController = FindObjectOfType<QuestionController>();
             _playerController = FindObjectOfType<PlayerController>();
             _dataController = FindObjectOfType<DataController>();
-			_upVote = FindObjectOfType<Upvote>();
-			_downVote = FindObjectOfType<Downvote>();
+            _upVote = FindObjectOfType<Upvote>();
+            _downVote = FindObjectOfType<Downvote>();
             _playerController.AddToGamesPlayed();
             _playerController.userScore = 0;
             _questionController.Load(); //TODO what is this??
@@ -269,17 +268,17 @@ namespace _LetsQuiz
         // TASK : to be completed when multiplayer is implemented
         public void ReportQuestion()
         {
-            _click.Play();
+            FeedbackClick.Play();
             FeedbackAlert.Show("Report question");
-			DownvoteButton ();
+            DownvoteButton();
         }
 
         // TASK : to be completed when multiplayer is implemented
         public void LikeQuestion()
         {
-            _click.Play();
+            FeedbackClick.Play();
             FeedbackAlert.Show("Like question");
-			UpvoteButton ();
+            UpvoteButton();
         }
 
         #endregion like & dislike buttons
@@ -356,18 +355,19 @@ namespace _LetsQuiz
             submitGame = FindObjectOfType<SubmitGame>();
             submitGame.SubmitGameToDB(_questionController.getRemainingQuestions(_questionPool));
         }
-	
-	 	public void UpvoteButton()
-	 	{
-			Debug.Log("****current question is: " + currentQuestionData.questionText);
-			_upVote.Uvote(currentQuestionData);	
-		}
 
-		public void DownvoteButton()
-	 	{
-			Debug.Log("****current question is: " + currentQuestionData.questionText);
-			_downVote.Dvote(currentQuestionData);	
-		}
+        public void UpvoteButton()
+        {
+            Debug.Log("****current question is: " + currentQuestionData.questionText);
+            _upVote.Uvote(currentQuestionData);	
+        }
+
+        public void DownvoteButton()
+        {
+            Debug.Log("****current question is: " + currentQuestionData.questionText);
+            _downVote.Dvote(currentQuestionData);	
+        }
+
         #endregion navigation specific
 
         #endregion methods
