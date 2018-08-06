@@ -689,8 +689,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_TextComponent: {fileID: 732711022}
   m_Placeholder: {fileID: 0}
-  m_ContentType: 7
-  m_InputType: 2
+  m_ContentType: 0
+  m_InputType: 0
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0
@@ -1869,3 +1869,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 995417d989f84b34387df08149a00769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tokenText: {fileID: 0}

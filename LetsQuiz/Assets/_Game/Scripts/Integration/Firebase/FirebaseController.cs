@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase.Messaging;
+using UnityEngine.UI;
 
 namespace _LetsQuiz
 {
@@ -10,6 +11,7 @@ namespace _LetsQuiz
 
         #region variables
 
+        [SerializeField] private Text _tokenText;
         private float _connectionTimer = 0.0f;
         private const float _connectionTimeLimit = 10000.0f;
 
@@ -47,13 +49,19 @@ namespace _LetsQuiz
 
         private void OnTokenReceived(object sender, TokenReceivedEventArgs e)
         {
+            Debug.Log("[FirebaseController] OnTokenRecieved() Token : " + e.Token);
+
             FirebaseMessaging.SubscribeAsync("/topics/all");
 
             Token = e.Token;
+
+            if (!string.IsNullOrEmpty(Token))
+                _tokenText.text = Token;
         }
 
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
+            Debug.Log("[FirebaseController] OnMessageReceived() Notification received from : " + e.Message.From + " with title : " + e.Message.Notification.Title + " with messgae : " + e.Message.Notification.Body);
             Header = e.Message.Notification.Title;
             Message = e.Message.Notification.Body;
         }
@@ -80,12 +88,14 @@ namespace _LetsQuiz
 
         public void CreateNotification(string token, string header, string message)
         {
-            StartCoroutine(SendNotification(token, header, message));
+            if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
+                StartCoroutine(SendNotification(token, header, message));
         }
 
         public void CreateDebugNotification(string header, string message)
         {
-            StartCoroutine(SendDebugNotification(header, message));
+            if (!string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
+                StartCoroutine(SendDebugNotification(header, message));
         }
 
         private IEnumerator SendNotification(string token, string header, string message)
@@ -134,8 +144,6 @@ namespace _LetsQuiz
                     Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.text);
                     yield return notificationRequest;
                 }
-                    
-
             }
 
         }
@@ -185,13 +193,9 @@ namespace _LetsQuiz
                     Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.text);
                     yield return notificationRequest;
                 }
-
-
             }
-
         }
 
         #endregion
     }
 }
-

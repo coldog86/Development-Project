@@ -140,7 +140,10 @@ namespace _LetsQuiz
             {
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
                 _questionPool = _questionController.getAllQuestionsAllCatagories();
-                FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+                
                 return _questionPool;
             }
             if (_dataController.turnNumber == 2 || _dataController.turnNumber == 4 || _dataController.turnNumber == 6)
@@ -149,7 +152,10 @@ namespace _LetsQuiz
                 string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
                 RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                 _questionPool = rd.questions;
-                FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent");
+
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
+                
                 return _questionPool;
             }
             else
@@ -210,7 +216,11 @@ namespace _LetsQuiz
                     _questionPool = _questionController.removeQuestion(_questionPool, randomNumber); //remove question from list
                     questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
                     _questionController.addAskedQuestionToAskedQuestions(currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn against " + _dataController.ongoingGameData.opponent);
+
+                    if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                        FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+                    else
+                        return;
                 }
                 if (_dataController.turnNumber == 2 | _dataController.turnNumber == 4 | _dataController.turnNumber == 6)
                 {
@@ -218,7 +228,11 @@ namespace _LetsQuiz
                     currentQuestionData = _questionPool[0];// Get the QuestionData for the current question
                     _questionPool = _questionController.removeQuestion(_questionPool, 0); //remove question from list
                     questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", _dataController.ongoingGameData.opponent + " is taking their turn");
+
+                    if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                        FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "Your opponent is taking their turn!");
+                    else
+                        return;
                 }
                 _numberOfQuestionsAsked++;
                 ShowAnswers(currentQuestionData);
@@ -355,7 +369,9 @@ namespace _LetsQuiz
 //                _playerController.scoreStatus = "no change";
 //            }
 
-            FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "That's a wrap, folks!", "Your game against " + _dataController.ongoingGameData.opponent + " has ended.");
+            if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "That's a wrap, folks!", "Your game has ended!");
+            
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
 
             Debug.Log("GameController : EndRound(): End of Round");

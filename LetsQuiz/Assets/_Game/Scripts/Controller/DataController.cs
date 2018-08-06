@@ -214,15 +214,17 @@ namespace _LetsQuiz
             if (_playerController.userScore > ongoingGameData.playerScore)
             {
                 ongoingGameData.overAllScore = -1; //opponent won the round
-                FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Uh-Oh!", "You lost your game against " + ongoingGameData.opponent);
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Uh-Oh!", "You lost your game!");
+                    
             }
                 
             if (_playerController.userScore < ongoingGameData.playerScore)
             {
                 ongoingGameData.overAllScore = +1; //player won the round
-                FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Woo-Hoo!", "You won your game against " + ongoingGameData.opponent);
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Woo-Hoo!", "You won your game!");
             }
-               
 
             return ongoingGameData.overAllScore;
         }
