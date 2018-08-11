@@ -1,33 +1,42 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+
 
 namespace _LetsQuiz
 {
     public class GameLobbyController : MonoBehaviour
     {
         private CheckForOpenGames _CheckForOpenGames;
-        private OngoingGamesData _DataForExistingGame;
+		private DataController _dataController;
         private MenuController _MenuController;
         private PlayerController _playerController;
         private CheckForPlayerExistingGames _checkForPlayerExistingGames;
+		private QuestionController _questionController;
+		public QuestionData[] questionsPoolFromCatagory { get; }
 
         private int[] gameNumbers;
 
-        public Button ongoingGame1;
-        public Button ongoingGame2;
-        public Button ongoingGame3;
-        public Button ongoingGame4;
+		public GameObject catagoryPopUp;
+		public Dropdown catagoryDD;
+		public GameObject catAckPanel;
+		public GameObject catSelectPanel;
+		public GameObject backgroundStuff; 
 
         // Use this for initialization
         private void Start()
         {
-            _CheckForOpenGames = FindObjectOfType<CheckForOpenGames>();
+			DontDestroyOnLoad (this.gameObject);
+			_CheckForOpenGames = FindObjectOfType<CheckForOpenGames>();
             _MenuController = FindObjectOfType<MenuController>();
             _checkForPlayerExistingGames = FindObjectOfType<CheckForPlayerExistingGames>();
             _playerController = FindObjectOfType<PlayerController>();
+			_questionController = FindObjectOfType<QuestionController> ();
 
-            //PlayerPrefs.SetString(_playerController.GetUsername(), "55194,26117,37969,39617");
+			populateDropDown ();
 
             Debug.Log("here we go");
             if (PlayerPrefs.HasKey(_playerController.GetUsername()))
@@ -56,5 +65,38 @@ namespace _LetsQuiz
             FeedbackClick.Play();
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
+
+		public void presentPopUp()
+		{
+			catagoryDD.gameObject.SetActive (true);
+			if (_dataController.turnNumber == 1) 
+			{
+					
+			}
+
+		}
+
+		private void populateDropDown()
+		{
+			List<string> catagories = new List<string> ();
+			catagories = _questionController.getAllCatagories();
+			catagoryDD.AddOptions (catagories);			
+		}
+
+		public void catagorySelected()
+		{
+			string catagory = (catagoryDD.options[catagoryDD.value]).text;
+			Debug.Log ("catagory selected = " + catagory);
+			QuestionData[] questionsFromCat = _questionController.getQuestionsFromSpecificCatagories (catagoryDD.value);
+			//_dataController = FindObjectOfType<DataController> ();
+			//_dataController._tempQuestionPool = questionsFromCat;
+			_MenuController.StartGame();
+		}
+
+		public void catagoryAcknowledged()
+		{
+			_MenuController.StartGame();
+		}
+
     }
 }

@@ -65,6 +65,31 @@ namespace _LetsQuiz
             return allQuestionsAllCatagories;
         }
 
+		public List<string> getAllCatagories()
+		{
+			List<string> catagoryList = new List<string>();
+			GameData allQ = JsonUtility.FromJson<GameData>(_questionData);
+			for (int i = 0; i < allQ.allRoundData.Length; i++)
+			{
+				catagoryList.Add(allQ.allRoundData[i].name);
+			}
+			return catagoryList;
+		}
+
+		public QuestionData[] getQuestionsFromSpecificCatagories(int selection)
+		{
+			List<QuestionData> questionsList = new List<QuestionData>();
+			GameData allQ = JsonUtility.FromJson<GameData>(_questionData);
+			for (int n = 0; n < allQ.allRoundData[selection].questions.Length; n++)
+			{
+				questionsList.Add(allQ.allRoundData[selection].questions[n]);
+			}
+
+			QuestionData[] questionsFromCatagory = questionsList.ToArray();
+
+			return questionsFromCatagory;
+		}
+
         public QuestionData[] removeQuestion(QuestionData[] questionPool, int remove)
         {
             List<QuestionData> poolAsList = new List<QuestionData>();

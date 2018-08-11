@@ -46,6 +46,7 @@ namespace _LetsQuiz
         private QuestionController _questionController;
         private PlayerController _playerController;
         private SubmitScore _submitScore;
+		private GameLobbyController _gameLobbyController;
 
         [Header("Other")]
         private Upvote _upVote;
@@ -95,6 +96,8 @@ namespace _LetsQuiz
             _playerController.AddToGamesPlayed();
             _playerController.userScore = 0;
             _questionController.Load(); //TODO what is this??
+			_gameLobbyController = FindObjectOfType<GameLobbyController>();
+
 
             _questionPool = GetQuestionPool();
 
@@ -136,16 +139,28 @@ namespace _LetsQuiz
                 return _questionPool;
             }
 
-            if (_dataController.turnNumber == 1 || _dataController.turnNumber == 3 || _dataController.turnNumber == 5)
+			if (_dataController.turnNumber == 1)
             {
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
-                _questionPool = _questionController.getAllQuestionsAllCatagories();
+				_questionPool = _gameLobbyController.questionsPoolFromCatagory;
+				Destroy (_gameLobbyController);
 
                 if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                     FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
                 
                 return _questionPool;
             }
+			if (_dataController.turnNumber == 3 || _dataController.turnNumber == 5) 
+			{
+				//there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
+				_questionPool = _questionController.getAllQuestionsAllCatagories();
+
+				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+
+				return _questionPool;
+			}
+
             if (_dataController.turnNumber == 2 || _dataController.turnNumber == 4 || _dataController.turnNumber == 6)
             {
                 //there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
