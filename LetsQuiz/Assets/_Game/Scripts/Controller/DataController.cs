@@ -32,7 +32,8 @@ namespace _LetsQuiz
         private int _status = -2;
 
         public OngoingGamesData ongoingGameData { get; set; }
-		public QuestionData[] _tempQuestionPool { get; set; }
+		public QuestionData[] tempQuestionPool { get; set; }
+		public int catagory { get; set; }
         public int turnNumber { get; set; }
 
         public int gameNumber { get; set; }

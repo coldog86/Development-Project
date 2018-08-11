@@ -7,9 +7,10 @@
         public string player;
 		public string opponent;
 		public string askedQuestions;
-		public string QuestionsLeftInCatagory;
 		public string Round1Catagory;
+		public string questionsLeftInCat;
 		public string Round2Catagory;
+		public string questionsLeftInCat2;
 		public int playerScore;
 		public int opponentScore;
 		public bool gameRequiresOppoent;

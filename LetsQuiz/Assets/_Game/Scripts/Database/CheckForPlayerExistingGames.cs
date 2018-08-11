@@ -107,10 +107,8 @@ namespace _LetsQuiz
             for (int i = 0; i < gamesPlayerHasStarted.dataForOpenGame.Length; i++)
             {
                 GameObject go = new GameObject();
-
-                //bool isInteractable = isButtonInteractable (gamesPlayerHasStarted, i, playerOne, img);
-
-                go = Instantiate(gameButton) as GameObject; //Instantiate must be after you set all the variables on that object!
+				//bool isInteractable = isButtonInteractable (gamesPlayerHasStarted, i, playerOne, img);
+				go = Instantiate(gameButton) as GameObject; //Instantiate must be after you set all the variables on that object!
                 go.transform.SetParent(buttonContainer);
 
                 OngoingGamesData gameData = gamesPlayerHasStarted.dataForOpenGame[i];
@@ -124,11 +122,12 @@ namespace _LetsQuiz
 
         private void continueGameButtonPressed(OngoingGamesData gameData)
         {
+			_GameLobbyController = FindObjectOfType<GameLobbyController> ();
             Debug.Log(gameData.gameNumber);
             _dataController.ongoingGameData = gameData;
             _dataController.turnNumber = _dataController.ongoingGameData.turnNumber;
             _dataController.turnNumber++;
-            _MenuController.StartGame();
+			_GameLobbyController.presentPopUp ();
         }
 
         private void isInteractable(OngoingGamesData gameData, GameObject go)

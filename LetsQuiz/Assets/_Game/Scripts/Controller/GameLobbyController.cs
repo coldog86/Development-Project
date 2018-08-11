@@ -16,7 +16,8 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private CheckForPlayerExistingGames _checkForPlayerExistingGames;
 		private QuestionController _questionController;
-		public QuestionData[] questionsPoolFromCatagory { get; }
+		public QuestionData[] questionsPoolFromCatagory { get; set;}
+		public string catagoryText { get; set; }
 
         private int[] gameNumbers;
 
@@ -24,7 +25,8 @@ namespace _LetsQuiz
 		public Dropdown catagoryDD;
 		public GameObject catAckPanel;
 		public GameObject catSelectPanel;
-		public GameObject backgroundStuff; 
+		public GameObject backgroundStuff;
+		public Text catagoryText; 
 
         // Use this for initialization
         private void Start()
@@ -35,8 +37,7 @@ namespace _LetsQuiz
             _checkForPlayerExistingGames = FindObjectOfType<CheckForPlayerExistingGames>();
             _playerController = FindObjectOfType<PlayerController>();
 			_questionController = FindObjectOfType<QuestionController> ();
-
-			populateDropDown ();
+			_dataController = FindObjectOfType<DataController> ();
 
             Debug.Log("here we go");
             if (PlayerPrefs.HasKey(_playerController.GetUsername()))
@@ -69,9 +70,26 @@ namespace _LetsQuiz
 		public void presentPopUp()
 		{
 			catagoryDD.gameObject.SetActive (true);
-			if (_dataController.turnNumber == 1) 
+			backgroundStuff.SetActive (false);
+			catagoryPopUp.SetActive (true);
+			if (_dataController.turnNumber == 1 || _dataController.turnNumber == 3) 
 			{
-					
+				catSelectPanel.SetActive (true);
+				populateDropDown ();
+			}
+			if (_dataController.turnNumber == 2 || _dataController.turnNumber == 4) 
+			{
+				catAckPanel.SetActive (true);
+				Debug.Log (_dataController.ongoingGameData.Round1Catagory);
+				string catagory = _questionController.getAllCatagories () [Convert.ToInt32(_dataController.ongoingGameData.Round1Catagory)] ;
+				catagoryText.text = catagory;
+			}
+			if (_dataController.turnNumber == 5 || _dataController.turnNumber == 6) 
+			{
+				catAckPanel.SetActive (true);
+				Debug.Log (_dataController.ongoingGameData.Round1Catagory);
+				string catagory = _questionController.getAllCatagories () [Convert.ToInt32(_dataController.ongoingGameData.Round1Catagory)] ;
+				catagoryText.text = catagory;
 			}
 
 		}
@@ -80,6 +98,8 @@ namespace _LetsQuiz
 		{
 			List<string> catagories = new List<string> ();
 			catagories = _questionController.getAllCatagories();
+			if (_dataController.turnNumber == 3)
+				catagories = _questionController.removeCatagory (catagories, Convert.ToInt32 (_dataController.ongoingGameData.Round1Catagory));
 			catagoryDD.AddOptions (catagories);			
 		}
 
@@ -87,9 +107,8 @@ namespace _LetsQuiz
 		{
 			string catagory = (catagoryDD.options[catagoryDD.value]).text;
 			Debug.Log ("catagory selected = " + catagory);
-			QuestionData[] questionsFromCat = _questionController.getQuestionsFromSpecificCatagories (catagoryDD.value);
-			//_dataController = FindObjectOfType<DataController> ();
-			//_dataController._tempQuestionPool = questionsFromCat;
+			questionsPoolFromCatagory = _questionController.getQuestionsFromSpecificCatagories (catagoryDD.value);
+			_dataController.catagory = catagoryDD.value;
 			_MenuController.StartGame();
 		}
 
@@ -97,6 +116,8 @@ namespace _LetsQuiz
 		{
 			_MenuController.StartGame();
 		}
+
+		
 
     }
 }

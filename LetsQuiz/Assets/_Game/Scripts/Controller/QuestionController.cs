@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Random = UnityEngine.Random;
 
 namespace _LetsQuiz
 {
@@ -10,6 +11,9 @@ namespace _LetsQuiz
 
         [Header("Components")]
         private PlayerController _playerController;
+		private DataController _dataController;
+		private GameLobbyController _gameLobbyController;
+
         private string _questionData;
         private GameData _allQuestions;
         private List<QuestionData> _AskedQuestions;
@@ -76,6 +80,26 @@ namespace _LetsQuiz
 			return catagoryList;
 		}
 
+
+		public List<string> removeCatagory(List<string> catagories, int remove)
+		{
+			catagories.RemoveAt(remove);
+			return catagories;
+		}
+
+		public int getRandomCatagory()
+		{
+			_dataController = FindObjectOfType<DataController> ();
+			_gameLobbyController = FindObjectOfType<GameLobbyController> ();
+			List<string> catagoryList = getAllCatagories ();
+			catagoryList = removeCatagory(catagoryList, Convert.ToInt32(_dataController.ongoingGameData.Round1Catagory));
+			catagoryList = removeCatagory(catagoryList, Convert.ToInt32(_dataController.ongoingGameData.Round2Catagory));
+			int randomNumber = Random.Range(0, catagoryList.Count - 1); //gets random number between 0 and total number of questions
+
+			return randomNumber;
+		}
+
+
 		public QuestionData[] getQuestionsFromSpecificCatagories(int selection)
 		{
 			List<QuestionData> questionsList = new List<QuestionData>();
@@ -86,7 +110,10 @@ namespace _LetsQuiz
 			}
 
 			QuestionData[] questionsFromCatagory = questionsList.ToArray();
-
+			Debug.Log ("Size of catagory = " + questionsFromCatagory.Length);
+			for (int i = 0; i < questionsFromCatagory.Length; i++) {
+				Debug.Log (questionsFromCatagory [i].questionText);
+			}
 			return questionsFromCatagory;
 		}
 

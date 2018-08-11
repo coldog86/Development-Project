@@ -55,13 +55,10 @@ namespace _LetsQuiz
             else
             {
                 // we got the string from the server, it is every question in JSON format
-                Debug.Log("[GetHighScores] PullAllHighScoresFromServer() : Vox transmition recieved");
-                //Debug.Log(download.text);
-
+				Debug.Log("[GetHighScores] PullAllHighScoresFromServer() : Data recieved.");
                 _dataController.serverConnected = true;
                 _dataController.allHighScoreJSON = download.text;
-                //_leaderboardController.setHighScoreData(download.text);
-
+                
                 yield return download;
 
                 _playerController.SetHighscoreData(download.text);

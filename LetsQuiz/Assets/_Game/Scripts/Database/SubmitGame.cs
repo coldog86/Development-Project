@@ -14,6 +14,7 @@ namespace _LetsQuiz
 		QuestionController _questionController;
 		DataController _dataController;
 		string _questionPool;
+		int _counter; //just used for testing, so the log can show what was submitted
 
 		// Use this for initialization
 		void Start () 
@@ -43,7 +44,7 @@ namespace _LetsQuiz
 				form.AddField ("playerNamePost", _playerController.GetUsername ());
 				form.AddField ("askedQuestionsPost", _questionController.getAskedQuestions ());
 				form.AddField ("QuestionsLeftInCatagoryPost", _questionPool);
-				form.AddField ("Round1CatagoryPost", "catagories not yet set");
+				form.AddField ("Round1CatagoryPost", _dataController.catagory.ToString());
 				form.AddField ("scorePost", _playerController.userScore);
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
 
@@ -52,6 +53,8 @@ namespace _LetsQuiz
 				form.AddField("totalGamesPlayedPost", _playerController.GetGamesPlayed().ToString());
 				form.AddField("totalQuestionsPost", _playerController.GetTotalQuestionsAnswered().ToString());
 				form.AddField("totalCorrectQuestionsPost", _playerController.GetNumberCorrectAnswers().ToString());
+
+				_counter = 1;
 
 				address = ServerHelper.Host + ServerHelper.SubmitRound1Data;
 			}
@@ -72,9 +75,9 @@ namespace _LetsQuiz
 				form.AddField("totalQuestionsPost", _playerController.GetTotalQuestionsAnswered().ToString());
 				form.AddField("totalCorrectQuestionsPost", _playerController.GetNumberCorrectAnswers().ToString());
 	            
+				_counter = 2;
+
 				address = ServerHelper.Host + ServerHelper.SubmitRound2Data;
-
-
 			}
 
 			if (_dataController.turnNumber == 3) 
@@ -91,8 +94,9 @@ namespace _LetsQuiz
 				form.AddField("totalQuestionsPost", _playerController.GetTotalQuestionsAnswered().ToString());
 				form.AddField("totalCorrectQuestionsPost", _playerController.GetNumberCorrectAnswers().ToString());
 	            
-				address = ServerHelper.Host + ServerHelper.SubmitRound3Data;
+				_counter = 3;
 
+				address = ServerHelper.Host + ServerHelper.SubmitRound3Data;
 			}
 			if (_dataController.turnNumber == 4) 
 			{
@@ -102,8 +106,9 @@ namespace _LetsQuiz
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
 				form.AddField ("overAllScorePost", _dataController.getOverAllScore());
 	            
-				address = ServerHelper.Host + ServerHelper.SubmitRound4Data;
+				_counter = 4;
 
+				address = ServerHelper.Host + ServerHelper.SubmitRound4Data;
 			}
 			if (_dataController.turnNumber == 5) 
 			{
@@ -112,8 +117,9 @@ namespace _LetsQuiz
 				form.AddField ("scorePost", _playerController.userScore);
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
 	            
-				address = ServerHelper.Host + ServerHelper.SubmitRound5Data;
+				_counter = 5;
 
+				address = ServerHelper.Host + ServerHelper.SubmitRound5Data;
 			}
 
 			if (_dataController.turnNumber == 6)
@@ -122,6 +128,7 @@ namespace _LetsQuiz
 				address = ServerHelper.Host + ServerHelper.SubmitRound6Data;
 				_dataController.ongoingGameData.opponentScore =+ _playerController.userScore;
 
+				_counter = 6;
 
 			} 
 
@@ -155,7 +162,7 @@ namespace _LetsQuiz
 
             if (submitRequest.isDone)
             {
-                Debug.Log("game data submitted");    
+				Debug.Log("game data submitted, using data #" + _counter);    
                 yield return submitRequest;
                 DestroyObject(gameObject); 
             }

@@ -55,7 +55,6 @@ namespace _LetsQuiz
             else
             {
                 // we got the string from the server, it is every question in JSON format
-                Debug.Log("[GetAllQuestions] PullAllQuestionsFromServer() : Vox transmition recieved");
                 Debug.Log("[GetAllQuestions] PullAllQuestionsFromServer() : Data recieved " + download.text);
 
                 _dataController.serverConnected = true;

@@ -53,7 +53,7 @@ namespace _LetsQuiz
         private Downvote _downVote;
 
 
-        private float _timeRemaining = 20;
+        private float _timeRemaining = 8;
         //TODO the in game slider does not work until the timer is 20 or less
 
         private bool _isRoundActive;
@@ -121,8 +121,10 @@ namespace _LetsQuiz
             _timeRemaining -= Time.deltaTime;
             UpdateTimeRemainingDisplay();
 
-            if (_timeRemaining <= 0)
-                EndRound();
+			if (_timeRemaining <= 0 && _timeRemaining > -100) {
+				_timeRemaining = -101;
+				EndRound ();
+			}
         }
 
         #endregion unity
@@ -142,6 +144,7 @@ namespace _LetsQuiz
 			if (_dataController.turnNumber == 1)
             {
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
+				Debug.Log("there are no open games, user set to player, starting brand new game");
 				_questionPool = _gameLobbyController.questionsPoolFromCatagory;
 				Destroy (_gameLobbyController);
 
@@ -150,7 +153,30 @@ namespace _LetsQuiz
                 
                 return _questionPool;
             }
-			if (_dataController.turnNumber == 3 || _dataController.turnNumber == 5) 
+			if (_dataController.turnNumber == 2)
+			{
+				//there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
+				string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
+				RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
+				_questionPool = rd.questions;
+
+				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
+
+				return _questionPool;
+			}
+
+			if (_dataController.turnNumber == 3) 
+			{
+				//Continuing a game. The opponent now gets to pick the catagory
+				_questionPool = _questionController.getAllQuestionsAllCatagories();
+
+				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+
+				return _questionPool;
+			}
+			if (_dataController.turnNumber == 5) 
 			{
 				//there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
 				_questionPool = _questionController.getAllQuestionsAllCatagories();
@@ -161,7 +187,7 @@ namespace _LetsQuiz
 				return _questionPool;
 			}
 
-            if (_dataController.turnNumber == 2 || _dataController.turnNumber == 4 || _dataController.turnNumber == 6)
+            if (_dataController.turnNumber == 4 || _dataController.turnNumber == 6)
             {
                 //there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
                 string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
@@ -208,14 +234,16 @@ namespace _LetsQuiz
                 {
                     //the user is the oppenent so if they have finished the question pool they have answered all the questions asked of the player, go on to the remaining questions in the catagory
 
-                    if (_dataController.ongoingGameData.QuestionsLeftInCatagory.Length < 5)
-                        EndRound();
+					if (_dataController.ongoingGameData.questionsLeftInCat.Length < 5) {
+						Debug.Log ("test");
+						EndRound ();
 
-                    string roundDataJSON = _dataController.ongoingGameData.QuestionsLeftInCatagory;
-                    Debug.Log("out of asked questons, asking remaining questions: " + _dataController.ongoingGameData.QuestionsLeftInCatagory);
+					}
 
-                    // TODO : is this finished?
-                    _dataController.ongoingGameData.QuestionsLeftInCatagory = "";
+					string roundDataJSON = _dataController.ongoingGameData.questionsLeftInCat;
+					Debug.Log("out of asked questons, asking remaining questions: " + _dataController.ongoingGameData.questionsLeftInCat);
+
+                    _dataController.ongoingGameData.questionsLeftInCat = "";
                     RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                     _questionPool = rd.questions;
                     ShowQuestion();
@@ -231,7 +259,8 @@ namespace _LetsQuiz
                     _questionPool = _questionController.removeQuestion(_questionPool, randomNumber); //remove question from list
                     questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
                     _questionController.addAskedQuestionToAskedQuestions(currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
-
+					_numberOfQuestionsAsked++;
+					ShowAnswers(currentQuestionData);
                     if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                         FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
                     else
@@ -243,14 +272,14 @@ namespace _LetsQuiz
                     currentQuestionData = _questionPool[0];// Get the QuestionData for the current question
                     _questionPool = _questionController.removeQuestion(_questionPool, 0); //remove question from list
                     questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
-
+					_numberOfQuestionsAsked++;
+					ShowAnswers(currentQuestionData);
                     if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                         FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "Your opponent is taking their turn!");
                     else
                         return;
                 }
-                _numberOfQuestionsAsked++;
-                ShowAnswers(currentQuestionData);
+                
             }
         }
 

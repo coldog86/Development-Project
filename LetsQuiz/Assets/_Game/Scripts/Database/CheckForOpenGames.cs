@@ -27,6 +27,7 @@ namespace _LetsQuiz
         {
             _dataController = FindObjectOfType<DataController>();
             _playerController = FindObjectOfType<PlayerController>();
+			_GameLobbyController = FindObjectOfType<GameLobbyController> ();
 
         }
 
@@ -106,7 +107,7 @@ namespace _LetsQuiz
 				//_GameLobbyController = FindObjectOfType<GameLobbyController>();
 				//_GameLobbyController.StartOpenGame(temp);
 				Debug.Log("****asked questions = " + og.dataForOpenGame[n].askedQuestions);
-				Debug.Log("****remaining questions = " + og.dataForOpenGame[n].QuestionsLeftInCatagory);
+				Debug.Log("****remaining questions = " + og.dataForOpenGame[n].questionsLeftInCat);
 
 				if(PlayerPrefs.HasKey(_playerController.GetUsername())){
 					string games = PlayerPrefs.GetString(_playerController.GetUsername());
@@ -124,9 +125,8 @@ namespace _LetsQuiz
 
 			
 			}
-			MenuController _MenuController;
-			_MenuController = FindObjectOfType<MenuController>();
-			_MenuController.StartGame();
+			Debug.Log ("turn number = " + _dataController.turnNumber);
+			_GameLobbyController.presentPopUp ();
 				
         }
 
