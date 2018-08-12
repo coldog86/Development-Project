@@ -170,7 +170,8 @@ namespace _LetsQuiz
 			if (_dataController.turnNumber == 3) 
 			{
 				//Continuing a game. The opponent now gets to pick the catagory
-				_questionPool = _questionController.getAllQuestionsAllCatagories();
+				_questionPool = _gameLobbyController.questionsPoolFromCatagory;
+				Destroy (_gameLobbyController);
 
 				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
 					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
@@ -180,7 +181,8 @@ namespace _LetsQuiz
 			if (_dataController.turnNumber == 5) 
 			{
 				//there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
-				_questionPool = _questionController.getAllQuestionsAllCatagories();
+				_questionPool = _gameLobbyController.questionsPoolFromCatagory;
+				Destroy (_gameLobbyController);
 
 				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
 					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
