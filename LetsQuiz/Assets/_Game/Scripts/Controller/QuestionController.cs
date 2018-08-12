@@ -81,39 +81,46 @@ namespace _LetsQuiz
 		}
 
 
-		public List<string> removeCatagory(List<string> catagories, int remove)
+		public List<string> removeCatagory(List<string> catagories, string remove)
 		{
-			catagories.RemoveAt(remove);
+			for (int i = 0; i < catagories.Count; i++) {
+				if(catagories[i].Equals(remove))
+					catagories.RemoveAt(i);
+			}
 			return catagories;
 		}
 
-		public int getRandomCatagory()
+		public string getRandomCatagory()
 		{
 			_dataController = FindObjectOfType<DataController> ();
 			_gameLobbyController = FindObjectOfType<GameLobbyController> ();
 			List<string> catagoryList = getAllCatagories ();
-			catagoryList = removeCatagory(catagoryList, Convert.ToInt32(_dataController.ongoingGameData.Round1Catagory));
-			catagoryList = removeCatagory(catagoryList, Convert.ToInt32(_dataController.ongoingGameData.Round2Catagory));
+			catagoryList = removeCatagory(catagoryList, _dataController.ongoingGameData.Round1Catagory);
+			catagoryList = removeCatagory(catagoryList, _dataController.ongoingGameData.Round2Catagory);
 			int randomNumber = Random.Range(0, catagoryList.Count - 1); //gets random number between 0 and total number of questions
-
-			return randomNumber;
+			string catagory = catagoryList[randomNumber];
+			return catagory;
 		}
 
 
-		public QuestionData[] getQuestionsFromSpecificCatagories(int selection)
+		public QuestionData[] getQuestionsInCatagory(string catagory)
 		{
-			List<QuestionData> questionsList = new List<QuestionData>();
+			QuestionData[] questionsInCatagory = null;
 			GameData allQ = JsonUtility.FromJson<GameData>(_questionData);
-			for (int n = 0; n < allQ.allRoundData[selection].questions.Length; n++)
-			{
-				questionsList.Add(allQ.allRoundData[selection].questions[n]);
+			for (int i = 0; i < allQ.allRoundData.Length; i++){			
+				if (allQ.allRoundData [i].name.Equals (catagory)) {
+					questionsInCatagory = allQ.allRoundData [i].questions;
+					return questionsInCatagory;
+				}
 			}
+			return questionsInCatagory;
+		}
 
-			QuestionData[] questionsFromCatagory = questionsList.ToArray();
-			Debug.Log ("Size of catagory = " + questionsFromCatagory.Length);
-			for (int i = 0; i < questionsFromCatagory.Length; i++) {
-				Debug.Log (questionsFromCatagory [i].questionText);
-			}
+		public QuestionData[] getQuestionsInCatagory(int selection)
+		{
+			QuestionData[] questionsFromCatagory;
+			GameData allQ = JsonUtility.FromJson<GameData>(_questionData);
+			questionsFromCatagory = allQ.allRoundData [selection].questions;
 			return questionsFromCatagory;
 		}
 

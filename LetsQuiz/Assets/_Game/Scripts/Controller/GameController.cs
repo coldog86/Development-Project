@@ -123,6 +123,7 @@ namespace _LetsQuiz
 
 			if (_timeRemaining <= 0 && _timeRemaining > -100) {
 				_timeRemaining = -101;
+				Debug.Log ("endround");
 				EndRound ();
 			}
         }
@@ -227,7 +228,7 @@ namespace _LetsQuiz
                 {
                     //the user is the player so if they have finished the question pool they have answered all the questions in the catagory.
                     Debug.Log("GameController : Show Questions(): Out of Questions");
-
+					Debug.Log ("endround");
                     EndRound();
                 }
                 if (_dataController.turnNumber == 2)
@@ -235,7 +236,7 @@ namespace _LetsQuiz
                     //the user is the oppenent so if they have finished the question pool they have answered all the questions asked of the player, go on to the remaining questions in the catagory
 
 					if (_dataController.ongoingGameData.questionsLeftInCat.Length < 5) {
-						Debug.Log ("test");
+						Debug.Log ("endround");
 						EndRound ();
 
 					}
@@ -393,26 +394,7 @@ namespace _LetsQuiz
             _music.Stop();
 
             SubmitToOngoingGamesDB();
-            //TODO do we need this?
-            // NOTE : saves highscore to player prefs
-//			if (_playerController.userScore > _playerController.GetHighestScore ())
-//			{
-//				Debug.Log ("GameController : EndRound(): New High Score");
-//				_playerController.scoreStatus = "new high score";
-//				_playerController.SetHighestScore (_playerController.userScore);
-//
-//				if (_playerController.GetPlayerType () == PlayerStatus.LoggedIn)
-//				{
-//					_submitScore = FindObjectOfType<SubmitScore> ();
-//					_submitScore.SubmitScores (_playerController.GetUsername (), _playerController.GetHighestScore ());
-//				}
-//			}
-//			else
-//            {
-//                Debug.Log("GameController : EndRound(): No Score Change");
-//                _playerController.scoreStatus = "no change";
-//            }
-
+            
             if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                 FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "That's a wrap, folks!", "Your game has ended!");
             

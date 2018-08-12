@@ -35,7 +35,6 @@ namespace _LetsQuiz
 
 		private IEnumerator SubmitRoundData ()
 		{
-			Debug.Log(_dataController.turnNumber);
 			string address = "";
 			WWWForm form = new WWWForm ();
 			if (_dataController.turnNumber == 1) 

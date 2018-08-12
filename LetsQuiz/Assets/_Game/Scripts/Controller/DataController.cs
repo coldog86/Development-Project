@@ -2,6 +2,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 namespace _LetsQuiz
 {
@@ -33,10 +35,9 @@ namespace _LetsQuiz
 
         public OngoingGamesData ongoingGameData { get; set; }
 		public QuestionData[] tempQuestionPool { get; set; }
-		public int catagory { get; set; }
+		public string catagory { get; set; }
         public int turnNumber { get; set; }
-
-        public int gameNumber { get; set; }
+		public int gameNumber { get; set; }
 
         #endregion variables
 
@@ -80,6 +81,8 @@ namespace _LetsQuiz
 
             _highScoreController = GetComponent<HighscoreController>();
             _highScoreController.Load();
+
+			List<string> catagories = new List<string> ();
 
             // retrive player username and password from PlayerPrefs if they have an id
             if (PlayerPrefs.HasKey(_playerController.idKey))

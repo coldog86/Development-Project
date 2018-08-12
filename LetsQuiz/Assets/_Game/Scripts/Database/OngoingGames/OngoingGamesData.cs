@@ -11,6 +11,8 @@
 		public string questionsLeftInCat;
 		public string Round2Catagory;
 		public string questionsLeftInCat2;
+		public string round3Cat;
+		public string questionsLeftInCat3;
 		public int playerScore;
 		public int opponentScore;
 		public bool gameRequiresOppoent;

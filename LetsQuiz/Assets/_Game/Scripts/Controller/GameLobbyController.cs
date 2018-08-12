@@ -16,17 +16,21 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private CheckForPlayerExistingGames _checkForPlayerExistingGames;
 		private QuestionController _questionController;
+
+		private int[] gameNumbers;
+		private List<string> catagoryList;
+
+
 		public QuestionData[] questionsPoolFromCatagory { get; set;}
-		public string catagoryText { get; set; }
-
-        private int[] gameNumbers;
-
+		//public string catagoryText { get; set; }
+		       
 		public GameObject catagoryPopUp;
 		public Dropdown catagoryDD;
 		public GameObject catAckPanel;
 		public GameObject catSelectPanel;
 		public GameObject backgroundStuff;
-		public Text catagoryText; 
+		public Text catagoryText;
+
 
         // Use this for initialization
         private void Start()
@@ -69,46 +73,51 @@ namespace _LetsQuiz
 
 		public void presentPopUp()
 		{
+			catagoryPopUp.SetActive (true);
 			catagoryDD.gameObject.SetActive (true);
 			backgroundStuff.SetActive (false);
-			catagoryPopUp.SetActive (true);
 			if (_dataController.turnNumber == 1 || _dataController.turnNumber == 3) 
 			{
 				catSelectPanel.SetActive (true);
 				populateDropDown ();
 			}
-			if (_dataController.turnNumber == 2 || _dataController.turnNumber == 4) 
+			if (_dataController.turnNumber == 2)
 			{
 				catAckPanel.SetActive (true);
-				Debug.Log (_dataController.ongoingGameData.Round1Catagory);
-				string catagory = _questionController.getAllCatagories () [Convert.ToInt32(_dataController.ongoingGameData.Round1Catagory)] ;
-				catagoryText.text = catagory;
+				Debug.Log ("round catagory is : " + _dataController.ongoingGameData.Round1Catagory);
+				catagoryText.text = _dataController.ongoingGameData.Round1Catagory;
 			}
-			if (_dataController.turnNumber == 5 || _dataController.turnNumber == 6) 
+			if (_dataController.turnNumber == 4) 
 			{
 				catAckPanel.SetActive (true);
-				Debug.Log (_dataController.ongoingGameData.Round1Catagory);
-				string catagory = _questionController.getAllCatagories () [Convert.ToInt32(_dataController.ongoingGameData.Round1Catagory)] ;
-				catagoryText.text = catagory;
+				Debug.Log ("round catagory is : " + _dataController.ongoingGameData.Round2Catagory);
+				catagoryText.text = _dataController.ongoingGameData.Round2Catagory;
+			}
+			if (_dataController.turnNumber == 5) 
+			{
+				catAckPanel.SetActive (true);
+				string randomCatagory = _questionController.getRandomCatagory (); 
+				questionsPoolFromCatagory = _questionController.getQuestionsInCatagory (randomCatagory);
+				Debug.Log ("round catagory is : " + randomCatagory);
+				catagoryText.text = randomCatagory;
 			}
 
 		}
 
 		private void populateDropDown()
 		{
-			List<string> catagories = new List<string> ();
-			catagories = _questionController.getAllCatagories();
+			catagoryList = _questionController.getAllCatagories();
 			if (_dataController.turnNumber == 3)
-				catagories = _questionController.removeCatagory (catagories, Convert.ToInt32 (_dataController.ongoingGameData.Round1Catagory));
-			catagoryDD.AddOptions (catagories);			
+				catagoryList = _questionController.removeCatagory (catagoryList, _dataController.ongoingGameData.Round1Catagory);
+			catagoryDD.AddOptions (catagoryList);			
 		}
 
 		public void catagorySelected()
 		{
 			string catagory = (catagoryDD.options[catagoryDD.value]).text;
 			Debug.Log ("catagory selected = " + catagory);
-			questionsPoolFromCatagory = _questionController.getQuestionsFromSpecificCatagories (catagoryDD.value);
-			_dataController.catagory = catagoryDD.value;
+			questionsPoolFromCatagory = _questionController.getQuestionsInCatagory (catagory);
+			_dataController.catagory = catagory;
 			_MenuController.StartGame();
 		}
 
