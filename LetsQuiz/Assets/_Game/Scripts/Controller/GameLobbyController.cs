@@ -98,8 +98,14 @@ namespace _LetsQuiz
 				catAckPanel.SetActive (true);
 				string randomCatagory = _questionController.getRandomCatagory (); 
 				questionsPoolFromCatagory = _questionController.getQuestionsInCatagory (randomCatagory);
-				Debug.Log ("round catagory is : " + randomCatagory);
+				Debug.Log ("RANDOM round catagory is : " + randomCatagory);
 				catagoryText.text = randomCatagory;
+			}
+			if (_dataController.turnNumber == 6) 
+			{
+				catAckPanel.SetActive (true);
+				Debug.Log ("round catagory is : " + _dataController.ongoingGameData.round3Cat);
+				catagoryText.text = _dataController.ongoingGameData.Round2Catagory;
 			}
 
 		}

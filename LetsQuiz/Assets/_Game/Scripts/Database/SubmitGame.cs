@@ -83,7 +83,8 @@ namespace _LetsQuiz
 			{
 				Debug.Log("Submitting round 3 data");
 				form.AddField ("gameNumberPost", _dataController.ongoingGameData.gameNumber); 
-				form.AddField ("Round2CatagoryPost", "catagories not yet set");
+				form.AddField ("Round2CatagoryPost", _dataController.catagory.ToString());
+				form.AddField ("QuestionsLeftInCatagoryPost", _questionPool);
 				form.AddField ("scorePost", _playerController.userScore);
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
 
@@ -113,6 +114,8 @@ namespace _LetsQuiz
 			{
 				Debug.Log("Submitting round 5 data");
 				form.AddField ("gameNumberPost", _dataController.ongoingGameData.gameNumber); 
+				form.AddField ("Round3CatagoryPost", _dataController.catagory.ToString());
+				form.AddField ("QuestionsLeftInCatagoryPost", _questionPool);
 				form.AddField ("scorePost", _playerController.userScore);
 				form.AddField ("turnsCompletedPost", _dataController.turnNumber);
 	            
