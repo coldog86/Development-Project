@@ -78,6 +78,7 @@ namespace _LetsQuiz
 			overallScorePanel.SetActive(true);
 			TotalCorrectPanel.SetActive(false);
 			TopQuestionPanel.SetActive(false);
+			Debug.Log ("Toggled Highest Score");
 		}
 
 		public void toggleCorrectPanel() {
@@ -85,6 +86,7 @@ namespace _LetsQuiz
 			overallScorePanel.SetActive(false);
 			TotalCorrectPanel.SetActive(true);
 			TopQuestionPanel.SetActive(false);
+			Debug.Log ("Toggled Correct");
 		}
 
 		public void toggleTopQuestionPanel() {
@@ -92,6 +94,7 @@ namespace _LetsQuiz
 			overallScorePanel.SetActive(false);
 			TotalCorrectPanel.SetActive(false);
 			TopQuestionPanel.SetActive(true);
+			Debug.Log ("Toggled Top Question");
 		}
 
         #endregion unity
