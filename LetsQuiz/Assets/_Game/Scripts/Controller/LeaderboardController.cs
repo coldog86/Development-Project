@@ -37,11 +37,23 @@ namespace _LetsQuiz
         //gameobjecy for total questions correct by players
         private List<GameObject> totalQuestionsCorrectObjects = new List<GameObject>();
 
+		[Header("Panels")]
+		public GameObject overallScorePanel;
+		public GameObject TotalCorrectPanel;
+		public GameObject TopQuestionPanel;
+
         #endregion variables
 
         #region methods
 
         #region unity
+
+		private void Awake() {
+
+			overallScorePanel.SetActive(true);
+			TotalCorrectPanel.SetActive(false);
+			TopQuestionPanel.SetActive(false);
+		}
 
         private void Start()
         {
@@ -60,6 +72,27 @@ namespace _LetsQuiz
 
             ShowTotalQuestionsCorrect(allHighScores);
         }
+
+		public void toggleHighestScorePanel() {
+
+			overallScorePanel.SetActive(true);
+			TotalCorrectPanel.SetActive(false);
+			TopQuestionPanel.SetActive(false);
+		}
+
+		public void toggleCorrectPanel() {
+
+			overallScorePanel.SetActive(false);
+			TotalCorrectPanel.SetActive(true);
+			TopQuestionPanel.SetActive(false);
+		}
+
+		public void toggleTopQuestionPanel() {
+
+			overallScorePanel.SetActive(false);
+			TotalCorrectPanel.SetActive(false);
+			TopQuestionPanel.SetActive(true);
+		}
 
         #endregion unity
 
@@ -175,4 +208,10 @@ namespace _LetsQuiz
 
         #endregion methods
     }
+
+
+
+
+
+
 }
