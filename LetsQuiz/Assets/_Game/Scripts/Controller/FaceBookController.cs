@@ -28,6 +28,7 @@ public class FaceBookController : MonoBehaviour
 	public string appLinkURL{ get; set; }
 	public string uriPic{ get; set; }
 	public string profileId{ get; set; }
+	public string profileEmail{ get; set; }
 
 
 	void Awake()
@@ -71,6 +72,7 @@ public class FaceBookController : MonoBehaviour
 	{
 		FB.API ("/me?fields=name", HttpMethod.GET, DisplayUsername);
 		FB.API ("/me?fields=id", HttpMethod.GET, DisplayUserId);
+		FB.API ("/me?fields=email", HttpMethod.GET, DisplayUserEmail);
 		//FB.API ("/me/picture?type=square&height=128&width=128", HttpMethod.GET, DisplayProfilePic);
 		FB.GetAppLink (dealWithAppLink);
 
@@ -96,7 +98,16 @@ public class FaceBookController : MonoBehaviour
 		}
 	}
 
-			
+	void DisplayUserEmail(IResult result)
+	{
+		if (result.Error == null) {
+			profileEmail = "" + result.ResultDictionary ["email"];
+			Debug.Log("Your Email: " + profileEmail);
+		} else {
+			Debug.Log (result.Error);
+		}
+	}
+
 
 	//void DisplayProfilePic(IGraphResult result)
 	//{
@@ -112,6 +123,31 @@ public class FaceBookController : MonoBehaviour
 
 		}
 	}
+//	public void share()
+//	{
+//		FB.FeedShare (
+//			string.Empty,
+//			new Uri (appLinkURL),
+//			"Let's Quiz",
+//			"Come play",
+//			"Check out this game",
+//			new Uri (""),
+//			string.Empty,
+//			shareCallBack
+//
+//		);    
+//	}
+//	void shareCallBack(IResult result)
+//	{
+//		if (result.Cancelled) {
+//			Debug.Log ("Share Cancelled");
+//		} else if (!string.IsNullOrEmpty (result.Error)) {
+//			Debug.Log ("Error on share!");
+//		} else if (!string.IsNullOrEmpty (result.RawResult)) {
+//			Debug.Log ("Success on share");
+//		}
+//	}
+
 
 }
 

@@ -60,6 +60,8 @@ namespace _LetsQuiz
         public GameObject dialogLoggedIn;
         public GameObject dialogLoggedOut;
         public GameObject dialogUsername;
+		public GameObject dialogEmail;
+		public GameObject dialogUIDPassword;
         //public GameObject dialogProfilePic;
 
 
@@ -220,6 +222,7 @@ namespace _LetsQuiz
                         FeedbackAlert.Show("Welcome, " + username + "!");
                         return true;
                     }
+
                 }
             }
             return false;
@@ -347,6 +350,7 @@ namespace _LetsQuiz
                         FeedbackAlert.Show("Welcome back, " + username + "!");
                         return true;
                     }
+
                 }
             }
             return false;
@@ -362,6 +366,7 @@ namespace _LetsQuiz
             FeedbackClick.Play();
             List<string> permissions = new List<string>();
             permissions.Add("public_profile");
+			permissions.Add("email");
             FB.LogInWithReadPermissions(permissions, AuthCallBack);
         }
 
@@ -369,7 +374,7 @@ namespace _LetsQuiz
         {
             if (result.Error != null)
             {
-                Debug.Log(result.Error);
+				Debug.Log(result.Error);
             }
             else
             {
@@ -385,11 +390,12 @@ namespace _LetsQuiz
                 }
 
                 DealWithFBMenus(FB.IsLoggedIn);
+
             }
-
-        }
-
-        void DealWithFBMenus(bool isLoggedIn)
+			    
+		}
+        
+		void DealWithFBMenus(bool isLoggedIn)
         {
             if (isLoggedIn)
             {
@@ -403,43 +409,78 @@ namespace _LetsQuiz
                 googleButton.SetActive(false);
                 facebookButton.SetActive(false);
 
+				string username = FaceBookController.Instance.profileName;
+				string email = FaceBookController.Instance.profileEmail;
+				string password = FaceBookController.Instance.profileEmail;
 
 
-                if (FaceBookController.Instance.profileName != null)
-                {
-                    Text userName = dialogUsername.GetComponent<Text>();
-                    userName.text = FaceBookController.Instance.profileName;
+				if (FaceBookController.Instance.profileName != null) {
+					Text userName = dialogUsername.GetComponent<Text> ();
+					userName.text = FaceBookController.Instance.profileName;
 
-                    FeedbackAlert.Show("Welcome, " + userName.text + "!");
-                    if (isLoggedIn)
-                        LoadMenu();
-                }
-                else
-                {
-                    StartCoroutine("waitForProfileName");
-                }
+					FeedbackAlert.Show ("Welcome, " + userName.text + "!");
+														
+				} else {
+					StartCoroutine ("waitForProfileName");
+				}
 
-                //if (FaceBookController.Instance.profilePic != null) {
-                //Image profilePic = DialogProfilePic.GetComponent<Image> ();
-                //profilePic.sprite = FaceBookController.Instance.profilePic;
-                //} else {
+				if (FaceBookController.Instance.profileEmail != null) {
+					Text userEmail = dialogUsername.GetComponent<Text> ();
+					userEmail.text = FaceBookController.Instance.profileEmail;
 
-                //StartCoroutine ("waitForProfilePic");
-                //}
-            }
-            else
-            {
-                dialogLoggedIn.SetActive(false);
-                dialogLoggedOut.SetActive(true);
-            }
-        }
+				} else {
+					StartCoroutine ("waitForProfileEmail");
+				}
 
-        IEnumerator waitForProfileName()
-        {
-            while (FaceBookController.Instance.profileName == null)
-                yield return null;
-            DealWithFBMenus(FB.IsLoggedIn);
-        }
+				if (FaceBookController.Instance.profileId != null) {
+					Text userId = dialogUsername.GetComponent<Text> ();
+					userId.text = FaceBookController.Instance.profileId;
+
+				} else {
+					StartCoroutine ("waitForProfileId");
+				}
+
+				//if (FaceBookController.Instance.profilePic != null) {
+				//Image profilePic = DialogProfilePic.GetComponent<Image> ();
+				//profilePic.sprite = FaceBookController.Instance.profilePic;
+				//} else {
+
+				//StartCoroutine ("waitForProfilePic");
+			//}
+				if (addFacebookUsers(username, email, password))
+				{
+					_playerController.SetPlayerType(PlayerStatus.LoggedIn);
+					LoadMenu();
+				}
+
+			}
+			else
+			{
+				dialogLoggedIn.SetActive(false);
+				dialogLoggedOut.SetActive(true);
+			}
+		}
+
+		IEnumerator waitForProfileName()
+		{
+			while (FaceBookController.Instance.profileName == null)
+				yield return null;
+			DealWithFBMenus(FB.IsLoggedIn);
+		}
+
+		IEnumerator waitForProfileEmail()
+		{
+			while (FaceBookController.Instance.profileEmail == null)
+				yield return null;
+			DealWithFBMenus(FB.IsLoggedIn);
+		}
+
+		IEnumerator waitForProfileId()
+		{
+			while (FaceBookController.Instance.profileId == null)
+				yield return null;
+			DealWithFBMenus(FB.IsLoggedIn);
+		}
 
         //IEnumerator waitForProfilePic()
         //{
@@ -449,7 +490,93 @@ namespace _LetsQuiz
         //DealWithFBMenus (FB.IsLoggedIn);
         //}
 
+		private bool addFacebookUsers(string username, string email, string password){
 
+			username = FaceBookController.Instance.profileName;
+			email = FaceBookController.Instance.profileEmail;
+			password = FaceBookController.Instance.profileId;
+
+
+			WWWForm form = new WWWForm();
+
+			form.AddField("usernamePost", username);
+			form.AddField("emailPost", email);
+			form.AddField("passwordPost", password);
+
+			WWW registerRequest = new WWW(ServerHelper.Host + ServerHelper.Register, form);
+
+			_connectionTimer += Time.deltaTime;
+
+			while (!registerRequest.isDone)
+			{
+				FeedbackAlert.Show("Adding details");
+
+				if (_connectionTimer > _connectionTimeLimit)
+				{
+					FeedbackAlert.Show("Server time out.");
+					Debug.LogError("[LoginController]  addFacebookUsers() : " + registerRequest.error);
+					return false;
+				}
+				else if (registerRequest.error != null)
+				{
+					FeedbackAlert.Show("Connection error. Please try again.");
+					Debug.Log("[LoginController] addFacebookUsers() : " + registerRequest.error);
+					return false;
+				}
+				// extra check just to ensure a stream error doesn't come up
+				else if (_connectionTimer > _connectionTimeLimit && registerRequest.error != null)
+				{
+					FeedbackAlert.Show("Server time out.");
+					Debug.LogError("[LoginController] addFacebookUsers() : " + registerRequest.error);
+					return false;
+				}
+			}
+
+			if (registerRequest.isDone && registerRequest.error != null)
+			{
+				FeedbackAlert.Show("Connection error. Please try again.");
+				Debug.Log("[LoginController]addFacebookUsers() : " + registerRequest.error);
+				return false;
+			}
+
+			if (registerRequest.isDone)
+			{
+				// check that the register request returned something
+				if (!string.IsNullOrEmpty(registerRequest.text))
+				{
+					_playerString = registerRequest.text;
+					Debug.Log(_playerString);
+
+					// if the retrieved register text doesn't have "ID" load login scene
+					if (!_playerString.Contains("ID"))
+					{
+						FeedbackAlert.Show("Adding account failed. Please try again.");
+						return false;
+					}
+					// otherwise save the player information to PlayerPrefs and load menu scene
+					else
+					{
+						_player = PlayerJsonHelper.LoadPlayerFromServer(_playerString);
+
+						if (_player != null)
+							_playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
+								_player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
+								_player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
+
+						FeedbackAlert.Show("Welcome, " + username + "!");
+
+						return true;
+
+					}
+
+				}
+			}
+			return false;
+		}
+
+
+	
+		
         // TASK : to be completed when social media is integrated
         public void GoogleLogin()
         {
@@ -475,6 +602,8 @@ namespace _LetsQuiz
             else
                 Debug.Log("User logged in failed ");
         }
+
+
 
         #endregion social media specific
 
