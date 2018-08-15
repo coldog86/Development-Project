@@ -390,7 +390,6 @@ namespace _LetsQuiz
                 }
 
                 DealWithFBMenus(FB.IsLoggedIn);
-
             }
 			    
 		}
@@ -417,9 +416,7 @@ namespace _LetsQuiz
 				if (FaceBookController.Instance.profileName != null) {
 					Text userName = dialogUsername.GetComponent<Text> ();
 					userName.text = FaceBookController.Instance.profileName;
-
-					FeedbackAlert.Show ("Welcome, " + userName.text + "!");
-														
+																							
 				} else {
 					StartCoroutine ("waitForProfileName");
 				}
