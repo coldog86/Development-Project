@@ -105,7 +105,7 @@ namespace _LetsQuiz
 			{
 				catAckPanel.SetActive (true);
 				Debug.Log ("round catagory is : " + _dataController.ongoingGameData.round3Cat);
-				catagoryText.text = _dataController.ongoingGameData.Round2Catagory;
+				catagoryText.text = _dataController.ongoingGameData.round3Cat;
 			}
 
 		}

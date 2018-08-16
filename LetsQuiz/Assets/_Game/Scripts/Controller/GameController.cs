@@ -100,6 +100,7 @@ namespace _LetsQuiz
 
 
             _questionPool = GetQuestionPool();
+			Destroy (_gameLobbyController);
 
             if (PlayerPrefs.HasKey(_playerController.GetUsername()))
             {
@@ -147,7 +148,6 @@ namespace _LetsQuiz
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
 				Debug.Log("there are no open games, user set to player, starting brand new game");
 				_questionPool = _gameLobbyController.questionsPoolFromCatagory;
-				Destroy (_gameLobbyController);
 
                 if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                     FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
@@ -171,10 +171,21 @@ namespace _LetsQuiz
 			{
 				//Continuing a game. The opponent now gets to pick the catagory
 				_questionPool = _gameLobbyController.questionsPoolFromCatagory;
-				Destroy (_gameLobbyController);
 
 				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
 					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+
+				return _questionPool;
+			}
+
+			if (_dataController.turnNumber == 4) {
+				//there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
+				string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
+				RoundData rd = JsonUtility.FromJson<RoundData> (roundDataJSON);
+				_questionPool = rd.questions;
+
+				if (!string.IsNullOrEmpty (FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification (FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
 
 				return _questionPool;
 			}
@@ -190,18 +201,17 @@ namespace _LetsQuiz
 				return _questionPool;
 			}
 
-            if (_dataController.turnNumber == 4 || _dataController.turnNumber == 6)
-            {
-                //there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
-                string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
-                RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
-                _questionPool = rd.questions;
+			if(_dataController.turnNumber == 6)
+			{  
+				string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
+				RoundData rd = JsonUtility.FromJson<RoundData> (roundDataJSON);
+				_questionPool = rd.questions;
 
-                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
-                
-                return _questionPool;
-            }
+				if (!string.IsNullOrEmpty (FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification (FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
+
+				return _questionPool;
+			}
             else
             {
                 Debug.Log("something went wrong");
