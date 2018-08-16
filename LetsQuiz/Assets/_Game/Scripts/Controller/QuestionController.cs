@@ -99,6 +99,7 @@ namespace _LetsQuiz
 			catagoryList = removeCatagory(catagoryList, _dataController.ongoingGameData.Round2Catagory);
 			int randomNumber = Random.Range(0, catagoryList.Count - 1); //gets random number between 0 and total number of questions
 			string catagory = catagoryList[randomNumber];
+			_dataController.catagory = catagory;
 			return catagory;
 		}
 

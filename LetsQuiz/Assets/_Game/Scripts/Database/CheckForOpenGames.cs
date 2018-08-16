@@ -14,9 +14,6 @@ namespace _LetsQuiz
         private PlayerController _playerController;
         private GameLobbyController _GameLobbyController;
         private string openGamesJSON;
-		//public bool continueExistingGame { get; set; }
-		//private OngoingGamesData _OngoingGamesData;
-
         #endregion
 
         #region methods
@@ -101,11 +98,7 @@ namespace _LetsQuiz
 
 			if (n > -1) { 
 				Debug.Log("there are open game(s) - turn = 2");
-				//continueExistingGame = true;
 				_dataController.turnNumber = 2;
-				//OngoingGamesData temp = og.dataForOpenGame[n];
-				//_GameLobbyController = FindObjectOfType<GameLobbyController>();
-				//_GameLobbyController.StartOpenGame(temp);
 				Debug.Log("****asked questions = " + og.dataForOpenGame[n].askedQuestions);
 				Debug.Log("****remaining questions = " + og.dataForOpenGame[n].questionsLeftInCat);
 
