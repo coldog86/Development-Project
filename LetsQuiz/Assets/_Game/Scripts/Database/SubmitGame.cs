@@ -117,7 +117,6 @@ namespace _LetsQuiz
 				Debug.Log("Submitting round 5 data");
 				form.AddField ("gameNumberPost", _dataController.ongoingGameData.gameNumber); 
 				form.AddField ("askedQuestionsPost", _questionController.getAskedQuestions ());
-				Debug.Log (_dataController.catagory.ToString ());
 				form.AddField ("Round3CatagoryPost", _dataController.catagory.ToString());
 				form.AddField ("QuestionsLeftInCatagoryPost", _questionPool);
 				form.AddField ("scorePost", _playerController.userScore);
