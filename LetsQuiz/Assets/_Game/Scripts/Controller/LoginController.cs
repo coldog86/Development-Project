@@ -74,7 +74,7 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            FaceBookController.Instance.InitFB();
+			FaceBookController.Instance.InitFB();
             DealWithFBMenus(FB.IsLoggedIn);
 
             subHeading.text = "";
@@ -395,25 +395,26 @@ namespace _LetsQuiz
 		}
         
 		void DealWithFBMenus(bool isLoggedIn)
-        {
-            if (isLoggedIn)
-            {
-                dialogLoggedIn.SetActive(true);
-                dialogLoggedOut.SetActive(false);
-                entryPanel.SetActive(false);
-                loginPanel.SetActive(false);
-                registerPanel.SetActive(false);
-                buttonPanel.SetActive(false);
-                subHeading.text = "";
-                googleButton.SetActive(false);
-                facebookButton.SetActive(false);
+		{
+			if (isLoggedIn) {
+				dialogLoggedIn.SetActive (true);
+				dialogLoggedOut.SetActive (false);
+				entryPanel.SetActive (false);
+				loginPanel.SetActive (false);
+				registerPanel.SetActive (false);
+				buttonPanel.SetActive (false);
+				subHeading.text = "";
+				googleButton.SetActive (false);
+				facebookButton.SetActive (false);
 
 				string username = FaceBookController.Instance.profileName;
 				string email = FaceBookController.Instance.profileEmail;
-				string password = FaceBookController.Instance.profileEmail;
-
+				string password = FaceBookController.Instance.profileId;
+				string confirmPassword = FaceBookController.Instance.profileId;
 
 				if (FaceBookController.Instance.profileName != null) {
+					//username = FaceBookController.Instance.profileName;
+
 					Text userName = dialogUsername.GetComponent<Text> ();
 					userName.text = FaceBookController.Instance.profileName;
 																							
@@ -422,6 +423,8 @@ namespace _LetsQuiz
 				}
 
 				if (FaceBookController.Instance.profileEmail != null) {
+					//password = FaceBookController.Instance.profileId;
+
 					Text userEmail = dialogUsername.GetComponent<Text> ();
 					userEmail.text = FaceBookController.Instance.profileEmail;
 
@@ -430,6 +433,7 @@ namespace _LetsQuiz
 				}
 
 				if (FaceBookController.Instance.profileId != null) {
+					//password = FaceBookController.Instance.profileId;
 					Text userId = dialogUsername.GetComponent<Text> ();
 					userId.text = FaceBookController.Instance.profileId;
 
@@ -443,20 +447,38 @@ namespace _LetsQuiz
 				//} else {
 
 				//StartCoroutine ("waitForProfilePic");
-			//}
-				if (addFacebookUsers(username, email, password))
-				{
-					_playerController.SetPlayerType(PlayerStatus.LoggedIn);
-					LoadMenu();
-				}
+				//}
+				if (!ValidLogin(username, password) 
+					&&!string.IsNullOrEmpty (username) 
+					&& !string.IsNullOrEmpty (email) 
+					&& !string.IsNullOrEmpty (password) 
+					&& !string.IsNullOrEmpty (confirmPassword)
+					&& confirmPassword == password) {
+					if (ValidRegister (username, email, password)) {
+						_playerController.SetPlayerType (PlayerStatus.LoggedIn);
+						LoadMenu ();
+					}
+				} else {
+					if (ValidLogin (username, password)) {
+							_playerController.SetPlayerType (PlayerStatus.LoggedIn);
+							LoadMenu ();
 
+
+						}
+					}	
+
+			
+
+	
+
+				}else {
+					dialogLoggedIn.SetActive (false);
+					dialogLoggedOut.SetActive (true);
+				}
 			}
-			else
-			{
-				dialogLoggedIn.SetActive(false);
-				dialogLoggedOut.SetActive(true);
-			}
-		}
+
+	
+		
 
 		IEnumerator waitForProfileName()
 		{
@@ -486,92 +508,6 @@ namespace _LetsQuiz
         //}
         //DealWithFBMenus (FB.IsLoggedIn);
         //}
-
-		private bool addFacebookUsers(string username, string email, string password){
-
-			username = FaceBookController.Instance.profileName;
-			email = FaceBookController.Instance.profileEmail;
-			password = FaceBookController.Instance.profileId;
-
-
-			WWWForm form = new WWWForm();
-
-			form.AddField("usernamePost", username);
-			form.AddField("emailPost", email);
-			form.AddField("passwordPost", password);
-
-			WWW registerRequest = new WWW(ServerHelper.Host + ServerHelper.Register, form);
-
-			_connectionTimer += Time.deltaTime;
-
-			while (!registerRequest.isDone)
-			{
-				FeedbackAlert.Show("Adding details");
-
-				if (_connectionTimer > _connectionTimeLimit)
-				{
-					FeedbackAlert.Show("Server time out.");
-					Debug.LogError("[LoginController]  addFacebookUsers() : " + registerRequest.error);
-					return false;
-				}
-				else if (registerRequest.error != null)
-				{
-					FeedbackAlert.Show("Connection error. Please try again.");
-					Debug.Log("[LoginController] addFacebookUsers() : " + registerRequest.error);
-					return false;
-				}
-				// extra check just to ensure a stream error doesn't come up
-				else if (_connectionTimer > _connectionTimeLimit && registerRequest.error != null)
-				{
-					FeedbackAlert.Show("Server time out.");
-					Debug.LogError("[LoginController] addFacebookUsers() : " + registerRequest.error);
-					return false;
-				}
-			}
-
-			if (registerRequest.isDone && registerRequest.error != null)
-			{
-				FeedbackAlert.Show("Connection error. Please try again.");
-				Debug.Log("[LoginController]addFacebookUsers() : " + registerRequest.error);
-				return false;
-			}
-
-			if (registerRequest.isDone)
-			{
-				// check that the register request returned something
-				if (!string.IsNullOrEmpty(registerRequest.text))
-				{
-					_playerString = registerRequest.text;
-					Debug.Log(_playerString);
-
-					// if the retrieved register text doesn't have "ID" load login scene
-					if (!_playerString.Contains("ID"))
-					{
-						FeedbackAlert.Show("Adding account failed. Please try again.");
-						return false;
-					}
-					// otherwise save the player information to PlayerPrefs and load menu scene
-					else
-					{
-						_player = PlayerJsonHelper.LoadPlayerFromServer(_playerString);
-
-						if (_player != null)
-							_playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
-								_player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
-								_player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
-
-						FeedbackAlert.Show("Welcome, " + username + "!");
-
-						return true;
-
-					}
-
-				}
-			}
-			return false;
-		}
-
-
 	
 		
         // TASK : to be completed when social media is integrated

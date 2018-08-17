@@ -83,6 +83,7 @@ public class FaceBookController : MonoBehaviour
 	{
 		if (result.Error == null) {
 			profileName = "" + result.ResultDictionary ["name"];
+			Debug.Log("Your Name: " + profileName);
 		} else {
 			Debug.Log (result.Error);
 		}
@@ -123,30 +124,32 @@ public class FaceBookController : MonoBehaviour
 
 		}
 	}
-//	public void share()
-//	{
-//		FB.FeedShare (
-//			string.Empty,
-//			new Uri (appLinkURL),
-//			"Let's Quiz",
-//			"Come play",
-//			"Check out this game",
-//			new Uri (""),
-//			string.Empty,
-//			shareCallBack
-//
-//		);    
-//	}
-//	void shareCallBack(IResult result)
-//	{
-//		if (result.Cancelled) {
-//			Debug.Log ("Share Cancelled");
-//		} else if (!string.IsNullOrEmpty (result.Error)) {
-//			Debug.Log ("Error on share!");
-//		} else if (!string.IsNullOrEmpty (result.RawResult)) {
-//			Debug.Log ("Success on share");
-//		}
-//	}
+
+	public void share()
+	{
+		InitFB ();
+		FB.FeedShare (
+			string.Empty,
+			new Uri ("https://developers.facebook.com/"),
+			"Let's Quiz",
+			"Come play",
+			"Check out this game",
+			new Uri ("https://www.facebook.com/photo.php?fbid=10217071733810202&set=a.3575468990089&type=3&theater"),
+			string.Empty,
+			shareCallBack
+
+		);    
+	}
+	void shareCallBack(IResult result)
+	{
+		if (result.Cancelled) {
+			Debug.Log ("Share Cancelled");
+		} else if (!string.IsNullOrEmpty (result.Error)) {
+			Debug.Log ("Error on share!");
+		} else if (!string.IsNullOrEmpty (result.RawResult)) {
+			Debug.Log ("Success on share");
+		}
+	}
 
 
 }
