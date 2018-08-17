@@ -466,11 +466,7 @@ namespace _LetsQuiz
 
 						}
 					}	
-
-			
-
-	
-
+					
 				}else {
 					dialogLoggedIn.SetActive (false);
 					dialogLoggedOut.SetActive (true);
