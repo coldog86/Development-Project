@@ -184,7 +184,7 @@ namespace _LetsQuiz
                         {
                             _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
                                 _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
-                                _player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
+								_player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
                             FeedbackAlert.Show("Welcome back " + _username);
                         }

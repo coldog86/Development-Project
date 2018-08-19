@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace _LetsQuiz
 {
@@ -75,6 +76,8 @@ namespace _LetsQuiz
 
         public string scoreStatus { get; set; }
 
+		public List<SavedGame> savedGames { get; set; }
+
         #endregion properties
 
         #region id
@@ -82,6 +85,9 @@ namespace _LetsQuiz
         private void Start()
         {
             _dataController = FindObjectOfType<DataController>();
+
+			Debug.Log ("current saved games");
+			Debug.Log (savedGames);
         }
 
         // set the player id value
@@ -478,10 +484,32 @@ namespace _LetsQuiz
             return _questandSub;
         }
 
+		//get all saved games
+		public List<SavedGame> getSavedGames()
+		{
+			return savedGames;
+		}
+
+		//add to saved games
+		public void addSavedGame(SavedGame game)
+		{
+			savedGames.Add (game);
+			Debug.Log ("gamestate saved to local storage");
+		}
+
+		//set all saved games
+		public void setSavedGames(List<SavedGame> games)
+		{
+			savedGames = games;
+		}
+			
+
+
+
         #endregion question data
 
         public void Save(int id, string username, string email, string password, string dob, string questionsSubmitted,
-                         int numQuestionsSubmitted, int numGamesPlayed, int highestScore, int numCorrectAnswers, int totalQuestionsAnswered)
+			int numQuestionsSubmitted, int numGamesPlayed, int highestScore, int numCorrectAnswers, int totalQuestionsAnswered)
         {
             SetId(id);
             SetUsername(username);

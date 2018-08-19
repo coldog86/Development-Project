@@ -15,6 +15,7 @@ namespace _LetsQuiz
 		DataController _dataController;
 		string _questionPool;
 		int _counter; //just used for testing, so the log can show what was submitted
+		bool ConnectionAvailable;
 
 		// Use this for initialization
 		void Start () 
@@ -27,6 +28,8 @@ namespace _LetsQuiz
 		
 		public void SubmitGameToDB(string _questionPool)
         {
+
+			checkForConnection ();  //test for network connectivity
 			this._questionPool = _questionPool;
 			StartCoroutine(SubmitRoundData());
         }
@@ -35,6 +38,7 @@ namespace _LetsQuiz
 
 		private IEnumerator SubmitRoundData ()
 		{
+
 			string address = "";
 			WWWForm form = new WWWForm ();
 			if (_dataController.turnNumber == 1) 
@@ -147,6 +151,7 @@ namespace _LetsQuiz
                 {
                     FeedbackAlert.Show("Server time out.");
                     Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
+					_playerController.addSavedGame (new SavedGame(submitRequest));
                     yield return null;
                 }
 
@@ -154,6 +159,7 @@ namespace _LetsQuiz
                 if (_connectionTimer > _connectionTimeLimit || submitRequest.error != null){
                     FeedbackAlert.Show("Server error.");
                     Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
+					_playerController.addSavedGame (new SavedGame(submitRequest));
                     yield return null;
                 }    
             }
@@ -162,6 +168,7 @@ namespace _LetsQuiz
             {
                 FeedbackAlert.Show("Connection error. Please try again.");
                 Debug.Log("SubmitScore : Submit() : " + submitRequest.error);
+				_playerController.addSavedGame (new SavedGame(submitRequest));
                 yield return null;
             }
 
@@ -172,6 +179,34 @@ namespace _LetsQuiz
                 DestroyObject(gameObject); 
             }
         }
+
+		public void checkForConnection() {
+			//testing for network connectivity
+			switch (Application.internetReachability)
+			{
+			case NetworkReachability.NotReachable:
+				ConnectionAvailable = false;
+				break;
+
+			case NetworkReachability.ReachableViaCarrierDataNetwork:
+				ConnectionAvailable = true;
+				break;
+
+			case NetworkReachability.ReachableViaLocalAreaNetwork:
+				ConnectionAvailable = true;
+				break;
+			}
+			//how you check if a connection is available
+			if (ConnectionAvailable)
+			{
+				Debug.Log("Connection was succcessful");
+			}
+			else
+			{
+				Debug.Log("Connection was not succcessful");
+			}
+
+		}
 
 	}
 }
