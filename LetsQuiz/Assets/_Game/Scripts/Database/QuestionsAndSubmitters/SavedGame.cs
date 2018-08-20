@@ -3,11 +3,10 @@ using UnityEngine;
 
 namespace _LetsQuiz
 {
+	[System.Serializable]
 	public class SavedGame
 	{
-
 		public WWW _submitRequest;
-
 
 		public SavedGame(WWW submitRequest) {
 

@@ -76,7 +76,7 @@ namespace _LetsQuiz
 
         public string scoreStatus { get; set; }
 
-		public List<SavedGame> savedGames { get; set; }
+		public SavedGameContainer savedGames { get; set; }
 
         #endregion properties
 
@@ -485,7 +485,7 @@ namespace _LetsQuiz
         }
 
 		//get all saved games
-		public List<SavedGame> getSavedGames()
+		public SavedGameContainer getSavedGames()
 		{
 			return savedGames;
 		}
@@ -493,12 +493,13 @@ namespace _LetsQuiz
 		//add to saved games
 		public void addSavedGame(SavedGame game)
 		{
-			savedGames.Add (game);
-			Debug.Log ("gamestate saved to local storage");
+			savedGames.allSavedRounds.Add (game);
+			//resave games to persistent data, JSON  possibly just call the data Controller save method. 
+			_dataController.SaveSavedJSON("location", savedGames);
 		}
 
 		//set all saved games
-		public void setSavedGames(List<SavedGame> games)
+		public void setSavedGames(SavedGameContainer games)
 		{
 			savedGames = games;
 		}

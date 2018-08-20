@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.IO;
 
 namespace _LetsQuiz
 {
@@ -83,6 +84,8 @@ namespace _LetsQuiz
             _highScoreController.Load();
 
 			List<string> catagories = new List<string> ();
+
+			_playerController.setSavedGames = LoadSavedJSON ("location");
 
             // retrive player username and password from PlayerPrefs if they have an id
             if (PlayerPrefs.HasKey(_playerController.idKey))
@@ -233,7 +236,30 @@ namespace _LetsQuiz
             return ongoingGameData.overAllScore;
         }
 
-        #endregion feedback specific
+		#endregion feedback specific
+
+		//extract JSON and extract to array of SavedGame[]
+		//save to playerCOntroller. 
+		public SavedGameContainer LoadSavedJSON<SavedGameContainer>(string location) where SavedGameContainer : new()
+		{
+			if (File.Exists(location))
+			{
+				var data = File.ReadAllText(location);
+				return JsonUtility.FromJson<SavedGameContainer>(data);
+			}
+			else return new SavedGameContainer();
+		}
+
+		//SavetoJSON
+		//saves current rounds into persistent data
+		public void SaveSavedJSON<SavedGameContainer>(string location, SavedGameContainer games)
+		{
+			var data = JsonUtility.ToJson(games, true);
+			File.WriteAllText(location, data);
+			Debug.Log ("gamestate saved to local storage");
+
+		}
+        
 
         #endregion methods
     }

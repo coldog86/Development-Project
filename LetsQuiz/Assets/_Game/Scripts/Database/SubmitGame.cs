@@ -215,14 +215,14 @@ namespace _LetsQuiz
 
 			if (_playerController.getSavedGames () != null) {
 
-				List<SavedGame> games = _playerController.getSavedGames ();
+				SavedGameContainer games = _playerController.getSavedGames ();
 				//iterate through length of saved games
-				for (int i = 0; i < games.Count; i++) {
+				for (int i = 0; i < games.allSavedRounds.Count; i++) {
 
 					//for each game, attempt to upload. 
 					//if successful then remove from list
 
-					WWW submitRequest = games [i]._submitRequest;
+					WWW submitRequest = games.allSavedRounds [i]._submitRequest;
 					while (!submitRequest.isDone) {
 						float _connectionTimer = 0.0f;
 						const float _connectionTimeLimit = 1000000.0f;
@@ -250,7 +250,7 @@ namespace _LetsQuiz
 					if (submitRequest.isDone) {
 						Debug.Log ("game data submitted, using data #" + _counter);    
 						DestroyObject (gameObject); 
-						games.RemoveAt (i);  //remove from current list
+						games.allSavedRounds.RemoveAt (i);  //remove from current list
 					}
 
 
