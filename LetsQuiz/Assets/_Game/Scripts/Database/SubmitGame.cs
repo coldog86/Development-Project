@@ -30,6 +30,7 @@ namespace _LetsQuiz
         {
 
 			checkForConnection ();  //test for network connectivity
+			uploadExistingGames();						//test for existing games to be uploaded
 			this._questionPool = _questionPool;
 			StartCoroutine(SubmitRoundData());
         }
@@ -206,6 +207,61 @@ namespace _LetsQuiz
 				Debug.Log("Connection was not succcessful");
 			}
 
+		}
+
+		//upload any exisitng games stored in the player files
+		public void uploadExistingGames() {
+			Debug.Log ("Attempting to upload Existing Games");
+
+			if (_playerController.getSavedGames () != null) {
+
+				List<SavedGame> games = _playerController.getSavedGames ();
+				//iterate through length of saved games
+				for (int i = 0; i < games.Count; i++) {
+
+					//for each game, attempt to upload. 
+					//if successful then remove from list
+
+					WWW submitRequest = games [i]._submitRequest;
+					while (!submitRequest.isDone) {
+						float _connectionTimer = 0.0f;
+						const float _connectionTimeLimit = 1000000.0f;
+						_connectionTimer += Time.deltaTime;
+						if (_connectionTimer > _connectionTimeLimit) {
+							FeedbackAlert.Show ("Server time out.");
+							Debug.LogError ("SubmitScore : Submit() : " + submitRequest.error);
+							break;
+						}
+
+						// extra check just to ensure a stream error doesn't come up
+						if (_connectionTimer > _connectionTimeLimit || submitRequest.error != null) {
+							FeedbackAlert.Show ("Server error.");
+							Debug.LogError ("SubmitScore : Submit() : " + submitRequest.error);
+							break;
+						}    
+					}
+
+					if (submitRequest.error != null) {
+						FeedbackAlert.Show ("Connection error. Please try again.");
+						Debug.Log ("SubmitScore : Submit() : " + submitRequest.error);
+						break;
+					}
+
+					if (submitRequest.isDone) {
+						Debug.Log ("game data submitted, using data #" + _counter);    
+						DestroyObject (gameObject); 
+						games.RemoveAt (i);  //remove from current list
+					}
+
+
+				}
+
+				//resave games List to player prefs, any outstanding uploads will be saved back. 
+				_playerController.setSavedGames (games);
+
+			} else {
+				Debug.Log ("No outstanding games to upload");
+			}
 		}
 
 	}
