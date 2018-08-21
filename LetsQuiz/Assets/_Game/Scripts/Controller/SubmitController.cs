@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -14,14 +15,13 @@ namespace _LetsQuiz
         public InputField wrong1Input;
         public InputField wrong2Input;
         public InputField wrong3Input;
+        public Dropdown categorySelection;
 
         [Header("Connection")]
         public float connectionTimer = 0;
         public const float connectionTimeLimit = 10000.0f;
 
-        private PlayerController _playerController;
-
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -29,12 +29,18 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            _playerController = FindObjectOfType<PlayerController>();
+            if (PlayerController.Initialised)
+                PlayerController.Instance.Load();
 
-            _playerController.Load();
+            List<string> categories = new List<string>();
+
+            if (QuestionController.Initialised)
+                categories = QuestionController.Instance.GetAllCategories();
+
+            categorySelection.AddOptions(categories);
         }
 
-        #endregion
+        #endregion unity
 
         #region submit specific
 
@@ -47,6 +53,7 @@ namespace _LetsQuiz
             var wrong1Answer = wrong1Input.text;
             var wrong2Answer = wrong2Input.text;
             var wrong3Answer = wrong3Input.text;
+            var category = categorySelection.itemText.text;
 
             if (string.IsNullOrEmpty(question))
                 FeedbackAlert.Show("Question cannot be empty.");
@@ -63,6 +70,9 @@ namespace _LetsQuiz
             if (string.IsNullOrEmpty(wrong3Answer))
                 FeedbackAlert.Show("Wrong Answer 3 cannot be empty.");
 
+            if (string.IsNullOrEmpty(category))
+                FeedbackAlert.Show("Category cannot be empty.");
+
             if (!string.IsNullOrEmpty(question) && !string.IsNullOrEmpty(correctAnswer) && !string.IsNullOrEmpty(wrong1Answer) && !string.IsNullOrEmpty(wrong2Answer) && !string.IsNullOrEmpty(wrong3Answer))
             {
                 if (ValidSubmission(question, correctAnswer, wrong1Answer, wrong2Answer, wrong3Answer))
@@ -73,6 +83,7 @@ namespace _LetsQuiz
                     wrong1Input.text = "";
                     wrong2Input.text = "";
                     wrong3Input.text = "";
+                    categorySelection.value = 0;
                 }
                 else
                     FeedbackAlert.Show("Question submitted unucessfully.");
@@ -85,8 +96,6 @@ namespace _LetsQuiz
 
             WWWForm form = new WWWForm();
 
-            //form.AddField("usernamePost", _playerController.GetUsername());
-            //form.AddField("idPost", _playerController.GetId());
             form.AddField("questionText", question);
             form.AddField("correctAnswer", correctAnswer);
             form.AddField("wrong1", wrong1Answer);
@@ -97,7 +106,7 @@ namespace _LetsQuiz
             WWW submitQuestion = new WWW(ServerHelper.Host + ServerHelper.SubmitUserQuestion, form);
 
             while (!submitQuestion.isDone)
-            { 
+            {
                 connectionTimer += Time.deltaTime;
                 FeedbackAlert.Show("Attempting to submit question.");
 
@@ -139,7 +148,12 @@ namespace _LetsQuiz
             return false;
         }
 
-        #endregion
+        public void CategorySelected()
+        {
+            string category = categorySelection.options[categorySelection.value].text;
+        }
+
+        #endregion submit specific
 
         #region navigation specific
 
@@ -149,8 +163,8 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
-        #endregion
+        #endregion navigation specific
 
-        #endregion
+        #endregion methods
     }
 }

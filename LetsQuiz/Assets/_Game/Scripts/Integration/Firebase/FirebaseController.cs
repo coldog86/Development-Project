@@ -1,21 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Firebase.Messaging;
+using System.Collections;
 using UnityEngine;
-using Firebase.Messaging;
 using UnityEngine.UI;
 
 namespace _LetsQuiz
 {
     public class FirebaseController : Singleton<FirebaseController>
     {
-
         #region variables
 
+        [Header("Components")]
         [SerializeField] private Text _tokenText;
+
         private float _connectionTimer = 0.0f;
         private const float _connectionTimeLimit = 10000.0f;
 
-        #endregion
+        #endregion variables
+
+        #region properties
 
         public string Token { get; private set; }
 
@@ -23,17 +25,15 @@ namespace _LetsQuiz
 
         public string Message { get; private set; }
 
-        #region properties
-
-        #endregion
+        #endregion properties
 
         #region methods
 
         #region unity
 
-        protected override void Awake()
+        protected override void OnEnable()
         {
-            base.Awake();
+            base.OnEnable();
             DontDestroyOnLoad(gameObject);
         }
 
@@ -43,7 +43,7 @@ namespace _LetsQuiz
             FirebaseMessaging.MessageReceived += OnMessageReceived;
         }
 
-        #endregion
+        #endregion unity
 
         #region events
 
@@ -66,7 +66,7 @@ namespace _LetsQuiz
             Message = e.Message.Notification.Body;
         }
 
-        #endregion
+        #endregion events
 
         #region subscription
 
@@ -84,18 +84,14 @@ namespace _LetsQuiz
             }
         }
 
-        #endregion
+        #endregion subscription
+
+        #region notification
 
         public void CreateNotification(string token, string header, string message)
         {
             if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
                 StartCoroutine(SendNotification(token, header, message));
-        }
-
-        public void CreateDebugNotification(string header, string message)
-        {
-            if (!string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
-                StartCoroutine(SendDebugNotification(header, message));
         }
 
         private IEnumerator SendNotification(string token, string header, string message)
@@ -145,7 +141,16 @@ namespace _LetsQuiz
                     yield return notificationRequest;
                 }
             }
+        }
 
+        #endregion notification
+
+        #region notification - debug
+
+        public void CreateDebugNotification(string header, string message)
+        {
+            if (!string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
+                StartCoroutine(SendDebugNotification(header, message));
         }
 
         private IEnumerator SendDebugNotification(string header, string message)
@@ -196,6 +201,8 @@ namespace _LetsQuiz
             }
         }
 
-        #endregion
+        #endregion notification - debug
+
+        #endregion methods
     }
 }

@@ -776,9 +776,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationDuration: 1
-  topTransform: {fileID: 0}
-  middleTransform: {fileID: 0}
-  bottomTransform: {fileID: 0}
+  topTransform: {fileID: 224380997649963844}
+  middleTransform: {fileID: 224708387953180438}
+  bottomTransform: {fileID: 224116455425538308}
   isArrow: 0
 --- !u!114 &114528328182569610
 MonoBehaviour:
@@ -1128,7 +1128,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 1
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114848329502881788
@@ -1307,7 +1307,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 1
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!222 &222010986272371150

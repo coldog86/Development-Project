@@ -5,6 +5,5 @@
     {
         public string answerText;
         public bool isCorrect;
-
     }
 }

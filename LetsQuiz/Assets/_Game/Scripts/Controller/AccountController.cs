@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace _LetsQuiz
 {
@@ -8,13 +8,11 @@ namespace _LetsQuiz
     {
         #region variables
 
-        private PlayerController _playerController;
-
         [Header("Components")]
         public Text username;
         public Text email;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -22,21 +20,20 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            _playerController = FindObjectOfType<PlayerController>();
-
             if (!username)
                 Debug.Log("Username Input Field is null");
+
             if (!email)
                 Debug.Log("Email Input Field is null");
         }
 
         private void Start()
         {
-            username.text = _playerController.GetUsername();
-            email.text = _playerController.GetEmail();
+            username.text = PlayerController.Instance.GetUsername();
+            email.text = PlayerController.Instance.GetEmail();
         }
 
-        #endregion
+        #endregion unity
 
         #region navigation specific
 
@@ -46,9 +43,8 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
-        #endregion
+        #endregion navigation specific
 
-
-        #endregion
+        #endregion methods
     }
 }

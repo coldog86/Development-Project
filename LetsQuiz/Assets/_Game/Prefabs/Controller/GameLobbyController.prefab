@@ -36,7 +36,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1460146028424240}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 55.2536, y: 134.56482, z: -2.3276649}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -55,6 +55,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameButton: {fileID: 1991676904502388, guid: cc9f7e0471529df4ebb2c77f516ccf6c, type: 2}
   buttonContainer: {fileID: 0}
+  Red: {r: 0.95686275, g: 0.2627451, b: 0.21176471, a: 1}
+  Green: {r: 0.29803923, g: 0.6862745, b: 0.3137255, a: 1}
 --- !u!114 &114847060159031086
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -66,10 +68,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3e49642760c2fa4aa7e981bf192a6b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ongoingGame1: {fileID: 0}
-  ongoingGame2: {fileID: 0}
-  ongoingGame3: {fileID: 0}
-  ongoingGame4: {fileID: 0}
+  CatagoryPopUp: {fileID: 0}
+  CatagoryDropDown: {fileID: 0}
+  CatAckPanel: {fileID: 0}
+  CatSelectPanel: {fileID: 0}
+  BackgroundStuff: {fileID: 0}
+  CatagoryText: {fileID: 0}
 --- !u!114 &114994916082142090
 MonoBehaviour:
   m_ObjectHideFlags: 1

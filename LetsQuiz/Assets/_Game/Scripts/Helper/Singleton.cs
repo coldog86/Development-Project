@@ -16,10 +16,10 @@ namespace _LetsQuiz
 
         #region unity
 
-        protected virtual void Awake()
+        protected virtual void OnEnable()
         {
             if (Instance != null)
-                Debug.LogErrorFormat("[{0}] Awake() : Instance of {1} already initialised.", name, GetType().Name);
+                Debug.LogErrorFormat("[{0}] OnEnable() : Instance of {1} already initialised.", name, GetType().Name);
             else
                 Instance = (T)this;
         }

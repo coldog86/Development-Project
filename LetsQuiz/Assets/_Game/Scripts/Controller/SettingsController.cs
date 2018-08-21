@@ -1,80 +1,50 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace _LetsQuiz
 {
-    public class SettingsController : MonoBehaviour
+    public class SettingsController : Singleton<SettingsController>
     {
         #region variables
 
-        [Header("Settings")]
-        private const int unmutedVolume = -10;
-        private const int mutedVolume = -80;
-
         [Header("Components")]
-        public AudioMixer masterMixer;
+        public AudioMixer MasterMixer;
+
         private Toggle _soundEffectSwitch;
         private Toggle _backgroundMusicSwitch;
         private Toggle _notificationSwitch;
-
-        // AudioMixer parameters
-        private const string _soundEffectParameter = "SoundEffectVolume";
-        private const string _backgroundMusicParameter = "BackgroundMusicVolume";
-
-        // PlayerPref keys
-        private const string _effectVolumeKey = "SoundEffectVolume";
-        private const string _effectToggleKey = "SoundEffectToggle";
-        private const string _musicVolumeKey = "BackgroundMusicVolume";
-        private const string _musicToggleKey = "BackgroundMusicToggle";
-        private const string _notificationToggleKey = "NotificationToggle";
-
+        private Button _backButton;
 
         // int declartions of bools
         private const int _toggleActive = 1;
         private const int _toggleInactive = 0;
 
-        private PlayerSettings _playerSettings;
-
-        #endregion
+        #endregion variables
 
         #region properties
 
-        public string effectVolumeKey { get { return _effectVolumeKey; } }
+        public PlayerSettings Settings { get; set; }
 
-        public string effectToggleKey { get { return _effectToggleKey; } }
-
-        public string musicVolumeKey { get { return _musicVolumeKey; } }
-
-        public string musicToggleKey { get { return _musicToggleKey; } }
-
-        public string notificationToggleKey { get { return _notificationToggleKey; } }
-
-        #endregion
+        #endregion properties
 
         #region methods
 
         #region unity
 
-        private void Awake()
+        protected override void OnEnable()
         {
-            // only get toggle references if settings scene is active
-            if (SceneManager.GetActiveScene().buildIndex == BuildIndex.Settings)
-            {
-                // get required components
-                _soundEffectSwitch = GameObject.FindGameObjectWithTag("Toggle_Sound").GetComponent<Toggle>();
-                _backgroundMusicSwitch = GameObject.FindGameObjectWithTag("Toggle_Background").GetComponent<Toggle>();
-                _notificationSwitch = GameObject.FindGameObjectWithTag("Toggle_Notification").GetComponent<Toggle>();
-            }
+            base.OnEnable();
+            DontDestroyOnLoad(gameObject);
+            // load the player settings
+            Load();
         }
 
         private void Start()
         {
-            // load the player settings
-            Load();
-
             // set the toggle status if there are toggles to set
+
             if (_soundEffectSwitch)
                 _soundEffectSwitch.isOn = GetSoundEffectToggle();
 
@@ -85,7 +55,23 @@ namespace _LetsQuiz
                 _notificationSwitch.isOn = GetNotificationToggle();
         }
 
-        #endregion
+        private void Update()
+        {
+            if (_soundEffectSwitch != null && _backgroundMusicSwitch != null && _notificationSwitch != null && _backButton != null)
+                return;
+
+            if (SceneManager.GetActiveScene().buildIndex == BuildIndex.Settings)
+            {
+                // get required components
+                _soundEffectSwitch = GameObject.FindGameObjectWithTag("Toggle_Sound").GetComponent<Toggle>();
+                _backgroundMusicSwitch = GameObject.FindGameObjectWithTag("Toggle_Background").GetComponent<Toggle>();
+                _notificationSwitch = GameObject.FindGameObjectWithTag("Toggle_Notification").GetComponent<Toggle>();
+                _backButton = GameObject.Find("BackButton").GetComponent<Button>();
+                _backButton.onClick.AddListener(BackToMenu);
+            }
+        }
+
+        #endregion unity
 
         #region navigation specific
 
@@ -95,7 +81,7 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
-        #endregion
+        #endregion navigation specific
 
         #region user interaction
 
@@ -103,10 +89,10 @@ namespace _LetsQuiz
         public void ToggleSoundEffect()
         {
             if (_soundEffectSwitch.isOn)
-                SetSoundEffectVolume(unmutedVolume);
+                SetSoundEffectVolume(DataHelper.AudioParameter.UNMUTED_VOLUME);
             else
-                SetSoundEffectVolume(mutedVolume);
-            
+                SetSoundEffectVolume(DataHelper.AudioParameter.MUTED_VOLUME);
+
             SetSoundEffectToggle(_soundEffectSwitch.isOn);
         }
 
@@ -114,10 +100,10 @@ namespace _LetsQuiz
         public void ToggleBackgroundMusic()
         {
             if (_backgroundMusicSwitch.isOn)
-                SetBackgroundMusicVolume(unmutedVolume);
+                SetBackgroundMusicVolume(DataHelper.AudioParameter.UNMUTED_VOLUME);
             else
-                SetBackgroundMusicVolume(mutedVolume);
-            
+                SetBackgroundMusicVolume(DataHelper.AudioParameter.MUTED_VOLUME);
+
             SetBackgroundMusicToggle(_backgroundMusicSwitch.isOn);
         }
 
@@ -127,7 +113,7 @@ namespace _LetsQuiz
             SetNotificationToggle(_notificationSwitch.isOn);
         }
 
-        #endregion
+        #endregion user interaction
 
         #region sound effect specific
 
@@ -136,10 +122,10 @@ namespace _LetsQuiz
         // set the sound effect mixer value
         public void SetSoundEffectVolume(int volume)
         {
-            if (volume != _playerSettings.soundEffectVolume)
+            if (volume != Settings.SoundEffectVolume)
             {
-                _playerSettings.soundEffectVolume = volume;
-                masterMixer.SetFloat(_soundEffectParameter, volume);
+                Settings.SoundEffectVolume = volume;
+                MasterMixer.SetFloat(DataHelper.AudioParameter.SOUND_EFFECT, volume);
                 SaveSoundEffectVolume();
             }
         }
@@ -147,16 +133,16 @@ namespace _LetsQuiz
         // get the sound effect mixer value
         public float GetSoundEffectVolume()
         {
-            return _playerSettings.soundEffectVolume;
+            return Settings.SoundEffectVolume;
         }
 
         // save the sound effect mixer value to playerprefs
         private void SaveSoundEffectVolume()
         {
-            PlayerPrefs.SetFloat(_effectVolumeKey, _playerSettings.soundEffectVolume);
+            PlayerPrefs.SetFloat(DataHelper.PlayerSettingsKey.EFFECT_VOLUME, Settings.SoundEffectVolume);
         }
 
-        #endregion
+        #endregion mixer specific
 
         #region toggle specifc
 
@@ -165,9 +151,9 @@ namespace _LetsQuiz
         {
             var toggleStatus = status ? _toggleActive : _toggleInactive;
 
-            if (toggleStatus != _playerSettings.soundEffectToggled)
+            if (toggleStatus != Settings.SoundEffectToggle)
             {
-                _playerSettings.soundEffectToggled = toggleStatus;
+                Settings.SoundEffectToggle = toggleStatus;
                 SaveSoundEffectToggle();
             }
         }
@@ -175,20 +161,20 @@ namespace _LetsQuiz
         // get the sound effect toggle value
         public bool GetSoundEffectToggle()
         {
-            var status = _playerSettings.soundEffectToggled == _toggleActive ? true : false;
+            var status = Settings.SoundEffectToggle == _toggleActive ? true : false;
             return status;
         }
 
         // save the sound effect toggle value to playerprefs
         private void SaveSoundEffectToggle()
         {
-            PlayerPrefs.SetInt(_effectToggleKey, _playerSettings.soundEffectToggled);
+            PlayerPrefs.SetInt(DataHelper.PlayerSettingsKey.EFFECT_TOGGLE, Settings.SoundEffectToggle);
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion toggle specifc
 
-        #endregion
+        #endregion sound effect specific
 
         #region background music specific
 
@@ -197,10 +183,10 @@ namespace _LetsQuiz
         // set the background music mixer value
         public void SetBackgroundMusicVolume(int volume)
         {
-            if (volume != _playerSettings.backgroundMusicVolume)
+            if (volume != Settings.BackgroundMusicVolume)
             {
-                _playerSettings.backgroundMusicVolume = volume;
-                masterMixer.SetFloat(_backgroundMusicParameter, volume);
+                Settings.BackgroundMusicVolume = volume;
+                MasterMixer.SetFloat(DataHelper.AudioParameter.BACKGROUND_MUSIC, volume);
                 SaveBackgroundMusicVolume();
             }
         }
@@ -208,16 +194,16 @@ namespace _LetsQuiz
         // get the background music mixer value
         public float GetBackgroundMusicVolume()
         {
-            return _playerSettings.backgroundMusicVolume;
+            return Settings.BackgroundMusicVolume;
         }
 
         // save the background music value to playerprefs
         private void SaveBackgroundMusicVolume()
         {
-            PlayerPrefs.SetFloat(_musicVolumeKey, _playerSettings.backgroundMusicVolume);
+            PlayerPrefs.SetFloat(DataHelper.PlayerSettingsKey.MUSIC_VOLUME, Settings.BackgroundMusicVolume);
         }
 
-        #endregion
+        #endregion mixer specific
 
         #region toggle specific
 
@@ -226,30 +212,30 @@ namespace _LetsQuiz
         {
             var toggleStatus = status ? _toggleActive : _toggleInactive;
 
-            if (toggleStatus != _playerSettings.backgroundMusicToggled)
+            if (toggleStatus != Settings.BackgroundMusicToggle)
             {
-                _playerSettings.backgroundMusicToggled = toggleStatus;
+                Settings.BackgroundMusicToggle = toggleStatus;
                 SaveBackgroundMusicToggle();
             }
         }
-            
+
         // get the background music toggle value
         public bool GetBackgroundMusicToggle()
         {
-            var status = _playerSettings.backgroundMusicToggled == _toggleActive ? true : false;
+            var status = Settings.BackgroundMusicToggle == _toggleActive ? true : false;
             return status;
         }
 
         // save the background music toggle value to playerprefs
         private void SaveBackgroundMusicToggle()
         {
-            PlayerPrefs.SetInt(_musicToggleKey, _playerSettings.backgroundMusicToggled);
+            PlayerPrefs.SetInt(DataHelper.PlayerSettingsKey.MUSIC_TOGGLE, Settings.BackgroundMusicToggle);
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion toggle specific
 
-        #endregion
+        #endregion background music specific
 
         #region notification specific
 
@@ -258,10 +244,10 @@ namespace _LetsQuiz
         {
             var toggleStatus = status ? _toggleActive : _toggleInactive;
 
-            if (toggleStatus != _playerSettings.notificationsToggled)
+            if (toggleStatus != Settings.NotificationsToggle)
             {
                 FirebaseController.Instance.ToogleSubscription(status);
-                _playerSettings.notificationsToggled = toggleStatus;
+                Settings.NotificationsToggle = toggleStatus;
                 SaveNotificationToggle();
             }
         }
@@ -269,55 +255,55 @@ namespace _LetsQuiz
         // get the notification toggle value
         public bool GetNotificationToggle()
         {
-            var status = _playerSettings.notificationsToggled == _toggleActive ? true : false;
+            var status = Settings.NotificationsToggle == _toggleActive ? true : false;
             return status;
         }
 
         // save the notification toggle value to playerprefs
         private void SaveNotificationToggle()
         {
-            PlayerPrefs.SetInt(_notificationToggleKey, _playerSettings.notificationsToggled);
+            PlayerPrefs.SetInt(DataHelper.PlayerSettingsKey.NOTIFICATION_TOGGLE, Settings.NotificationsToggle);
             PlayerPrefs.Save();
         }
 
-        #endregion
+        #endregion notification specific
 
         #region load settings
 
         // load player settings from playerprefs
         public void Load()
         {
-            _playerSettings = new PlayerSettings();
+            Settings = new PlayerSettings();
 
             // load sound effect volume
-            if (PlayerPrefs.HasKey(_effectVolumeKey))
+            if (PlayerPrefs.HasKey(DataHelper.PlayerSettingsKey.EFFECT_VOLUME))
             {
-                _playerSettings.soundEffectVolume = PlayerPrefs.GetInt(_effectVolumeKey);
-                masterMixer.SetFloat(_soundEffectParameter, GetSoundEffectVolume());
+                Settings.SoundEffectVolume = PlayerPrefs.GetInt(DataHelper.PlayerSettingsKey.EFFECT_VOLUME);
+                MasterMixer.SetFloat(DataHelper.AudioParameter.SOUND_EFFECT, GetSoundEffectVolume());
             }
 
             // load background music volume
-            if (PlayerPrefs.HasKey(_musicVolumeKey))
+            if (PlayerPrefs.HasKey(DataHelper.PlayerSettingsKey.MUSIC_VOLUME))
             {
-                _playerSettings.backgroundMusicVolume = PlayerPrefs.GetInt(_musicVolumeKey);
-                masterMixer.SetFloat(_backgroundMusicParameter, GetBackgroundMusicVolume());
+                Settings.BackgroundMusicVolume = PlayerPrefs.GetInt(DataHelper.PlayerSettingsKey.MUSIC_VOLUME);
+                MasterMixer.SetFloat(DataHelper.AudioParameter.BACKGROUND_MUSIC, GetBackgroundMusicVolume());
             }
 
             // load sound effect toggle status
-            if (PlayerPrefs.HasKey(_effectToggleKey))
-                _playerSettings.soundEffectToggled = PlayerPrefs.GetInt(_effectToggleKey);
+            if (PlayerPrefs.HasKey(DataHelper.PlayerSettingsKey.EFFECT_TOGGLE))
+                Settings.SoundEffectToggle = PlayerPrefs.GetInt(DataHelper.PlayerSettingsKey.EFFECT_TOGGLE);
 
             // load background music toggle status
-            if (PlayerPrefs.HasKey(_musicToggleKey))
-                _playerSettings.backgroundMusicToggled = PlayerPrefs.GetInt(_musicToggleKey);
+            if (PlayerPrefs.HasKey(DataHelper.PlayerSettingsKey.MUSIC_TOGGLE))
+                Settings.BackgroundMusicToggle = PlayerPrefs.GetInt(DataHelper.PlayerSettingsKey.MUSIC_TOGGLE);
 
             // load push notifications toggle status
-            if (PlayerPrefs.HasKey(_notificationToggleKey))
-                _playerSettings.notificationsToggled = PlayerPrefs.GetInt(_notificationToggleKey);
+            if (PlayerPrefs.HasKey(DataHelper.PlayerSettingsKey.NOTIFICATION_TOGGLE))
+                Settings.NotificationsToggle = PlayerPrefs.GetInt(DataHelper.PlayerSettingsKey.NOTIFICATION_TOGGLE);
         }
 
-        #endregion
+        #endregion load settings
 
-        #endregion
+        #endregion methods
     }
 }

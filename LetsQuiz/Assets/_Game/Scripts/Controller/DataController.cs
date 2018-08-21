@@ -1,29 +1,19 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace _LetsQuiz
 {
-    public class DataController : MonoBehaviour
+    public class DataController : Singleton<DataController>
     {
         #region variables
 
         [Header("Components")]
         private GetAllQuestions _questionDownload;
         private GetHighScores _highscoreDownload;
-        private GetPlayerQuestionSubmissions _questandSub;
-        private PlayerController _playerController;
-        private SettingsController _settingsController;
-        private QuestionController _questionController;
-        private HighscoreController _highScoreController;
-
-        [Header("Player")]
-        private Player _player;
-        private string _playerString = "";
+        private GetPlayerQuestionSubmissions _questAndSub;
 
         [Header("Connection")]
         private const float _connectionTimeLimit = 1000000.0f;
@@ -34,21 +24,19 @@ namespace _LetsQuiz
         private string _password = "p";
         private int _status = -2;
 
-        public OngoingGamesData ongoingGameData { get; set; }
-		public QuestionData[] tempQuestionPool { get; set; }
-		public string catagory { get; set; }
-        public int turnNumber { get; set; }
-		public int gameNumber { get; set; }
-
         #endregion variables
 
         #region properties
 
-        public bool serverConnected { get; set; }
-
-        public string allQuestionJSON { get; set; }
-
-        public string allHighScoreJSON { get; set; }
+        public Player Player { get; set; }
+        public OngoingGamesData OngoingGameData { get; set; }
+        public QuestionData[] TempQuestionPool { get; set; }
+        public string Catagory { get; set; }
+        public int TurnNumber { get; set; }
+        public int GameNumber { get; set; }
+        public bool ServerConnected { get; set; }
+        public string AllQuestionJSON { get; set; }
+        public string AllHighScoreJSON { get; set; }
 
         #endregion properties
 
@@ -56,16 +44,23 @@ namespace _LetsQuiz
 
         #region unity
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            DontDestroyOnLoad(gameObject);
+            TurnNumber = 0;
+        }
+
         private void Start()
         {
-            //PlayerPrefs.DeleteKey("col"); PlayerPrefs.DeleteKey("col2");
-            DontDestroyOnLoad(gameObject);
-            turnNumber = 0;
-            _settingsController = GetComponent<SettingsController>();
-            _settingsController.Load();
+            if (SettingsController.Initialised)
+                SettingsController.Instance.Load();
 
-            _playerController = GetComponent<PlayerController>();
-            _playerController.Load();
+            if (PlayerController.Initialised)
+                PlayerController.Instance.Load();
+
+            if (HighscoreController.Initialised)
+                HighscoreController.Instance.Load();
 
             _questionDownload = FindObjectOfType<GetAllQuestions>();
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
@@ -73,28 +68,32 @@ namespace _LetsQuiz
             _highscoreDownload = FindObjectOfType<GetHighScores>();
             StartCoroutine(_highscoreDownload.PullAllHighScoresFromServer());
 
-            //add in for the Submitted Questions Highscore table.
-            _questandSub = GetComponent<GetPlayerQuestionSubmissions>();
-            StartCoroutine(_questandSub.PullQuestionSubmitters());
+            // add in for the Submitted Questions Highscore table.
+            _questAndSub = GetComponent<GetPlayerQuestionSubmissions>();
+            StartCoroutine(_questAndSub.PullQuestionSubmitters());
 
-            _questionController = GetComponent<QuestionController>();
-            _questionController.Load();
+            if (QuestionController.Initialised)
+                QuestionController.Instance.Load();
 
-            _highScoreController = GetComponent<HighscoreController>();
-            _highScoreController.Load();
+            if (HighscoreController.Initialised)
+                HighscoreController.Instance.Load();
 
-			List<string> catagories = new List<string> ();
+            List<string> categories = new List<string>();
 
-			_playerController.setSavedGames = LoadSavedJSON ("location");
+            if (!File.Exists(DataHelper.File.SAVE_LOCATION))
+                File.WriteAllText(DataHelper.File.SAVE_LOCATION, " { }");
+
+            if (PlayerController.Initialised)
+                PlayerController.Instance.SetSavedGames(LoadSavedJSON<SavedGameContainer>(DataHelper.File.SAVE_LOCATION));
 
             // retrive player username and password from PlayerPrefs if they have an id
-            if (PlayerPrefs.HasKey(_playerController.idKey))
+            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.ID))
             {
-                //TODO is any of these ever used?
-                // NOTE : Used to determine if player has already logged in or not for automatic login
-                _status = _playerController.GetPlayerType();
-                _username = _playerController.GetUsername();
-                _password = _playerController.GetPassword();
+                // TODO : is any of these ever used?
+                // NOTE : used to determine if player has already logged in or not for automatic login
+                _status = PlayerController.Instance.GetPlayerType();
+                _username = PlayerController.Instance.GetUsername();
+                _password = PlayerController.Instance.GetPassword();
             }
         }
 
@@ -104,10 +103,10 @@ namespace _LetsQuiz
 
         public void Init()
         {
-            if (serverConnected)
+            if (ServerConnected)
             {
                 // check if username and password are stored in PlayerPrefs
-                // if it is login, otherwise load login scene
+                // if it is perform login, else load login scene
                 if (_username != "u" && _password != "p" && (_status == PlayerStatus.LoggedIn || _status == PlayerStatus.Guest))
                     StartCoroutine(Login(_username, _password));
                 else
@@ -162,18 +161,15 @@ namespace _LetsQuiz
             if (loginRequest.isDone)
             {
                 // check that the login request returned something
-                if (!String.IsNullOrEmpty(loginRequest.text))
+                if (!string.IsNullOrEmpty(loginRequest.text))
                 {
-                    _playerString = loginRequest.text;
-                    //Debug.Log(_playerString);
-                    _player = new Player();
+                    Player = new Player();
 
                     //TODO Chanes can you look at the whole player and playercontroller and get rid of what we don't need please?
-                    _player = JsonUtility.FromJson<Player>(_playerString);
-                    //Debug.Log(_player.ID);
+                    Player = JsonUtility.FromJson<Player>(loginRequest.text);
 
                     // if the retrieved login text doesn't have "ID" load login scene
-                    if (!_playerString.Contains("ID"))
+                    if (!loginRequest.text.Contains("ID"))
                     {
                         SceneManager.LoadScene(BuildIndex.Login);
                         yield return null;
@@ -181,16 +177,17 @@ namespace _LetsQuiz
                     // otherwise save the player information to PlayerPrefs and load menu scene
                     else
                     {
-                        _player = PlayerJsonHelper.LoadPlayerFromServer(_playerString);
+                        Player = JsonUtility.FromJson<Player>(loginRequest.text);
 
-                        if (_player != null)
+                        if (Player != null)
                         {
-                            _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
-                                _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
-								_player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
+                            PlayerController.Instance.Save(Player.ID, Player.username, Player.email, Player.password, Player.DOB, Player.questionsSubmitted,
+                                                           Player.numQuestionsSubmitted, Player.numGamesPlayed, Player.totalPointsScore,
+                                                           Player.TotalCorrectAnswers, Player.totalQuestionsAnswered);
 
                             FeedbackAlert.Show("Welcome back " + _username);
                         }
+
                         SceneManager.LoadScene(BuildIndex.Menu);
                         yield return loginRequest;
                     }
@@ -218,48 +215,59 @@ namespace _LetsQuiz
 
         public int getOverAllScore()
         {
-            if (_playerController.userScore > ongoingGameData.playerScore)
+            if (PlayerController.Instance.UserScore > OngoingGameData.playerScore)
             {
-                ongoingGameData.overAllScore = -1; //opponent won the round
+                OngoingGameData.overAllScore = -1; //opponent won the round
+
                 if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                     FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Uh-Oh!", "You lost your game!");
-                    
             }
-                
-            if (_playerController.userScore < ongoingGameData.playerScore)
+
+            if (PlayerController.Instance.UserScore < OngoingGameData.playerScore)
             {
-                ongoingGameData.overAllScore = +1; //player won the round
+                OngoingGameData.overAllScore = +1; //player won the round
+
                 if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                     FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Woo-Hoo!", "You won your game!");
             }
 
-            return ongoingGameData.overAllScore;
+            return OngoingGameData.overAllScore;
         }
 
-		#endregion feedback specific
+        #endregion feedback specific
 
-		//extract JSON and extract to array of SavedGame[]
-		//save to playerCOntroller. 
-		public SavedGameContainer LoadSavedJSON<SavedGameContainer>(string location) where SavedGameContainer : new()
-		{
-			if (File.Exists(location))
-			{
-				var data = File.ReadAllText(location);
-				return JsonUtility.FromJson<SavedGameContainer>(data);
-			}
-			else return new SavedGameContainer();
-		}
+        #region offline redun
 
-		//SavetoJSON
-		//saves current rounds into persistent data
-		public void SaveSavedJSON<SavedGameContainer>(string location, SavedGameContainer games)
-		{
-			var data = JsonUtility.ToJson(games, true);
-			File.WriteAllText(location, data);
-			Debug.Log ("gamestate saved to local storage");
+        // extract JSON and extract to array of SavedGame[]
+        // save to PlayerController.
+        public SavedGameContainer LoadSavedJSON<SavedGameContainer>(string location) where SavedGameContainer : new()
+        {
+            Debug.Log("[DataController] Load() : " + location);
 
-		}
-        
+            if (File.Exists(location))
+            {
+                var data = File.ReadAllText(location);
+                return JsonUtility.FromJson<SavedGameContainer>(data);
+            }
+            else return new SavedGameContainer();
+        }
+
+        // SavetoJSON
+        // saves current rounds into persistent data
+        public void SaveSavedJSON<SavedGameContainer>(string location, SavedGameContainer games)
+        {
+            Debug.Log("[DataController] Save() : " + location);
+
+            if (File.Exists(location))
+            {
+                var data = JsonUtility.ToJson(games, true);
+                File.WriteAllText(location, data);
+            }
+            else
+                File.WriteAllText(location, "{ }");
+        }
+
+        #endregion offline redun
 
         #endregion methods
     }

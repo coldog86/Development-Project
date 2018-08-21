@@ -7,7 +7,7 @@ namespace _LetsQuiz
 {
     public class NotificationHelper : MonoBehaviour
     {
-        [Header("Register")]
+        [Header("Notification")]
         public InputField notifcationTitleInput;
         public InputField notifcationBodyInput;
 

@@ -36,7 +36,7 @@ namespace _LetsQuiz
                 if (_downloadTimer < 0)
                 {
                     Debug.LogError("[GetAllQuestions] PullAllQuestionsFromServer() : Server time out.");
-                    _dataController.serverConnected = false;
+                    _dataController.ServerConnected = false;
                     break;
                 }
                 _downloadTimer -= Time.deltaTime;
@@ -50,15 +50,15 @@ namespace _LetsQuiz
                  * check the prefs for previously saved questions */
                 Debug.LogError(download.error);
                 Debug.Log("[GetAllQuestions] PullAllQuestionsFromServer() : Failed to hit the server.");
-                _dataController.serverConnected = false;
+                _dataController.ServerConnected = false;
             }
             else
             {
                 // we got the string from the server, it is every question in JSON format
                 Debug.Log("[GetAllQuestions] PullAllQuestionsFromServer() : Data recieved " + download.text);
 
-                _dataController.serverConnected = true;
-                _dataController.allQuestionJSON = download.text;
+                _dataController.ServerConnected = true;
+                _dataController.AllQuestionJSON = download.text;
 
                 yield return download;
 

@@ -10,25 +10,18 @@ namespace _LetsQuiz
         private float _connectionTimer = 0.0f;
         private const float _connectionTimeLimit = 1000000.0f;
 
-        private PlayerController _playerController;
-
-        #endregion
+        #endregion variables
 
         #region methods
 
-        #region unity
-
-
-        #endregion
-
         #region submit specific
 
-		public void Uvote(QuestionData currentQuestion)
+        public void Uvote(QuestionData currentQuestion)
         {
-			StartCoroutine(vote(currentQuestion));
+            StartCoroutine(vote(currentQuestion));
         }
 
-		private IEnumerator vote(QuestionData currentQuestion)
+        private IEnumerator vote(QuestionData currentQuestion)
         {
             WWWForm form = new WWWForm();
 
@@ -53,7 +46,7 @@ namespace _LetsQuiz
                     FeedbackAlert.Show("Server error.");
                     Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
                     yield return null;
-                }    
+                }
             }
 
             if (submitRequest.error != null)
@@ -65,14 +58,14 @@ namespace _LetsQuiz
 
             if (submitRequest.isDone)
             {
-                Debug.Log("Score submitted");    
+                Debug.Log("Score submitted");
                 yield return submitRequest;
-                DestroyObject(gameObject); 
+                DestroyObject(gameObject);
             }
         }
 
-        #endregion
+        #endregion submit specific
 
-        #endregion
+        #endregion methods
     }
 }

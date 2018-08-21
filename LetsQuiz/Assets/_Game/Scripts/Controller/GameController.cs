@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
-using System.Collections;
-using Facebook.Unity.Example;
 
 namespace _LetsQuiz
 {
@@ -29,7 +26,6 @@ namespace _LetsQuiz
         public Text questionText;
         public GameObject questionDisplay;
         public QuestionData questionData;
-        public PlayerController playerController;
         public QuestionData currentQuestion;
         public QuestionData currentQuestionData;
 
@@ -41,21 +37,16 @@ namespace _LetsQuiz
         public Transform answerButtonParent;
 
         [Header("Controllers")]
-        private DataController _dataController;
         private RoundData _currentRoundData;
-        private QuestionController _questionController;
-        private PlayerController _playerController;
         private SubmitScore _submitScore;
-		private GameLobbyController _gameLobbyController;
 
         [Header("Other")]
         private Upvote _upVote;
         private Downvote _downVote;
 
-
         private float _timeRemaining = 8;
-        //TODO the in game slider does not work until the timer is 20 or less
 
+        //TODO the in game slider does not work until the timer is 20 or less
         private bool _isRoundActive;
 
         //private int _questionIndex;
@@ -72,6 +63,46 @@ namespace _LetsQuiz
 
         #region properties
 
+        public DataController DataController
+        {
+            get
+            {
+                if (DataController.Initialised)
+                    return DataController.Instance;
+                else return null;
+            }
+        }
+
+        public PlayerController PlayerController
+        {
+            get
+            {
+                if (PlayerController.Initialised)
+                    return PlayerController.Instance;
+                else return null;
+            }
+        }
+
+        public QuestionController QuestionController
+        {
+            get
+            {
+                if (QuestionController.Initialised)
+                    return QuestionController.Instance;
+                else return null;
+            }
+        }
+
+        public GameLobbyController GameLobbyController
+        {
+            get
+            {
+                if (GameLobbyController.Initialised)
+                    return GameLobbyController.Instance;
+                else return null;
+            }
+        }
+
         public bool clicked { get; set; }
 
         #endregion properties
@@ -87,32 +118,29 @@ namespace _LetsQuiz
         }
 
         private void Start()
-        {            
-            _questionController = FindObjectOfType<QuestionController>();
-            _playerController = FindObjectOfType<PlayerController>();
-            _dataController = FindObjectOfType<DataController>();
+        {
             _upVote = FindObjectOfType<Upvote>();
             _downVote = FindObjectOfType<Downvote>();
-            _playerController.AddToGamesPlayed();
-            _playerController.userScore = 0;
-            _questionController.Load(); //TODO what is this??
-			_gameLobbyController = FindObjectOfType<GameLobbyController>();
 
+            PlayerController.AddToGamesPlayed();
+            PlayerController.UserScore = 0;
+            QuestionController.Load();
 
             _questionPool = GetQuestionPool();
-			Destroy (_gameLobbyController);
 
-            if (PlayerPrefs.HasKey(_playerController.GetUsername()))
+            Destroy(GameLobbyController);
+
+            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))
             {
-                string numbers = PlayerPrefs.GetString(_playerController.GetUsername());
-                numbers = numbers + "," + _dataController.gameNumber;
-                PlayerPrefs.SetString(_playerController.GetUsername(), numbers);
-                Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
+                string numbers = PlayerPrefs.GetString(PlayerController.GetUsername());
+                numbers = numbers + "," + DataController.GameNumber;
+                PlayerPrefs.SetString(DataHelper.PlayerDataKey.USERNAME, numbers);
+                Debug.Log("games in player prefs = " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
             }
             else
             {
-                PlayerPrefs.SetString(_playerController.GetUsername(), _dataController.gameNumber.ToString());
-                Debug.Log("games in player prefs = " + PlayerPrefs.GetString(_playerController.GetUsername()));
+                PlayerPrefs.SetString(DataHelper.PlayerDataKey.USERNAME, DataController.GameNumber.ToString());
+                Debug.Log("games in player prefs = " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
             }
             ShowQuestion();
         }
@@ -120,13 +148,15 @@ namespace _LetsQuiz
         private void Update()
         {
             _timeRemaining -= Time.deltaTime;
+
             UpdateTimeRemainingDisplay();
 
-			if (_timeRemaining <= 0 && _timeRemaining > -100) {
-				_timeRemaining = -101;
-				Debug.Log ("endround");
-				EndRound ();
-			}
+            if (_timeRemaining <= 0 && _timeRemaining > -100)
+            {
+                _timeRemaining = -101;
+                Debug.Log("endround");
+                EndRound();
+            }
         }
 
         #endregion unity
@@ -135,87 +165,88 @@ namespace _LetsQuiz
 
         private QuestionData[] GetQuestionPool()
         {
-            if (_dataController.turnNumber == 0)
+            if (DataController.TurnNumber == 0)
             {
                 //this should not actually happen as CheckForOpenGames() should have set the turn number to at least 1
                 // treat this as a brand new game
-                _questionPool = _questionController.getAllQuestionsAllCatagories();
+                _questionPool = QuestionController.GetAllQuestionsAllCategories();
                 return _questionPool;
             }
 
-			if (_dataController.turnNumber == 1)
+            if (DataController.TurnNumber == 1)
             {
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
-				Debug.Log("there are no open games, user set to player, starting brand new game");
-				_questionPool = _gameLobbyController.questionsPoolFromCatagory;
+                Debug.Log("there are no open games, user set to player, starting brand new game");
+                _questionPool = GameLobbyController.QuestionsPoolFromCatagory;
 
                 if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                     FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
-                
+
                 return _questionPool;
             }
-			if (_dataController.turnNumber == 2)
-			{
-				//there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
-				string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
-				RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
-				_questionPool = rd.questions;
+            if (DataController.TurnNumber == 2)
+            {
+                //there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
+                string roundDataJSON = DataController.OngoingGameData.askedQuestions;
+                RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
+                _questionPool = rd.questions;
 
-				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
 
-				return _questionPool;
-			}
+                return _questionPool;
+            }
 
-			if (_dataController.turnNumber == 3) 
-			{
-				//Continuing a game. The opponent now gets to pick the catagory
-				_questionPool = _gameLobbyController.questionsPoolFromCatagory;
+            if (DataController.TurnNumber == 3)
+            {
+                //Continuing a game. The opponent now gets to pick the catagory
+                _questionPool = GameLobbyController.QuestionsPoolFromCatagory;
 
-				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
 
-				return _questionPool;
-			}
+                return _questionPool;
+            }
 
-			if (_dataController.turnNumber == 4) {
-				//there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
-				string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
-				RoundData rd = JsonUtility.FromJson<RoundData> (roundDataJSON);
-				_questionPool = rd.questions;
+            if (DataController.TurnNumber == 4)
+            {
+                //there is an open game, the user will be the 'oppponent' they will be playing round 2 with a predetermined questionpool
+                string roundDataJSON = DataController.OngoingGameData.askedQuestions;
+                RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
+                _questionPool = rd.questions;
 
-				if (!string.IsNullOrEmpty (FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification (FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
 
-				return _questionPool;
-			}
-			if (_dataController.turnNumber == 5) 
-			{
-				//there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
-				_questionPool = _gameLobbyController.questionsPoolFromCatagory;
-				Destroy (_gameLobbyController);
+                return _questionPool;
+            }
+            if (DataController.TurnNumber == 5)
+            {
+                //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
+                _questionPool = GameLobbyController.QuestionsPoolFromCatagory;
+                Destroy(GameLobbyController);
 
-				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
 
-				return _questionPool;
-			}
+                return _questionPool;
+            }
 
-			if(_dataController.turnNumber == 6)
-			{  
-				string roundDataJSON = _dataController.ongoingGameData.askedQuestions;
-				RoundData rd = JsonUtility.FromJson<RoundData> (roundDataJSON);
-				_questionPool = rd.questions;
+            if (DataController.TurnNumber == 6)
+            {
+                string roundDataJSON = DataController.OngoingGameData.askedQuestions;
+                RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
+                _questionPool = rd.questions;
 
-				if (!string.IsNullOrEmpty (FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification (FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
 
-				return _questionPool;
-			}
+                return _questionPool;
+            }
             else
             {
                 Debug.Log("something went wrong");
-                _questionPool = _questionController.getAllQuestionsAllCatagories();
+                _questionPool = QuestionController.GetAllQuestionsAllCategories();
                 return _questionPool;
             }
         }
@@ -226,37 +257,37 @@ namespace _LetsQuiz
 
         public void ShowQuestion()
         {
-            scoreDisplay.text = _playerController.userScore.ToString();
+            scoreDisplay.text = PlayerController.UserScore.ToString();
             clicked = false;
             RemoveAnswerButtons();
-            _playerController.AddToTotalQuestionsAnswered();
+            PlayerController.AddToTotalQuestionsAnswered();
 
             currentQuestionData = null;
 
             //if all questions are asked
             if (_questionPool.Length <= 0)
             {
-                if (_dataController.turnNumber == 0 | _dataController.turnNumber == 1)
+                if (DataController.TurnNumber == 0 | DataController.TurnNumber == 1)
                 {
                     //the user is the player so if they have finished the question pool they have answered all the questions in the catagory.
                     Debug.Log("GameController : Show Questions(): Out of Questions");
-					Debug.Log ("endround");
+                    Debug.Log("endround");
                     EndRound();
                 }
-                if (_dataController.turnNumber == 2)
+                if (DataController.TurnNumber == 2)
                 {
                     //the user is the oppenent so if they have finished the question pool they have answered all the questions asked of the player, go on to the remaining questions in the catagory
 
-					if (_dataController.ongoingGameData.questionsLeftInCat.Length < 5) {
-						Debug.Log ("endround");
-						EndRound ();
+                    if (DataController.OngoingGameData.questionsLeftInCat.Length < 5)
+                    {
+                        Debug.Log("endround");
+                        EndRound();
+                    }
 
-					}
+                    string roundDataJSON = DataController.OngoingGameData.questionsLeftInCat;
+                    Debug.Log("out of asked questons, asking remaining questions: " + DataController.OngoingGameData.questionsLeftInCat);
 
-					string roundDataJSON = _dataController.ongoingGameData.questionsLeftInCat;
-					Debug.Log("out of asked questons, asking remaining questions: " + _dataController.ongoingGameData.questionsLeftInCat);
-
-                    _dataController.ongoingGameData.questionsLeftInCat = "";
+                    DataController.OngoingGameData.questionsLeftInCat = "";
                     RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                     _questionPool = rd.questions;
                     ShowQuestion();
@@ -264,35 +295,34 @@ namespace _LetsQuiz
             }
             else
             { //ask the question
-                if (_dataController.turnNumber == 0 | _dataController.turnNumber == 1 | _dataController.turnNumber == 3 | _dataController.turnNumber == 5)
+                if (DataController.TurnNumber == 0 | DataController.TurnNumber == 1 | DataController.TurnNumber == 3 | DataController.TurnNumber == 5)
                 {
                     //if user is player then quesitons should be asked in random order
                     int randomNumber = Random.Range(0, _questionPool.Length - 1); //gets random number between 0 and total number of questions
                     currentQuestionData = _questionPool[randomNumber];// Get the QuestionData for the current question
-                    _questionPool = _questionController.removeQuestion(_questionPool, randomNumber); //remove question from list
+                    _questionPool = QuestionController.RemoveQuestion(_questionPool, randomNumber); //remove question from list
                     questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
-                    _questionController.addAskedQuestionToAskedQuestions(currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
-					_numberOfQuestionsAsked++;
-					ShowAnswers(currentQuestionData);
+                    QuestionController.AddAskedQuestionToAskedQuestions(currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
+                    _numberOfQuestionsAsked++;
+                    ShowAnswers(currentQuestionData);
                     if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                         FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
                     else
                         return;
                 }
-                if (_dataController.turnNumber == 2 | _dataController.turnNumber == 4 | _dataController.turnNumber == 6)
+                if (DataController.TurnNumber == 2 | DataController.TurnNumber == 4 | DataController.TurnNumber == 6)
                 {
                     //if user is oppoent questions should be asked in the same order they were asked of player
                     currentQuestionData = _questionPool[0];// Get the QuestionData for the current question
-                    _questionPool = _questionController.removeQuestion(_questionPool, 0); //remove question from list
+                    _questionPool = QuestionController.RemoveQuestion(_questionPool, 0); //remove question from list
                     questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
-					_numberOfQuestionsAsked++;
-					ShowAnswers(currentQuestionData);
+                    _numberOfQuestionsAsked++;
+                    ShowAnswers(currentQuestionData);
                     if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                         FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "Your opponent is taking their turn!");
                     else
                         return;
                 }
-                
             }
         }
 
@@ -319,7 +349,7 @@ namespace _LetsQuiz
 
                 if (answerButton.isCorrect(currentQuestionData.answers[n]))
                 {
-                    _playerController.AddToNumberCorrectAnswers();
+                    PlayerController.AddToNumberCorrectAnswers();
                     _correctAnswerButton = answerButton;
                     _isCorrect = true;
                     _correctAnswerData = currentQuestionData.answers[n];
@@ -372,10 +402,10 @@ namespace _LetsQuiz
             Debug.Log("GameController : Score(): score called bool = " + answer);
 
             if (answer)
-                _playerController.userScore = _playerController.userScore + 10;
+                PlayerController.UserScore = PlayerController.UserScore + 10;
 
             if (!answer)
-                _playerController.userScore = _playerController.userScore - 5;
+                PlayerController.UserScore = PlayerController.UserScore - 5;
 
             ShowQuestion();
         }
@@ -406,33 +436,33 @@ namespace _LetsQuiz
             _music.Stop();
 
             SubmitToOngoingGamesDB();
-            
+
             if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                 FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "That's a wrap, folks!", "Your game has ended!");
-            
+
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
 
             Debug.Log("GameController : EndRound(): End of Round");
-            Debug.Log(_playerController.scoreStatus);
+            Debug.Log(PlayerController.ScoreStatus);
         }
 
         public void SubmitToOngoingGamesDB()
         {
             SubmitGame submitGame;
             submitGame = FindObjectOfType<SubmitGame>();
-            submitGame.SubmitGameToDB(_questionController.getRemainingQuestions(_questionPool));
+            submitGame.SubmitGameToDB(QuestionController.GetRemainingQuestions(_questionPool));
         }
 
         public void UpvoteButton()
         {
             Debug.Log("****current question is: " + currentQuestionData.questionText);
-            _upVote.Uvote(currentQuestionData);	
+            _upVote.Uvote(currentQuestionData);
         }
 
         public void DownvoteButton()
         {
             Debug.Log("****current question is: " + currentQuestionData.questionText);
-            _downVote.Dvote(currentQuestionData);	
+            _downVote.Dvote(currentQuestionData);
         }
 
         #endregion navigation specific

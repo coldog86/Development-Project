@@ -9,17 +9,15 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Component")]
-        // public GameObject navigationDrawer;
         public Button accountButton;
         public Button leaderboardButton;
         public Button submitQuestionButton;
-       
-        private Text _username;
+
+        private Text _usernameText;
         private FeedbackMusic _music;
-        private PlayerController _playerController;
         private GetAllQuestions _questionDownload;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -27,37 +25,36 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            DontDestroyOnLoad(this.gameObject);
-            _username = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
-            _playerController = FindObjectOfType<PlayerController>();
+            DontDestroyOnLoad(gameObject);
 
-            var playerType = _playerController.GetPlayerType();
+            _usernameText = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
 
-            if (PlayerPrefs.HasKey(_playerController.usernameKey) && (playerType == PlayerStatus.LoggedIn || playerType == PlayerStatus.Guest))
-                _username.text = _playerController.GetUsername();
+            var playerType = 0;
+
+            if (PlayerController.Initialised)
+                playerType = PlayerController.Instance.GetPlayerType();
+
+            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME) && (playerType == PlayerStatus.LoggedIn || playerType == PlayerStatus.Guest))
+                _usernameText.text = PlayerController.Instance.GetUsername();
 
             if (playerType == PlayerStatus.Guest)
             {
                 accountButton.gameObject.SetActive(false);
                 leaderboardButton.gameObject.SetActive(false);
                 submitQuestionButton.gameObject.SetActive(false);
-            }  
+            }
         }
-        //TODO what is this for, I have seen a few private start() methods, when are they called, do they behave like a public Start()?
+
+        // TODO what is this for, I have seen a few private start() methods, when are they called, do they behave like a public Start()?
         // NOTE : does the same as public start() - just better programming pratise
         private void Start()
         {
-            //navigationDrawer.SetActive(false);
-
             _music = FindObjectOfType<FeedbackMusic>();
-
             _questionDownload = FindObjectOfType<GetAllQuestions>();
-
             Destroy(_questionDownload);
-
         }
 
-        #endregion
+        #endregion unity
 
         #region game specific
 
@@ -73,7 +70,7 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.GameLobby, LoadSceneMode.Single);
         }
 
-        #endregion
+        #endregion game specific
 
         #region navigation specific
 
@@ -110,7 +107,7 @@ namespace _LetsQuiz
         private void OpenLogin()
         {
             FeedbackClick.Play();
-            _playerController.SetPlayerType(PlayerStatus.LoggedOut);
+            PlayerController.Instance.SetPlayerType(PlayerStatus.LoggedOut);
             SceneManager.LoadScene(BuildIndex.Login, LoadSceneMode.Single);
         }
 
@@ -120,8 +117,8 @@ namespace _LetsQuiz
             FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", Application.Quit, FeedbackTwoButtonModal.Hide);
         }
 
-        #endregion
+        #endregion navigation specific
 
-        #endregion
+        #endregion methods
     }
 }

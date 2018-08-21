@@ -9,10 +9,10 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Component")]
-        private static GameObject _instance;
+        private static FeedbackAlert _instance;
         private static Text _message;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -20,12 +20,12 @@ namespace _LetsQuiz
         private static void Create()
         {
             // create instance of alert prefab as gameobject
-            _instance = Instantiate(Resources.Load<GameObject>("Feedback/Alert"));
+            _instance = Instantiate(Resources.Load<FeedbackAlert>("Feedback/Alert"));
 
             _message = _instance.GetComponentInChildren<Text>();
 
             // deactivate alert
-            _instance.SetActive(false);
+            _instance.gameObject.SetActive(false);
         }
 
         // used to show the alert from external sources
@@ -34,11 +34,11 @@ namespace _LetsQuiz
         {
             Create();
 
-            // set the message text 
+            // set the message text
             _message.text = message;
 
             // after everything has been set, show the alert
-            _instance.SetActive(true);
+            _instance.gameObject.SetActive(true);
 
             // start coroutine to hide alert if time is greater than zero
             if (time > 0)
@@ -49,11 +49,10 @@ namespace _LetsQuiz
         public static void Hide()
         {
             // hide the alert
-            _instance.SetActive(false);
+            _instance.gameObject.SetActive(false);
 
-            if (!_instance.activeInHierarchy)
+            if (!_instance.gameObject.activeInHierarchy)
                 Destroy(_instance);
-
         }
 
         // used to hide the alert from internal source is time is set to greater than zero
@@ -62,10 +61,10 @@ namespace _LetsQuiz
             // hide the alert
             yield return new WaitForSeconds(time);
 
-            Hide();
+            if (!_instance.gameObject.activeInHierarchy)
+                Destroy(_instance);
         }
 
-        #endregion
+        #endregion methods
     }
 }
-

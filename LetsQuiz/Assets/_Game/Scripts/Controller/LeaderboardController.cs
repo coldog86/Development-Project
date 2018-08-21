@@ -9,15 +9,11 @@ namespace _LetsQuiz
     {
         #region variables
 
-        [Header("Playe High Scorers")]
-        private HighScoresContainer allHighScores;
+        [Header("Player High Scorers")]
+        private HighScoresContainer _allHighScores;
         public SimpleObjectPool highScorerObjectPool;
         public Transform highScorerParent;
-        private HighscoreController _highScoreController;
-        private string highScoreData;
-
-        private PlayerController _playerController;
-        private DataController _dataController;
+        private string _highScoreData;
 
         [Header("Question High Scorers")]
         private QuestAndSub[] _questandSub;
@@ -29,18 +25,18 @@ namespace _LetsQuiz
         public Transform TotalCorrectParent;
 
         //gameobject for overall highscore
-        private List<GameObject> highScorerGameObjects = new List<GameObject>();
+        private List<GameObject> _highScorerGameObjects = new List<GameObject>();
 
         //gameobject for submitted questions
-        private List<GameObject> questionHighscoreObjects = new List<GameObject>();
+        private List<GameObject> _questionHighscoreObjects = new List<GameObject>();
 
-        //gameobjecy for total questions correct by players
-        private List<GameObject> totalQuestionsCorrectObjects = new List<GameObject>();
+        //gameobject for total questions correct by players
+        private List<GameObject> _totalQuestionsCorrectObjects = new List<GameObject>();
 
-		[Header("Panels")]
-		public GameObject overallScorePanel;
-		public GameObject TotalCorrectPanel;
-		public GameObject TopQuestionPanel;
+        [Header("Panels")]
+        public GameObject OverallScorePanel;
+        public GameObject TotalCorrectPanel;
+        public GameObject TopQuestionPanel;
 
         #endregion variables
 
@@ -48,54 +44,54 @@ namespace _LetsQuiz
 
         #region unity
 
-		private void Awake() {
-
-			overallScorePanel.SetActive(true);
-			TotalCorrectPanel.SetActive(false);
-			TopQuestionPanel.SetActive(false);
-		}
+        private void Awake()
+        {
+            OverallScorePanel.SetActive(true);
+            TotalCorrectPanel.SetActive(false);
+            TopQuestionPanel.SetActive(false);
+        }
 
         private void Start()
         {
-            _playerController = FindObjectOfType<PlayerController>();
-            _highScoreController = FindObjectOfType<HighscoreController>();
+            if (HighscoreController.Initialised)
+                HighscoreController.Instance.Load();
 
-            _highScoreController.Load();
-            allHighScores = _highScoreController.extractHighScores();
+            _allHighScores = HighscoreController.Instance.ExtractHighScores();
 
-            ShowHighScorers(allHighScores);
-
+            ShowHighScorers(_allHighScores);
 
             //get the QuestandSub highscorers
-            _questandSub = _playerController.GetQuestandSubData();
+            if (PlayerController.Initialised)
+                _questandSub = PlayerController.Instance.GetQuestandSubData();
+
             ShowQuestionHighScorers(_questandSub);
 
-            ShowTotalQuestionsCorrect(allHighScores);
+            ShowTotalQuestionsCorrect(_allHighScores);
         }
 
-		public void toggleHighestScorePanel() {
+        public void ToggleHighestScorePanel()
+        {
+            OverallScorePanel.SetActive(true);
+            TotalCorrectPanel.SetActive(false);
+            TopQuestionPanel.SetActive(false);
+            Debug.Log("[LeaderboardController] ToggleHighestScorePanel(): Toggled Highest Score");
+        }
 
-			overallScorePanel.SetActive(true);
-			TotalCorrectPanel.SetActive(false);
-			TopQuestionPanel.SetActive(false);
-			Debug.Log ("Toggled Highest Score");
-		}
+        public void ToggleCorrectPanel()
+        {
+            OverallScorePanel.SetActive(false);
+            TotalCorrectPanel.SetActive(true);
+            TopQuestionPanel.SetActive(false);
+            Debug.Log("[LeaderboardController] ToggleCorrectPanel(): Toggled Correct");
+        }
 
-		public void toggleCorrectPanel() {
-
-			overallScorePanel.SetActive(false);
-			TotalCorrectPanel.SetActive(true);
-			TopQuestionPanel.SetActive(false);
-			Debug.Log ("Toggled Correct");
-		}
-
-		public void toggleTopQuestionPanel() {
-
-			overallScorePanel.SetActive(false);
-			TotalCorrectPanel.SetActive(false);
-			TopQuestionPanel.SetActive(true);
-			Debug.Log ("Toggled Top Question");
-		}
+        public void ToggleTopQuestionPanel()
+        {
+            OverallScorePanel.SetActive(false);
+            TotalCorrectPanel.SetActive(false);
+            TopQuestionPanel.SetActive(true);
+            Debug.Log("[LeaderboardController] ToggleTopQuestionPanel(): Toggled Top Question");
+        }
 
         #endregion unity
 
@@ -104,7 +100,8 @@ namespace _LetsQuiz
         //sorts highScorers and displays top 10 in highScorerParent using LeaderboardEntry prefabs.
         private void ShowHighScorers(HighScoresContainer allHighScorers)
         {
-            RemoveHighScorers(); //clear leaderboard to start
+            //clear leaderboard to start
+            RemoveHighScorers();
 
             //sort scores by totalScore.
             HighScoresObject[] sorted = allHighScorers.allHighScorers.OrderBy(c => c.getTotalScoreInt()).ToArray();
@@ -115,7 +112,7 @@ namespace _LetsQuiz
                 GameObject highScorerGameObject = highScorerObjectPool.GetObject(); //create new GameObejct
                 HighScoresObject currentHighScore = sorted[i]; 						//get current highscorer
 
-                highScorerGameObjects.Add(highScorerGameObject);
+                _highScorerGameObjects.Add(highScorerGameObject);
                 highScorerGameObject.transform.SetParent(highScorerParent);
                 LeaderboardEntry leaderBoardEntry = highScorerGameObject.GetComponent<LeaderboardEntry>();
 
@@ -126,10 +123,10 @@ namespace _LetsQuiz
         //removes all Player Highscore LeaderboardEntry Objects from the scene
         private void RemoveHighScorers()
         {
-            while (highScorerGameObjects.Count > 0)
+            while (_highScorerGameObjects.Count > 0)
             {
-                highScorerObjectPool.ReturnObject(highScorerGameObjects[0]);
-                highScorerGameObjects.RemoveAt(0);
+                highScorerObjectPool.ReturnObject(_highScorerGameObjects[0]);
+                _highScorerGameObjects.RemoveAt(0);
             }
         }
 
@@ -138,14 +135,13 @@ namespace _LetsQuiz
         {
             QuestAndSub[] sortedQuestionsByRating = unsortedQuestions.OrderBy(c => c.getRating()).ToArray();
 
-
             //for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items.
             for (int i = sortedQuestionsByRating.Length - 1; i > sortedQuestionsByRating.Length - 11; i--)
             {
                 GameObject questionHighScoreObject = questionHighscoreObjectPool.GetObject(); //create new GameObejct
                 QuestAndSub currentQuestionHighscore = sortedQuestionsByRating[i];                      //get current highscorer
 
-                questionHighscoreObjects.Add(questionHighScoreObject);
+                _questionHighscoreObjects.Add(questionHighScoreObject);
                 questionHighScoreObject.transform.SetParent(questionHighscoreParent);
                 LeaderboardEntry leaderBoardEntry = questionHighScoreObject.GetComponent<LeaderboardEntry>();
 
@@ -156,13 +152,12 @@ namespace _LetsQuiz
         //removes all Question Highscore Obejcts from the scene
         private void RemoveQuestionHighscores()
         {
-            while (questionHighscoreObjects.Count > 0)
+            while (_questionHighscoreObjects.Count > 0)
             {
-                questionHighscoreObjectPool.ReturnObject(questionHighscoreObjects[0]);
-                questionHighscoreObjects.RemoveAt(0);
+                questionHighscoreObjectPool.ReturnObject(_questionHighscoreObjects[0]);
+                _questionHighscoreObjects.RemoveAt(0);
             }
         }
-
 
         //show most correct answers
         private void ShowTotalQuestionsCorrect(HighScoresContainer allHighScorers)
@@ -178,7 +173,7 @@ namespace _LetsQuiz
                 GameObject totalCorrectgameObject = TotalCorrectObjectPool.GetObject(); //create new GameObejct
                 HighScoresObject currentHighScore = sorted[i]; 						//get current highscorer
 
-                highScorerGameObjects.Add(totalCorrectgameObject);
+                _highScorerGameObjects.Add(totalCorrectgameObject);
                 totalCorrectgameObject.transform.SetParent(TotalCorrectParent);
                 LeaderboardEntry leaderBoardEntry = totalCorrectgameObject.GetComponent<LeaderboardEntry>();
 
@@ -189,13 +184,12 @@ namespace _LetsQuiz
         //remove most correct answers objects
         private void RemoveTotalQuestionsCorrect()
         {
-            while (totalQuestionsCorrectObjects.Count > 0)
+            while (_totalQuestionsCorrectObjects.Count > 0)
             {
-                TotalCorrectObjectPool.ReturnObject(totalQuestionsCorrectObjects[0]);
-                totalQuestionsCorrectObjects.RemoveAt(0);
+                TotalCorrectObjectPool.ReturnObject(_totalQuestionsCorrectObjects[0]);
+                _totalQuestionsCorrectObjects.RemoveAt(0);
             }
         }
-
 
         #endregion high score specific
 
@@ -211,10 +205,4 @@ namespace _LetsQuiz
 
         #endregion methods
     }
-
-
-
-
-
-
 }

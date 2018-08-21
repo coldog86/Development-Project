@@ -11,15 +11,14 @@
 
         public int getTotalScoreInt()
         {
-    
             int integer = int.Parse(totalScore);
             return integer;
         }
 
-		public int getTotalCorrect()
-		{
-			int integer = int.Parse(questionsRight);
-			return integer;
-		}
+        public int getTotalCorrect()
+        {
+            int integer = int.Parse(questionsRight);
+            return integer;
+        }
     }
 }

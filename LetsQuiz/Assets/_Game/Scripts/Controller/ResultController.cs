@@ -25,10 +25,31 @@ namespace _LetsQuiz
 
         private int _ranking;
         private FeedbackMusic _music;
-        private PlayerController _playerController;
-        private DataController _dataController;
 
-        #endregion
+        #endregion variables
+
+        #region properties
+
+        public DataController DataController
+        {
+            get
+            {
+                if (DataController.Initialised)
+                    return DataController.Instance;
+                else return null;
+            }
+        }
+        public PlayerController PlayerController
+        {
+            get
+            {
+                if (PlayerController.Initialised)
+                    return PlayerController.Instance;
+                else return null;
+            }
+        }
+
+        #endregion properties
 
         #region methods
 
@@ -38,13 +59,11 @@ namespace _LetsQuiz
         {
             _music = FindObjectOfType<FeedbackMusic>();
             _music.PlayBackgroundMusic();
-            _playerController = FindObjectOfType<PlayerController>();      
-            _dataController = FindObjectOfType<DataController>();          
         }
 
         private void Start()
-        { 
-            if (_playerController.GetPlayerType() == PlayerStatus.LoggedIn)
+        {
+            if (PlayerController.GetPlayerType() == PlayerStatus.LoggedIn)
             {
                 score.enabled = true;
                 username.enabled = true;
@@ -60,7 +79,7 @@ namespace _LetsQuiz
                 rankText.enabled = true;
                 worldText.enabled = false;
             }
-            if (_dataController.turnNumber == 6)
+            if (DataController.TurnNumber == 6)
             {
                 finalResultsPanel.SetActive(true);
             }
@@ -75,26 +94,26 @@ namespace _LetsQuiz
             backgroundEffect.transform.Rotate(Vector3.forward * Time.deltaTime * 7.0f);
         }
 
-        #endregion
+        #endregion unity
 
         #region user feedback
 
         private void Display()
         {
-            if (_playerController.GetPlayerType() == PlayerStatus.LoggedIn)
+            if (PlayerController.GetPlayerType() == PlayerStatus.LoggedIn)
             {
-                score.text = _playerController.userScore.ToString();
-                username.text = _playerController.GetUsername();
+                score.text = PlayerController.UserScore.ToString();
+                username.text = PlayerController.GetUsername();
             }
             else
             {
-                username.text = _playerController.GetUsername();
+                username.text = PlayerController.GetUsername();
                 rankText.text = "Your final score was";
-                rank.text = _playerController.userScore.ToString();
+                rank.text = PlayerController.UserScore.ToString();
             }
         }
 
-        #endregion
+        #endregion user feedback
 
         #region rank specific
 
@@ -118,19 +137,19 @@ namespace _LetsQuiz
 
             if (!download.isDone || download.error != null)
             {
-                /* if we cannot connect to the server or there is some error in the data, 
+                /* if we cannot connect to the server or there is some error in the data,
                  * check the prefs for previously saved questions */
                 Debug.LogError("ResultController : FindRanking(): " + download.error);
                 Debug.Log("Failed to hit the server.");
                 yield return null;
             }
             else
-            { 
+            {
                 // we got the string from the server, it is every question in JSON format
                 Debug.Log("ResultController: FindRanking() : " + download.text);
                 yield return download;
                 calculateRanking(download.text);
-            } 
+            }
         }
 
         private void calculateRanking(string s)
@@ -145,7 +164,7 @@ namespace _LetsQuiz
             _ranking = 0;
             for (int i = list.Count - 1; i > 0; i--)
             {
-                if (_playerController.userScore <= list[i])
+                if (PlayerController.UserScore <= list[i])
                     _ranking = i - 1;
             }
 
@@ -157,13 +176,13 @@ namespace _LetsQuiz
         {
             WWWForm form = new WWWForm();
 
-            form.AddField("username", _playerController.GetUsername());
-            form.AddField("score", _playerController.userScore);
+            form.AddField("username", PlayerController.GetUsername());
+            form.AddField("score", PlayerController.UserScore);
 
             WWW submitRank = new WWW(ServerHelper.Host + ServerHelper.SetRanking, form);
 
             while (!submitRank.isDone)
-            { 
+            {
                 connectionTimer += Time.deltaTime;
                 FeedbackAlert.Show("Attempting to submit ranking.");
 
@@ -205,17 +224,9 @@ namespace _LetsQuiz
             return false;
         }
 
-
-
-        #endregion
+        #endregion rank specific
 
         #region user interaction
-
-        public void ShareResults()
-        {
-            FeedbackClick.Play();
-            FeedbackAlert.Show("Share results");
-        }
 
         public void BackToMenu()
         {
@@ -224,8 +235,8 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
-        #endregion
+        #endregion user interaction
 
-        #endregion
+        #endregion methods
     }
 }

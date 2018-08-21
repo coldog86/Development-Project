@@ -9,10 +9,30 @@ namespace _LetsQuiz
 
         private float _downloadTimer = 5.0f;
 
-        private DataController _dataController;
-        private PlayerController _playerController;
-
         #endregion variables
+
+        #region properties
+
+        public DataController DataController
+        {
+            get
+            {
+                if (DataController.Initialised)
+                    return DataController.Instance;
+                else return null;
+            }
+        }
+        public PlayerController PlayerController
+        {
+            get
+            {
+                if (PlayerController.Initialised)
+                    return PlayerController.Instance;
+                else return null;
+            }
+        }
+
+        #endregion properties
 
         #region methods
 
@@ -20,10 +40,8 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            _dataController = FindObjectOfType<DataController>();
-            _playerController = FindObjectOfType<PlayerController>();
-            //StartCoroutine (PullQuesionSubmitters ());
-            Debug.Log("[GetPlayerQuestionSubmissions] Start() : Load Player Submission");
+            // StartCoroutine(PullQuesionSubmitters ());
+            // Debug.Log("[GetPlayerQuestionSubmissions] Start() : Load Player Submission");
         }
 
         #endregion unity
@@ -33,12 +51,13 @@ namespace _LetsQuiz
         public IEnumerator PullQuestionSubmitters()
         {
             WWW download = new WWW(ServerHelper.Host + ServerHelper.GetQuestionSubmissionStuff);
+
             while (!download.isDone)
             {
                 if (_downloadTimer < 0)
                 {
-                    Debug.LogError("Server time out.");
-                    _dataController.serverConnected = false;
+                    Debug.LogError("[GetPlayerQuestionSubmissions] PullQuestionsFromServer() : Server time out.");
+                    DataController.ServerConnected = false;
                     break;
                 }
                 _downloadTimer -= Time.deltaTime;
@@ -51,26 +70,25 @@ namespace _LetsQuiz
                 /* if we cannot connect to the server or there is some error in the data,
                  * check the prefs for previously saved questions */
                 Debug.LogError(download.error);
-                Debug.Log("Failed to hit the server.");
-                _dataController.serverConnected = false;
+                Debug.Log("[GetPlayerQuestionSubmissions] PullQuestionsFromServer() : Failed to hit the server.");
+                DataController.ServerConnected = false;
             }
             else
             {
                 // we got the string from the server, it is every question in JSON format
-                Debug.Log("Question Subbmission stuff = ");
-                Debug.Log(download.text);
-                handleData(download.text);
+                Debug.Log("[GetPlayerQuestionSubmissions] PullQuestionsFromServer() : Questions: " + download.text);
+                HandleData(download.text);
                 yield return download;
             }
         }
 
-        private void handleData(string json)
+        private void HandleData(string json)
         {
             QuestAndSubContainer qsc = new QuestAndSubContainer();
             json = "{\"dataForQuestAndSub\":" + json + "}"; //you have to do this because you cannot serialize directly into an array, you need an object that holds the array
             qsc = JsonUtility.FromJson<QuestAndSubContainer>(json);//now we have an object that holds our array of questAndSub objects
             QuestAndSub[] _questAndSub = qsc.dataForQuestAndSub; //fuck off the container and there is your array of stuff
-            _playerController.SetQuestandSubData(_questAndSub);
+            PlayerController.SetQuestandSubData(_questAndSub);
         }
 
         #endregion download specific

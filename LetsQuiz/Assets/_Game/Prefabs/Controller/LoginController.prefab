@@ -73,3 +73,5 @@ MonoBehaviour:
   dialogLoggedIn: {fileID: 0}
   dialogLoggedOut: {fileID: 0}
   dialogUsername: {fileID: 0}
+  dialogEmail: {fileID: 0}
+  dialogUIDPassword: {fileID: 0}

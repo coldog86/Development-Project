@@ -9,7 +9,7 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Component")]
-        private static GameObject _instance;
+        private static FeedbackTwoButtonModal _instance;
 
         private static Text _heading;
         private static Text _message;
@@ -18,7 +18,7 @@ namespace _LetsQuiz
         private static Button _negativeButton;
         private static Text _negativeText;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -26,7 +26,7 @@ namespace _LetsQuiz
         private static void Create()
         {
             // create instance of modal prefab as gameobject
-            _instance = Instantiate(Resources.Load<GameObject>("Feedback/ModalTwoButton"));
+            _instance = Instantiate(Resources.Load<FeedbackTwoButtonModal>("Feedback/ModalTwoButton"));
 
             // find all the required components
             _heading = GameObject.FindGameObjectWithTag("Modal_Heading").GetComponent<Text>();
@@ -37,7 +37,7 @@ namespace _LetsQuiz
             _negativeText = _negativeButton.GetComponentInChildren<Text>();
 
             // deactivate modal
-            _instance.SetActive(false);
+            _instance.gameObject.SetActive(false);
         }
 
         // used to show the modal from external sources
@@ -46,7 +46,7 @@ namespace _LetsQuiz
         {
             Create();
 
-            // set the heading, message, and button text 
+            // set the heading, message, and button text
             _heading.text = heading;
             _message.text = message;
             _positiveText.text = postive;
@@ -64,19 +64,18 @@ namespace _LetsQuiz
             }
 
             // after everything has been set, show the modal
-            _instance.SetActive(true);
+            _instance.gameObject.SetActive(true);
         }
 
         // used to hide the modal from external sources
         public static void Hide()
         {
             // hide the modal
-            _instance.SetActive(false);
-            if (!_instance.activeInHierarchy)
+            _instance.gameObject.SetActive(false);
+            if (!_instance.gameObject.activeInHierarchy)
                 Destroy(_instance);
         }
 
-        #endregion
+        #endregion methods
     }
 }
-

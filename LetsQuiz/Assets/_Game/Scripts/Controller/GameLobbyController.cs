@@ -1,58 +1,87 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
-
 
 namespace _LetsQuiz
 {
-    public class GameLobbyController : MonoBehaviour
+    public class GameLobbyController : Singleton<GameLobbyController>
     {
-        private CheckForOpenGames _CheckForOpenGames;
-		private DataController _dataController;
-        private MenuController _MenuController;
-        private PlayerController _playerController;
+        #region variables
+
+        [Header("Components")]
+        public GameObject CatagoryPopUp;
+        public Dropdown CatagoryDropDown;
+        public GameObject CatAckPanel;
+        public GameObject CatSelectPanel;
+        public GameObject BackgroundStuff;
+        public Text CatagoryText;
+
+        private CheckForOpenGames _checkForOpenGames;
+        private MenuController _menuController;
         private CheckForPlayerExistingGames _checkForPlayerExistingGames;
-		private QuestionController _questionController;
 
-		private int[] gameNumbers;
-		private List<string> catagoryList;
+        private int[] _gameNumbers;
+        private List<string> _catagoryList;
 
+        #endregion variables
 
-		public QuestionData[] questionsPoolFromCatagory { get; set;}
-		//public string catagoryText { get; set; }
-		       
-		public GameObject catagoryPopUp;
-		public Dropdown catagoryDD;
-		public GameObject catAckPanel;
-		public GameObject catSelectPanel;
-		public GameObject backgroundStuff;
-		public Text catagoryText;
+        #region properties
 
+        public QuestionData[] QuestionsPoolFromCatagory { get; set; }
 
-        // Use this for initialization
+        public QuestionController QuestionController
+        {
+            get
+            {
+                if (QuestionController.Initialised)
+                    return QuestionController.Instance;
+                else return null;
+            }
+        }
+
+        public DataController DataController
+        {
+            get
+            {
+                if (DataController.Initialised)
+                    return DataController.Instance;
+                else return null;
+            }
+        }
+
+        #endregion properties
+
+        #region methods
+
+        #region unity
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            DontDestroyOnLoad(gameObject);
+        }
+
         private void Start()
         {
-			DontDestroyOnLoad (this.gameObject);
-			_CheckForOpenGames = FindObjectOfType<CheckForOpenGames>();
-            _MenuController = FindObjectOfType<MenuController>();
+            _checkForOpenGames = FindObjectOfType<CheckForOpenGames>();
+            _menuController = FindObjectOfType<MenuController>();
             _checkForPlayerExistingGames = FindObjectOfType<CheckForPlayerExistingGames>();
-            _playerController = FindObjectOfType<PlayerController>();
-			_questionController = FindObjectOfType<QuestionController> ();
-			_dataController = FindObjectOfType<DataController> ();
 
-            Debug.Log("here we go");
-            if (PlayerPrefs.HasKey(_playerController.GetUsername()))
+            Debug.Log("[GameLobbyController] Start() : Here we go");
+
+            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))
             {
-                //Debug.Log(PlayerPrefs.GetString(_playerController.ongoingGamesKey));
-                Debug.Log(PlayerPrefs.GetString(_playerController.GetUsername()));
+                Debug.Log("[GameLobbyController] Start() : Found player: " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
                 _checkForPlayerExistingGames.GetPlayersOpenGames();
             }
             else
-                Debug.Log("player has no ongoing games");
+                Debug.Log("[GameLobbyController] Start() : Player has no ongoing games");
         }
+
+        #endregion unity
+
+        #region GameLobbyController specific
 
         public void StartOpenGame(OngoingGamesData _ongoingGameData)
         {
@@ -61,8 +90,8 @@ namespace _LetsQuiz
 
         public void StartNewGame()
         {
-            Debug.Log("checking for open games");
-            _CheckForOpenGames.CheckForGamesNeedingOpponents();
+            Debug.Log("[GameLobbyController] StartNewGame() : Checking for open games");
+            _checkForOpenGames.CheckForGamesNeedingOpponents();
         }
 
         public void BackToMenu()
@@ -71,68 +100,78 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
-		public void presentPopUp()
-		{
-			catagoryPopUp.SetActive (true);
-			catagoryDD.gameObject.SetActive (true);
-			backgroundStuff.SetActive (false);
-			if (_dataController.turnNumber == 1 || _dataController.turnNumber == 3) 
-			{
-				catSelectPanel.SetActive (true);
-				populateDropDown ();
-			}
-			if (_dataController.turnNumber == 2)
-			{
-				catAckPanel.SetActive (true);
-				Debug.Log ("round catagory is : " + _dataController.ongoingGameData.Round1Catagory);
-				catagoryText.text = _dataController.ongoingGameData.Round1Catagory;
-			}
-			if (_dataController.turnNumber == 4) 
-			{
-				catAckPanel.SetActive (true);
-				Debug.Log ("round catagory is : " + _dataController.ongoingGameData.Round2Catagory);
-				catagoryText.text = _dataController.ongoingGameData.Round2Catagory;
-			}
-			if (_dataController.turnNumber == 5) 
-			{
-				catAckPanel.SetActive (true);
-				string randomCatagory = _questionController.getRandomCatagory (); 
-				questionsPoolFromCatagory = _questionController.getQuestionsInCatagory (randomCatagory);
-				Debug.Log ("RANDOM round catagory is : " + randomCatagory);
-				catagoryText.text = randomCatagory;
-			}
-			if (_dataController.turnNumber == 6) 
-			{
-				catAckPanel.SetActive (true);
-				Debug.Log ("round catagory is : " + _dataController.ongoingGameData.round3Cat);
-				catagoryText.text = _dataController.ongoingGameData.round3Cat;
-			}
+        public void PresentPopUp()
+        {
+            CatagoryPopUp.SetActive(true);
+            CatagoryDropDown.gameObject.SetActive(true);
+            BackgroundStuff.SetActive(false);
 
-		}
+            if (DataController.TurnNumber == 1 || DataController.TurnNumber == 3)
+            {
+                CatSelectPanel.SetActive(true);
+                PopulateDropDown();
+            }
 
-		private void populateDropDown()
-		{
-			catagoryList = _questionController.getAllCatagories();
-			if (_dataController.turnNumber == 3)
-				catagoryList = _questionController.removeCatagory (catagoryList, _dataController.ongoingGameData.Round1Catagory);
-			catagoryDD.AddOptions (catagoryList);			
-		}
+            if (DataController.TurnNumber == 2)
+            {
+                CatAckPanel.SetActive(true);
+                Debug.Log("[GameLobbyController] PresentPopUp() : Round catagory is : " + DataController.OngoingGameData.Round1Catagory);
+                CatagoryText.text = DataController.OngoingGameData.Round1Catagory;
+            }
 
-		public void catagorySelected()
-		{
-			string catagory = (catagoryDD.options[catagoryDD.value]).text;
-			Debug.Log ("catagory selected = " + catagory);
-			questionsPoolFromCatagory = _questionController.getQuestionsInCatagory (catagory);
-			_dataController.catagory = catagory;
-			_MenuController.StartGame();
-		}
+            if (DataController.Instance.TurnNumber == 4)
+            {
+                CatAckPanel.SetActive(true);
+                Debug.Log("[GameLobbyController] PresentPopUp() : Round catagory is : " + DataController.OngoingGameData.Round2Catagory);
+                CatagoryText.text = DataController.OngoingGameData.Round2Catagory;
+            }
 
-		public void catagoryAcknowledged()
-		{
-			_MenuController.StartGame();
-		}
+            if (DataController.TurnNumber == 5)
+            {
+                CatAckPanel.SetActive(true);
+                string randomCatagory = "";
+                randomCatagory = QuestionController.GetRandomCatagory();
+                QuestionsPoolFromCatagory = QuestionController.GetQuestionsInCatagory(randomCatagory);
 
-		
+                Debug.Log("[GameLobbyController] PresentPopUp() : Round catagory is : " + randomCatagory);
 
+                CatagoryText.text = randomCatagory;
+            }
+
+            if (DataController.TurnNumber == 6)
+            {
+                CatAckPanel.SetActive(true);
+                Debug.Log("[GameLobbyController] PresentPopUp() : Round catagory is :  " + DataController.OngoingGameData.round3Cat);
+                CatagoryText.text = DataController.OngoingGameData.round3Cat;
+            }
+        }
+
+        private void PopulateDropDown()
+        {
+            _catagoryList = QuestionController.GetAllCategories();
+
+            if (DataController.TurnNumber == 3)
+                _catagoryList = QuestionController.RemoveCatagory(_catagoryList, DataController.Instance.OngoingGameData.Round1Catagory);
+
+            CatagoryDropDown.AddOptions(_catagoryList);
+        }
+
+        public void CatagorySelected()
+        {
+            string catagory = (CatagoryDropDown.options[CatagoryDropDown.value]).text;
+            Debug.Log("[GameLobbyController] CatagorySelected() : Catagory selected: " + catagory);
+            QuestionsPoolFromCatagory = QuestionController.GetQuestionsInCatagory(catagory);
+            DataController.Catagory = catagory;
+            _menuController.StartGame();
+        }
+
+        public void catagoryAcknowledged()
+        {
+            _menuController.StartGame();
+        }
     }
+
+    #endregion GameLobbyController specific
+
+    #endregion methods
 }

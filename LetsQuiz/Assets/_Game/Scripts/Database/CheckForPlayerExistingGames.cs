@@ -8,64 +8,89 @@ namespace _LetsQuiz
     {
         #region variables
 
-        private float _downloadTimer = 5.0f;
-
-        private DataController _dataController;
-        private PlayerController _playerController;
-        private GameLobbyController _GameLobbyController;
-        private MenuController _MenuController;
-        private string openGamesJSON;
-        private bool _isInteractable = false;
-        //public bool continueExistingGame { get; set; }
-        //private OngoingGamesData _OngoingGamesData;
-
+        [Header("Components")]
         public GameObject gameButton;
         public Transform buttonContainer;
 
+        [Header("Settings")]
+        public Color Red;
+        public Color Green;
+
+        private float _connectionTimer = 0.0f;
+        private const float _connectionTimeLimit = 1000000.0f;
+
+        private MenuController _menuController;
+        private string _openGamesJSON;
+        private bool _isInteractable = false;
+
         #endregion variables
+
+        #region properties
+
+        public DataController DataController
+        {
+            get
+            {
+                if (DataController.Initialised)
+                    return DataController.Instance;
+                else return null;
+            }
+        }
+        public PlayerController PlayerController
+        {
+            get
+            {
+                if (PlayerController.Initialised)
+                    return PlayerController.Instance;
+                else return null;
+            }
+        }
+
+        public GameLobbyController GameLobbyController
+        {
+            get
+            {
+                if (GameLobbyController.Initialised)
+                    return GameLobbyController.Instance;
+                else return null;
+            }
+        }
+
+        #endregion properties
 
         #region methods
 
-        #region unity
-
-        private void Begin()
-        {
-            _dataController = FindObjectOfType<DataController>();
-            _playerController = FindObjectOfType<PlayerController>();
-            _MenuController = FindObjectOfType<MenuController>();
-        }
-
-        #endregion unity
-
-        #region download specific
+        #region CheckForPlayerExistingGames specific
 
         public void GetPlayersOpenGames()
         {
-            Begin();
             StartCoroutine(PlayersOpenGames());
         }
 
         private IEnumerator PlayersOpenGames()
         {
-            Debug.Log("checking players open games");
-            if (!PlayerPrefs.HasKey(_playerController.GetUsername()))
-                Debug.Log("player has no open games in playerprefs");
-            if (PlayerPrefs.HasKey(_playerController.GetUsername()))
-                Debug.Log("player has open games: " + PlayerPrefs.GetString(_playerController.GetUsername()));
+            Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() : Checking players open games");
+
+            if (!PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))
+                Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() :  Player has no open games in playerprefs");
+
+            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))
+                Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() : Player has open games: " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
 
             WWWForm form = new WWWForm();
-            form.AddField("gameNumbersPost", PlayerPrefs.GetString(_playerController.GetUsername())); //TODO need a better way to generate unique game numbers for the first game
+
+            //TODO need a better way to generate unique game numbers for the first game
+            form.AddField("gameNumbersPost", PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
+
             string address = ServerHelper.Host + ServerHelper.GetPlayersOpenGames;
             WWW submitRequest = new WWW(address, form);
             while (!submitRequest.isDone)
             {
-                float _connectionTimer = 0.0f;
-                const float _connectionTimeLimit = 1000000.0f;
                 _connectionTimer += Time.deltaTime;
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
+                    Debug.LogError("[CheckForPlayerExistingGames] PlayersOpenGames() : Error: " + submitRequest.error);
                     yield return null;
                 }
 
@@ -73,7 +98,7 @@ namespace _LetsQuiz
                 if (_connectionTimer > _connectionTimeLimit || submitRequest.error != null)
                 {
                     FeedbackAlert.Show("Server error.");
-                    Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
+                    Debug.LogError("[CheckForPlayerExistingGames] PlayersOpenGames() : Error: " + submitRequest.error);
                     yield return null;
                 }
             }
@@ -81,97 +106,111 @@ namespace _LetsQuiz
             if (submitRequest.error != null)
             {
                 FeedbackAlert.Show("Connection error. Please try again.");
-                Debug.Log("SubmitScore : Submit() : " + submitRequest.error);
+                Debug.LogError("[CheckForPlayerExistingGames] PlayersOpenGames() : Error: " + submitRequest.error);
                 yield return null;
             }
 
             if (submitRequest.isDone)
             {
-                Debug.Log("got open game data");
-                Debug.Log(submitRequest.text);
-                displayOpenGames(submitRequest.text);
+                Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() : Got open game data " + submitRequest.text);
+                DisplayOpenGames(submitRequest.text);
                 yield return submitRequest;
             }
         }
 
-        public void displayOpenGames(string openGamesStartedByTheUser)
+        public void DisplayOpenGames(string openGamesStartedByTheUser)
         {
             openGamesStartedByTheUser = "{\"dataForOpenGame\":" + openGamesStartedByTheUser + "}";
-            Debug.Log("JSON of playersOngoingGames " + openGamesStartedByTheUser);
+
+            Debug.Log("[CheckForPlayerExistingGames] DisplayOpenGames() : JSON of playersOngoingGames " + openGamesStartedByTheUser);
+
             OngoingGamesContainer gamesPlayerHasStarted = new OngoingGamesContainer();
-            gamesPlayerHasStarted = JsonUtility.FromJson<OngoingGamesContainer>(openGamesStartedByTheUser); //serialize opengame data
+
+            //serialize opengame data
+            gamesPlayerHasStarted = JsonUtility.FromJson<OngoingGamesContainer>(openGamesStartedByTheUser);
 
             if (gamesPlayerHasStarted.dataForOpenGame.Length == 0)
-                Debug.Log("user has no open games");
+                Debug.Log("[CheckForPlayerExistingGames] DisplayOpenGames() : User has no open games");
 
             for (int i = 0; i < gamesPlayerHasStarted.dataForOpenGame.Length; i++)
             {
                 GameObject go = new GameObject();
-				//bool isInteractable = isButtonInteractable (gamesPlayerHasStarted, i, playerOne, img);
-				go = Instantiate(gameButton) as GameObject; //Instantiate must be after you set all the variables on that object!
+                //bool isInteractable = isButtonInteractable (gamesPlayerHasStarted, i, playerOne, img);
+
+                //Instantiate must be after you set all the variables on that object!
+                go = Instantiate(gameButton) as GameObject;
                 go.transform.SetParent(buttonContainer);
 
                 OngoingGamesData gameData = gamesPlayerHasStarted.dataForOpenGame[i];
-                go.GetComponentInChildren<Button>().onClick.AddListener(() => continueGameButtonPressed(gameData));
-                go.GetComponentInChildren<Text>().text = gameData.gameNumber.ToString(); //this is what is written on each button
+                go.GetComponentInChildren<Button>().onClick.AddListener(() => ContinueGameButtonPressed(gameData));
+
+                //this is what is written on each button
+                go.GetComponentInChildren<Text>().text = gameData.gameNumber.ToString();
 
                 isInteractable(gameData, go);
-                go.transform.localScale = new Vector3(1, 1, 1); // the scale on my prefab is blowing out at runtime, this fixes that problem
+
+                // the scale on my prefab is blowing out at runtime, this fixes that problem
+                go.transform.localScale = new Vector3(1, 1, 1);
             }
         }
 
-        private void continueGameButtonPressed(OngoingGamesData gameData)
+        private void ContinueGameButtonPressed(OngoingGamesData gameData)
         {
-			_GameLobbyController = FindObjectOfType<GameLobbyController> ();
-            Debug.Log(gameData.gameNumber);
-            _dataController.ongoingGameData = gameData;
-            _dataController.turnNumber = _dataController.ongoingGameData.turnNumber;
-            _dataController.turnNumber++;
-			_GameLobbyController.presentPopUp ();
+            Debug.Log("[CheckForPlayerExistingGames] ContinueGameButtonPressed() : " + gameData.gameNumber);
+
+            DataController.OngoingGameData = gameData;
+            DataController.TurnNumber = DataController.OngoingGameData.turnNumber;
+            DataController.TurnNumber++;
+            GameLobbyController.PresentPopUp();
         }
 
         private void isInteractable(OngoingGamesData gameData, GameObject go)
         {
             Button b;
+
             var colors = go.GetComponentInChildren<Button>().colors;
-            if (_playerController.GetUsername() == gameData.player)
+
+            if (PlayerController.GetUsername() == gameData.player)
             {
                 if (gameData.turnNumber == 1 || gameData.turnNumber == 2 || gameData.turnNumber == 5)
                 {
                     b = go.GetComponentInChildren<Button>();
-                    b.GetComponent<Image>().color = Color.red;
+                    b.GetComponent<Image>().color = Red;
                     go.GetComponentInChildren<Button>().interactable = false;
                 }
+
                 if (gameData.turnNumber == 3 || gameData.turnNumber == 4)
                 {
                     b = go.GetComponentInChildren<Button>();
-                    b.GetComponent<Image>().color = Color.green;
+                    b.GetComponent<Image>().color = Green;
                     go.transform.SetAsFirstSibling();
                     go.GetComponentInChildren<Button>().interactable = true;
                 }
             }
-            if (_playerController.GetUsername() == gameData.opponent)
+
+            if (PlayerController.GetUsername() == gameData.opponent)
             {
                 if (gameData.turnNumber == 1)
-                    Debug.LogError("this should not happen");
+                    Debug.LogError("[CheckForPlayerExistingGames] IsInteractable() : this should not happen");
+
                 if (gameData.turnNumber == 3 || gameData.turnNumber == 4)
                 {
                     b = go.GetComponentInChildren<Button>();
-                    b.GetComponent<Image>().color = Color.red;
+                    b.GetComponent<Image>().color = Red;
                     go.GetComponentInChildren<Button>().interactable = false;
                 }
 
                 if (gameData.turnNumber == 2 || gameData.turnNumber == 5)
                 {
                     b = go.GetComponentInChildren<Button>();
-                    b.GetComponent<Image>().color = Color.green;
+                    b.GetComponent<Image>().color = Green;
                     go.GetComponentInChildren<Button>().interactable = true;
                 }
             }
         }
     }
 
-    #endregion download specific
+    #endregion CheckForPlayerExistingGames specific
 
     #endregion methods
 }

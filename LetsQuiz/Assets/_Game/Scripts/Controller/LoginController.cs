@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Facebook.Unity;
+using GooglePlayGames;
+using GooglePlayGames.BasicApi;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
-using System.Collections;
-using System.Collections.Generic;
-using Facebook.Unity;
-using GooglePlayGames;
-using GooglePlayGames.BasicApi;
-using UnityEngine.EventSystems;
 
 namespace _LetsQuiz
 {
@@ -54,19 +54,38 @@ namespace _LetsQuiz
         private string _playerString = "";
 
         [Header("Components")]
-        private PlayerController _playerController;
-        private SettingsController _settingsController;
-
         public GameObject dialogLoggedIn;
         public GameObject dialogLoggedOut;
         public GameObject dialogUsername;
-		public GameObject dialogEmail;
-		public GameObject dialogUIDPassword;
+        public GameObject dialogEmail;
+        public GameObject dialogUIDPassword;
         //public GameObject dialogProfilePic;
 
-
-
         #endregion variables
+
+        #region properties
+
+        public PlayerController PlayerController
+        {
+            get
+            {
+                if (PlayerController.Initialised)
+                    return PlayerController.Instance;
+                else return null;
+            }
+        }
+
+        public SettingsController SettingsController
+        {
+            get
+            {
+                if (SettingsController.Initialised)
+                    return SettingsController.Instance;
+                else return null;
+            }
+        }
+
+        #endregion properties
 
         #region methods
 
@@ -74,7 +93,7 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-			FaceBookController.Instance.InitFB();
+            FaceBookController.Instance.InitFB();
             DealWithFBMenus(FB.IsLoggedIn);
 
             subHeading.text = "";
@@ -88,17 +107,13 @@ namespace _LetsQuiz
             buttonPanel.SetActive(false);
             //googleButton.SetActive(false);
             //facebookButton.SetActive(false);
-
-
         }
 
         private void Start()
         {
-            _settingsController = FindObjectOfType<SettingsController>();
-            _settingsController.Load();
+            SettingsController.Load();
 
-            _playerController = FindObjectOfType<PlayerController>();
-            _playerController.Load();
+            PlayerController.Load();
 
             googleButton = GameObject.Find("Google");
             EventSystem.current.firstSelectedGameObject = googleButton;
@@ -145,7 +160,7 @@ namespace _LetsQuiz
             {
                 if (ValidRegister(username, email, password))
                 {
-                    _playerController.SetPlayerType(PlayerStatus.LoggedIn);
+                    PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }
             }
@@ -212,17 +227,16 @@ namespace _LetsQuiz
                     // otherwise save the player information to PlayerPrefs and load menu scene
                     else
                     {
-                        _player = PlayerJsonHelper.LoadPlayerFromServer(_playerString);
+                        _player = JsonUtility.FromJson<Player>(_playerString);
 
                         if (_player != null)
-                            _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
+                            PlayerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
                                 _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
                                 _player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
                         FeedbackAlert.Show("Welcome, " + username + "!");
                         return true;
                     }
-
                 }
             }
             return false;
@@ -248,7 +262,7 @@ namespace _LetsQuiz
 
             if (ValidRegister(guest, guest, guest))
             {
-                _playerController.SetPlayerType(PlayerStatus.Guest);
+                PlayerController.SetPlayerType(PlayerStatus.Guest);
                 LoadMenu();
             }
         }
@@ -274,7 +288,7 @@ namespace _LetsQuiz
             {
                 if (ValidLogin(username, password))
                 {
-                    _playerController.SetPlayerType(PlayerStatus.LoggedIn);
+                    PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }
             }
@@ -340,17 +354,16 @@ namespace _LetsQuiz
                     // otherwise save the player information to PlayerPrefs and load menu scene
                     else
                     {
-                        _player = PlayerJsonHelper.LoadPlayerFromServer(_playerString);
+                        _player = _player = JsonUtility.FromJson<Player>(_playerString);
 
                         if (_player != null)
-                            _playerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
+                            PlayerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
                                 _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
                                 _player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
                         FeedbackAlert.Show("Welcome back, " + username + "!");
                         return true;
                     }
-
                 }
             }
             return false;
@@ -366,15 +379,15 @@ namespace _LetsQuiz
             FeedbackClick.Play();
             List<string> permissions = new List<string>();
             permissions.Add("public_profile");
-			permissions.Add("email");
+            permissions.Add("email");
             FB.LogInWithReadPermissions(permissions, AuthCallBack);
         }
 
-        void AuthCallBack(IResult result)
+        private void AuthCallBack(IResult result)
         {
             if (result.Error != null)
             {
-				Debug.Log(result.Error);
+                Debug.Log(result.Error);
             }
             else
             {
@@ -391,111 +404,117 @@ namespace _LetsQuiz
 
                 DealWithFBMenus(FB.IsLoggedIn);
             }
-			    
-		}
-        
-		void DealWithFBMenus(bool isLoggedIn)
-		{
-			if (isLoggedIn) {
-				dialogLoggedIn.SetActive (true);
-				dialogLoggedOut.SetActive (false);
-				entryPanel.SetActive (false);
-				loginPanel.SetActive (false);
-				registerPanel.SetActive (false);
-				buttonPanel.SetActive (false);
-				subHeading.text = "";
-				googleButton.SetActive (false);
-				facebookButton.SetActive (false);
+        }
 
-				string username = FaceBookController.Instance.profileName;
-				string email = FaceBookController.Instance.profileEmail;
-				string password = FaceBookController.Instance.profileId;
-				string confirmPassword = FaceBookController.Instance.profileId;
+        private void DealWithFBMenus(bool isLoggedIn)
+        {
+            if (isLoggedIn)
+            {
+                dialogLoggedIn.SetActive(true);
+                dialogLoggedOut.SetActive(false);
+                entryPanel.SetActive(false);
+                loginPanel.SetActive(false);
+                registerPanel.SetActive(false);
+                buttonPanel.SetActive(false);
+                subHeading.text = "";
+                googleButton.SetActive(false);
+                facebookButton.SetActive(false);
 
-				if (FaceBookController.Instance.profileName != null) {
-					//username = FaceBookController.Instance.profileName;
+                string username = FaceBookController.Instance.profileName;
+                string email = FaceBookController.Instance.profileEmail;
+                string password = FaceBookController.Instance.profileId;
+                string confirmPassword = FaceBookController.Instance.profileId;
 
-					Text userName = dialogUsername.GetComponent<Text> ();
-					userName.text = FaceBookController.Instance.profileName;
-																							
-				} else {
-					StartCoroutine ("waitForProfileName");
-				}
+                if (FaceBookController.Instance.profileName != null)
+                {
+                    //username = FaceBookController.Instance.profileName;
 
-				if (FaceBookController.Instance.profileEmail != null) {
-					//password = FaceBookController.Instance.profileId;
+                    Text userName = dialogUsername.GetComponent<Text>();
+                    userName.text = FaceBookController.Instance.profileName;
+                }
+                else
+                {
+                    StartCoroutine("waitForProfileName");
+                }
 
-					Text userEmail = dialogUsername.GetComponent<Text> ();
-					userEmail.text = FaceBookController.Instance.profileEmail;
+                if (FaceBookController.Instance.profileEmail != null)
+                {
+                    //password = FaceBookController.Instance.profileId;
 
-				} else {
-					StartCoroutine ("waitForProfileEmail");
-				}
+                    Text userEmail = dialogUsername.GetComponent<Text>();
+                    userEmail.text = FaceBookController.Instance.profileEmail;
+                }
+                else
+                {
+                    StartCoroutine("waitForProfileEmail");
+                }
 
-				if (FaceBookController.Instance.profileId != null) {
-					//password = FaceBookController.Instance.profileId;
-					Text userId = dialogUsername.GetComponent<Text> ();
-					userId.text = FaceBookController.Instance.profileId;
+                if (FaceBookController.Instance.profileId != null)
+                {
+                    //password = FaceBookController.Instance.profileId;
+                    Text userId = dialogUsername.GetComponent<Text>();
+                    userId.text = FaceBookController.Instance.profileId;
+                }
+                else
+                {
+                    StartCoroutine("waitForProfileId");
+                }
 
-				} else {
-					StartCoroutine ("waitForProfileId");
-				}
+                //if (FaceBookController.Instance.profilePic != null) {
+                //Image profilePic = DialogProfilePic.GetComponent<Image> ();
+                //profilePic.sprite = FaceBookController.Instance.profilePic;
+                //} else {
+                //StartCoroutine ("waitForProfilePic");
+                //}
+                if (!ValidLogin(username, password)
+                    && !string.IsNullOrEmpty(username)
+                    && !string.IsNullOrEmpty(email)
+                    && !string.IsNullOrEmpty(password)
+                    && !string.IsNullOrEmpty(confirmPassword)
+                    && confirmPassword == password)
+                {
+                    if (ValidRegister(username, email, password))
+                    {
+                        PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
+                        LoadMenu();
+                    }
+                }
+                else
+                {
+                    if (ValidLogin(username, password))
+                    {
+                        PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
+                        LoadMenu();
+                    }
+                }
+            }
+            else
+            {
+                dialogLoggedIn.SetActive(false);
+                dialogLoggedOut.SetActive(true);
+            }
+        }
 
-				//if (FaceBookController.Instance.profilePic != null) {
-				//Image profilePic = DialogProfilePic.GetComponent<Image> ();
-				//profilePic.sprite = FaceBookController.Instance.profilePic;
-				//} else {
+        private IEnumerator waitForProfileName()
+        {
+            while (FaceBookController.Instance.profileName == null)
+                yield return null;
+            DealWithFBMenus(FB.IsLoggedIn);
+        }
 
-				//StartCoroutine ("waitForProfilePic");
-				//}
-				if (!ValidLogin(username, password) 
-					&&!string.IsNullOrEmpty (username) 
-					&& !string.IsNullOrEmpty (email) 
-					&& !string.IsNullOrEmpty (password) 
-					&& !string.IsNullOrEmpty (confirmPassword)
-					&& confirmPassword == password) {
-					if (ValidRegister (username, email, password)) {
-						_playerController.SetPlayerType (PlayerStatus.LoggedIn);
-						LoadMenu ();
-					}
-				} else {
-					if (ValidLogin (username, password)) {
-							_playerController.SetPlayerType (PlayerStatus.LoggedIn);
-							LoadMenu ();
+        private IEnumerator waitForProfileEmail()
+        {
+            while (FaceBookController.Instance.profileEmail == null)
+                yield return null;
+            DealWithFBMenus(FB.IsLoggedIn);
+        }
 
-
-						}
-					}	
-					
-				}else {
-					dialogLoggedIn.SetActive (false);
-					dialogLoggedOut.SetActive (true);
-				}
-			}
-
-	
-		
-
-		IEnumerator waitForProfileName()
-		{
-			while (FaceBookController.Instance.profileName == null)
-				yield return null;
-			DealWithFBMenus(FB.IsLoggedIn);
-		}
-
-		IEnumerator waitForProfileEmail()
-		{
-			while (FaceBookController.Instance.profileEmail == null)
-				yield return null;
-			DealWithFBMenus(FB.IsLoggedIn);
-		}
-
-		IEnumerator waitForProfileId()
-		{
-			while (FaceBookController.Instance.profileId == null)
-				yield return null;
-			DealWithFBMenus(FB.IsLoggedIn);
-		}
+        private IEnumerator waitForProfileId()
+        {
+            while (FaceBookController.Instance.profileId == null)
+                yield return null;
+            DealWithFBMenus(FB.IsLoggedIn);
+        }
 
         //IEnumerator waitForProfilePic()
         //{
@@ -504,13 +523,12 @@ namespace _LetsQuiz
         //}
         //DealWithFBMenus (FB.IsLoggedIn);
         //}
-	
-		
+
         // TASK : to be completed when social media is integrated
         public void GoogleLogin()
         {
             FeedbackClick.Play();
-            
+
             if (PlayGamesPlatform.Instance.localUser.authenticated)
             {
                 PlayGamesPlatform.Instance.Authenticate(LoginCallBack, false);
@@ -531,8 +549,6 @@ namespace _LetsQuiz
             else
                 Debug.Log("User logged in failed ");
         }
-
-
 
         #endregion social media specific
 
