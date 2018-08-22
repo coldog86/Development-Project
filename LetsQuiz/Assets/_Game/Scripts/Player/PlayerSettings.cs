@@ -3,10 +3,10 @@
     [System.Serializable]
     public class PlayerSettings
     {
-        public int SoundEffectVolume = -10;
+        public float SoundEffectVolume = -10;
         public int SoundEffectToggle = 1;
 
-        public int BackgroundMusicVolume = -10;
+        public float BackgroundMusicVolume = -10;
         public int BackgroundMusicToggle = 1;
 
         public int NotificationsToggle = 1;

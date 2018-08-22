@@ -1,5 +1,6 @@
 ﻿namespace _LetsQuiz
 {
+    [System.Serializable]
     public class Player
     {
         public int ID = 0;
