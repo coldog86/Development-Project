@@ -122,17 +122,17 @@ namespace _LetsQuiz
                 Debug.Log("****asked questions = " + og.dataForOpenGame[n].askedQuestions);
                 Debug.Log("****remaining questions = " + og.dataForOpenGame[n].questionsLeftInCat);
 
-                if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))
+				if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
                 {
-                    string games = PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME);
+					string games = PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername());
                     games = games + "," + DataController.GameNumber.ToString();
-                    PlayerPrefs.SetString(DataHelper.PlayerDataKey.USERNAME, games);
-                    Debug.Log("games in player prefs = " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
+					PlayerPrefs.SetString(((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()), games);
+					Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
                 }
                 if (!PlayerPrefs.HasKey(PlayerController.GetUsername()))
                 {
-                    PlayerPrefs.SetString(DataHelper.PlayerDataKey.USERNAME, DataController.GameNumber.ToString());
-                    Debug.Log("games in player prefs = " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
+					PlayerPrefs.SetString(((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()), DataController.GameNumber.ToString());
+					Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
                 }
 
                 DataController.OngoingGameData = og.dataForOpenGame[n];

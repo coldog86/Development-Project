@@ -70,9 +70,9 @@ namespace _LetsQuiz
 
             Debug.Log("[GameLobbyController] Start() : Here we go");
 
-            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))
+			if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
             {
-                Debug.Log("[GameLobbyController] Start() : Found player: " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
+				Debug.Log("[GameLobbyController] Start() : Found player: " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername());
                 _checkForPlayerExistingGames.GetPlayersOpenGames();
             }
             else

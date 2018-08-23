@@ -130,17 +130,17 @@ namespace _LetsQuiz
 
             Destroy(GameLobbyController);
 
-            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))
+			if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
             {
-                string numbers = PlayerPrefs.GetString(PlayerController.GetUsername());
+				string numbers = PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername());
                 numbers = numbers + "," + DataController.GameNumber;
-                PlayerPrefs.SetString(DataHelper.PlayerDataKey.USERNAME, numbers);
-                Debug.Log("games in player prefs = " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
+				PlayerPrefs.SetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername(), numbers);
+				Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()) + PlayerController.Instance.GetUsername());
             }
             else
             {
-                PlayerPrefs.SetString(DataHelper.PlayerDataKey.USERNAME, DataController.GameNumber.ToString());
-                Debug.Log("games in player prefs = " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
+				PlayerPrefs.SetString(((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()), DataController.GameNumber.ToString());
+				Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
             }
             ShowQuestion();
         }

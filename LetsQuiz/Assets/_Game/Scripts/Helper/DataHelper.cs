@@ -19,9 +19,10 @@ namespace _LetsQuiz
 
         public class PlayerDataKey
         {
-            public const string TYPE = "PlayerType";
+			public const string TYPE = "PlayerType";
             public const string ID = "PlayerId";
             public const string USERNAME = "PlayerUsername";
+			public const string GAMEKEY = "GameKey";
             public const string EMAIL = "PlayerEmail";
             public const string PASSWORD = "PlayerPassword";
             public const string DOB = "PlayerDOB";

@@ -71,16 +71,16 @@ namespace _LetsQuiz
         {
             Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() : Checking players open games");
 
-            if (!PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))
+			if (!PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
                 Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() :  Player has no open games in playerprefs");
 
-            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))
-                Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() : Player has open games: " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
+			if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
+				Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() : Player has open games: " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
 
             WWWForm form = new WWWForm();
 
             //TODO need a better way to generate unique game numbers for the first game
-            form.AddField("gameNumbersPost", PlayerPrefs.GetString(DataHelper.PlayerDataKey.USERNAME));
+			form.AddField("gameNumbersPost", PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
 
             string address = ServerHelper.Host + ServerHelper.GetPlayersOpenGames;
             WWW submitRequest = new WWW(address, form);
