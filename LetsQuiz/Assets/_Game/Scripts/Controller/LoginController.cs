@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -60,6 +61,7 @@ namespace _LetsQuiz
         public GameObject dialogEmail;
         public GameObject dialogUIDPassword;
         //public GameObject dialogProfilePic;
+		public bool isConnectedToGoogePlayServices{get; set;}
 
         #endregion variables
 
@@ -118,13 +120,12 @@ namespace _LetsQuiz
             googleButton = GameObject.Find("Google");
             EventSystem.current.firstSelectedGameObject = googleButton;
 
-            PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().Build();
+			PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder ().Build();
+			PlayGamesPlatform.InitializeInstance (config);
+			PlayGamesPlatform.DebugLogEnabled = true;
+			PlayGamesPlatform.Activate();
 
-            PlayGamesPlatform.DebugLogEnabled = true;
-            PlayGamesPlatform.InitializeInstance(config);
-            PlayGamesPlatform.Activate();
-
-            PlayGamesPlatform.Instance.Authenticate(LoginCallBack, true);
+            
         }
 
         #endregion unity
@@ -466,12 +467,14 @@ namespace _LetsQuiz
                 //} else {
                 //StartCoroutine ("waitForProfilePic");
                 //}
-                if (!ValidLogin(username, password)
-                    && !string.IsNullOrEmpty(username)
+
+						
+				if (!ValidLogin(username, password) 
+					&& !string.IsNullOrEmpty(username)
                     && !string.IsNullOrEmpty(email)
                     && !string.IsNullOrEmpty(password)
                     && !string.IsNullOrEmpty(confirmPassword)
-                    && confirmPassword == password)
+					&& confirmPassword == password)
                 {
                     if (ValidRegister(username, email, password))
                     {
@@ -526,29 +529,22 @@ namespace _LetsQuiz
 
         // TASK : to be completed when social media is integrated
         public void GoogleLogin()
-        {
-            FeedbackClick.Play();
+		{
+			FeedbackClick.Play ();
+			PlayGamesPlatform.Activate ();
+			PlayGamesPlatform.DebugLogEnabled = true;
 
-            if (PlayGamesPlatform.Instance.localUser.authenticated)
-            {
-                PlayGamesPlatform.Instance.Authenticate(LoginCallBack, false);
+			Social.localUser.Authenticate ((bool success) => {
+				if (success) {
+					FeedbackAlert.Show("Welcome back, " + Social.localUser + "!");
+					Debug.Log ("logged in");
+				} else {
+					Debug.Log ("login failed");
+				}	
+			});
+		}
+			
 
-                FeedbackAlert.Show("Welcome, " + Social.localUser.userName + "!");
-            }
-            else
-            {
-                PlayGamesPlatform.Instance.SignOut();
-                FeedbackAlert.Show("Login was not successful ");
-            }
-        }
-
-        public void LoginCallBack(bool isLoggedIn)
-        {
-            if (isLoggedIn)
-                Debug.Log("User logged in");
-            else
-                Debug.Log("User logged in failed ");
-        }
 
         #endregion social media specific
 

@@ -62,7 +62,7 @@ namespace _LetsQuiz
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
 
-			//PlayerPrefs.DeleteAll ();
+			PlayerPrefs.DeleteAll ();
 
             _questionDownload = FindObjectOfType<GetAllQuestions>();
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());

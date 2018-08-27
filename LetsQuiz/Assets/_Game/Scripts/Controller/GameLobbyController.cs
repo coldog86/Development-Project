@@ -92,6 +92,7 @@ namespace _LetsQuiz
         {
             Debug.Log("[GameLobbyController] StartNewGame() : Checking for open games");
             _checkForOpenGames.CheckForGamesNeedingOpponents();
+
         }
 
         public void BackToMenu()
