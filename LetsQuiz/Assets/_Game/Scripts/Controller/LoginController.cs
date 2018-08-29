@@ -28,7 +28,6 @@ namespace _LetsQuiz
         public GameObject toogleLoginPanelButton;
         public GameObject toggleRegisterPanelButton;
         public GameObject skipButton;
-        public GameObject googleButton;
         public GameObject facebookButton;
 
         [Header("Login")]
@@ -61,7 +60,7 @@ namespace _LetsQuiz
         public GameObject dialogEmail;
         public GameObject dialogUIDPassword;
         //public GameObject dialogProfilePic;
-		public bool isConnectedToGoogePlayServices{get; set;}
+
 
         #endregion variables
 
@@ -107,7 +106,6 @@ namespace _LetsQuiz
             skipButton.SetActive(false);
             registerButton.SetActive(false);
             buttonPanel.SetActive(false);
-            //googleButton.SetActive(false);
             //facebookButton.SetActive(false);
         }
 
@@ -116,16 +114,7 @@ namespace _LetsQuiz
             SettingsController.Load();
 
             PlayerController.Load();
-
-            googleButton = GameObject.Find("Google");
-            EventSystem.current.firstSelectedGameObject = googleButton;
-
-			PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder ().Build();
-			PlayGamesPlatform.InitializeInstance (config);
-			PlayGamesPlatform.DebugLogEnabled = true;
-			PlayGamesPlatform.Activate();
-
-            
+   
         }
 
         #endregion unity
@@ -418,7 +407,6 @@ namespace _LetsQuiz
                 registerPanel.SetActive(false);
                 buttonPanel.SetActive(false);
                 subHeading.text = "";
-                googleButton.SetActive(false);
                 facebookButton.SetActive(false);
 
                 string username = FaceBookController.Instance.profileName;
@@ -432,6 +420,7 @@ namespace _LetsQuiz
 
                     Text userName = dialogUsername.GetComponent<Text>();
                     userName.text = FaceBookController.Instance.profileName;
+					FeedbackAlert.Show ("Welcome, " + userName.text + "!");
                 }
                 else
                 {
@@ -469,12 +458,12 @@ namespace _LetsQuiz
                 //}
 
 						
-				if (!ValidLogin(username, password) 
-					&& !string.IsNullOrEmpty(username)
+				if (!string.IsNullOrEmpty(username)
                     && !string.IsNullOrEmpty(email)
                     && !string.IsNullOrEmpty(password)
                     && !string.IsNullOrEmpty(confirmPassword)
-					&& confirmPassword == password)
+					&& confirmPassword == password 
+					&& !ValidLogin(username, password))
                 {
                     if (ValidRegister(username, email, password))
                     {
@@ -528,24 +517,7 @@ namespace _LetsQuiz
         //}
 
         // TASK : to be completed when social media is integrated
-        public void GoogleLogin()
-		{
-			FeedbackClick.Play ();
-			PlayGamesPlatform.Activate ();
-			PlayGamesPlatform.DebugLogEnabled = true;
-
-			Social.localUser.Authenticate ((bool success) => {
-				if (success) {
-					FeedbackAlert.Show("Welcome back, " + Social.localUser + "!");
-					Debug.Log ("logged in");
-				} else {
-					Debug.Log ("login failed");
-				}	
-			});
-		}
-			
-
-
+       
         #endregion social media specific
 
         #region navigation specific
@@ -559,7 +531,6 @@ namespace _LetsQuiz
             loginButton.SetActive(true);
             skipButton.SetActive(true);
             registerButton.SetActive(false);
-            //googleButton.SetActive(true);
             //facebookButton.SetActive(true);
             toogleLoginPanelButton.SetActive(false);
             toggleRegisterPanelButton.SetActive(false);
@@ -576,7 +547,6 @@ namespace _LetsQuiz
             loginButton.SetActive(false);
             skipButton.SetActive(true);
             registerButton.SetActive(true);
-            //googleButton.SetActive(true);
             //facebookButton.SetActive(true);
             toogleLoginPanelButton.SetActive(false);
             toggleRegisterPanelButton.SetActive(false);
