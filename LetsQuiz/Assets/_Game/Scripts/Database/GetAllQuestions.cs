@@ -63,6 +63,8 @@ namespace _LetsQuiz
                 yield return download;
 
                 _playerController.SetQuestionData(download.text);
+				if(QuestionController.Initialised)
+					QuestionController.Instance.Load();
                 _dataController.Init();
             }
         }
