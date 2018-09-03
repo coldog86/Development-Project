@@ -1,13 +1,10 @@
 ﻿using Facebook.Unity;
-using GooglePlayGames;
-using GooglePlayGames.BasicApi;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -515,6 +512,7 @@ namespace _LetsQuiz
         //}
         //DealWithFBMenus (FB.IsLoggedIn);
         //}
+
 
         // TASK : to be completed when social media is integrated
        
