@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -58,7 +57,6 @@ namespace _LetsQuiz
         public GameObject dialogUIDPassword;
         //public GameObject dialogProfilePic;
 
-
         #endregion variables
 
         #region properties
@@ -108,10 +106,7 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            SettingsController.Load();
-
             PlayerController.Load();
-   
         }
 
         #endregion unity
@@ -147,6 +142,8 @@ namespace _LetsQuiz
             {
                 if (ValidRegister(username, email, password))
                 {
+                    PlayerController.SetUsername(username);
+                    PlayerController.SetPassword(password);
                     PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }
@@ -275,6 +272,8 @@ namespace _LetsQuiz
             {
                 if (ValidLogin(username, password))
                 {
+                    PlayerController.SetUsername(username);
+                    PlayerController.SetPassword(password);
                     PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }
@@ -327,7 +326,7 @@ namespace _LetsQuiz
             if (loginRequest.isDone)
             {
                 // check that the login request returned something
-                if (!String.IsNullOrEmpty(loginRequest.text))
+                if (!string.IsNullOrEmpty(loginRequest.text))
                 {
                     _playerString = loginRequest.text;
                     Debug.Log("[LoginController] ValidLogin() : " + _playerString);
@@ -417,7 +416,7 @@ namespace _LetsQuiz
 
                     Text userName = dialogUsername.GetComponent<Text>();
                     userName.text = FaceBookController.Instance.profileName;
-					FeedbackAlert.Show ("Welcome, " + userName.text + "!");
+                    FeedbackAlert.Show("Welcome, " + userName.text + "!");
                 }
                 else
                 {
@@ -454,13 +453,12 @@ namespace _LetsQuiz
                 //StartCoroutine ("waitForProfilePic");
                 //}
 
-						
-				if (!string.IsNullOrEmpty(username)
+                if (!string.IsNullOrEmpty(username)
                     && !string.IsNullOrEmpty(email)
                     && !string.IsNullOrEmpty(password)
                     && !string.IsNullOrEmpty(confirmPassword)
-					&& confirmPassword == password 
-					&& !ValidLogin(username, password))
+                    && confirmPassword == password
+                    && !ValidLogin(username, password))
                 {
                     if (ValidRegister(username, email, password))
                     {
@@ -513,9 +511,8 @@ namespace _LetsQuiz
         //DealWithFBMenus (FB.IsLoggedIn);
         //}
 
-
         // TASK : to be completed when social media is integrated
-       
+
         #endregion social media specific
 
         #region navigation specific

@@ -49,6 +49,7 @@ namespace _LetsQuiz
             base.OnEnable();
             DontDestroyOnLoad(gameObject);
             TurnNumber = 0;
+            Player = new Player();
         }
 
         private void Start()
@@ -61,8 +62,6 @@ namespace _LetsQuiz
 
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
-
-			PlayerPrefs.DeleteAll ();
 
             _questionDownload = FindObjectOfType<GetAllQuestions>();
             StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
@@ -94,10 +93,8 @@ namespace _LetsQuiz
                 // TODO : is any of these ever used?
                 // NOTE : used to determine if player has already logged in or not for automatic login
                 _status = PlayerController.Instance.GetPlayerType();
-				Debug.Log (_username);
-				_username = PlayerController.Instance.GetUsername().ToString();
-				Debug.Log (_username);
-				_password = PlayerController.Instance.GetPassword().ToString();
+                _username = PlayerController.Instance.GetUsername().ToString();
+                _password = PlayerController.Instance.GetPassword().ToString();
             }
         }
 
@@ -167,9 +164,6 @@ namespace _LetsQuiz
                 // check that the login request returned something
                 if (!string.IsNullOrEmpty(loginRequest.text))
                 {
-                    Player = new Player();
-					Debug.Log (loginRequest.text);
-                    //TODO Chanes can you look at the whole player and playercontroller and get rid of what we don't need please?
                     Player = JsonUtility.FromJson<Player>(loginRequest.text);
 
                     // if the retrieved login text doesn't have "ID" load login scene

@@ -1,5 +1,4 @@
-﻿using Facebook.Unity;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -105,14 +104,14 @@ namespace _LetsQuiz
             FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
         }
 
-//		public void FacebookLogout()
-//		{
-//			FeedbackClick.Play();
-//			if (FB.IsLoggedIn) {
-//				FB.LogOut ();
-//				FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
-//			}
-//		}
+        //		public void FacebookLogout()
+        //		{
+        //			FeedbackClick.Play();
+        //			if (FB.IsLoggedIn) {
+        //				FB.LogOut ();
+        //				FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
+        //			}
+        //		}
 
         private void OpenLogin()
         {
