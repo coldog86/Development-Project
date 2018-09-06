@@ -20,11 +20,13 @@ namespace _LetsQuiz
 
             if (PlayerController.Initialised)
                 HighScoreData = PlayerController.Instance.HighScoreJSON;
+				Debug.Log ("AllHighScore Data" + HighScoreData);
         }
 
         public HighScoresContainer ExtractHighScores()
         {
             HighScoresContainer AllHighScorers = JsonUtility.FromJson<HighScoresContainer>(HighScoreData);
+
             return AllHighScorers;
         }
 
