@@ -436,6 +436,8 @@ namespace _LetsQuiz
             _music.Stop();
 
             SubmitToOngoingGamesDB();
+			SubmitHighscoreData ();
+
 
             if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                 FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "That's a wrap, folks!", "Your game has ended!");
@@ -452,6 +454,14 @@ namespace _LetsQuiz
             submitGame = FindObjectOfType<SubmitGame>();
             submitGame.SubmitGameToDB(QuestionController.GetRemainingQuestions(_questionPool));
         }
+
+		public void SubmitHighscoreData()
+		{
+			_submitScore = FindObjectOfType<SubmitScore> ();
+			_submitScore.SubmitScores (PlayerController.GetUsername(), PlayerController.UserScore);
+			Debug.Log ("Highscore Submitting. Player: " + PlayerController.GetUsername() + " Round Score: " + PlayerController.UserScore);
+
+		}
 
         public void UpvoteButton()
         {
