@@ -34,7 +34,7 @@ namespace _LetsQuiz
         private List<GameObject> _totalQuestionsCorrectObjects = new List<GameObject>();
 
         [Header("Panels")]
-        public GameObject OverallScorePanel;
+		public GameObject OverallScorePanel;
         public GameObject TotalCorrectPanel;
         public GameObject TopQuestionPanel;
 
@@ -46,13 +46,19 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            OverallScorePanel.SetActive(true);
-            TotalCorrectPanel.SetActive(false);
-            TopQuestionPanel.SetActive(false);
+            
         }
 
         private void Start()
         {
+			OverallScorePanel = GameObject.Find ("OverallScorePanel");
+			TotalCorrectPanel = GameObject.Find ("TotalCorrectPanel");
+			TopQuestionPanel = GameObject.Find ("TopQuestionPanel");
+
+			OverallScorePanel.gameObject.SetActive (true);
+			TotalCorrectPanel.gameObject.SetActive (false);
+			TopQuestionPanel.gameObject.SetActive (false);
+
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
 
@@ -67,6 +73,7 @@ namespace _LetsQuiz
             ShowQuestionHighScorers(_questandSub);
 
             ShowTotalQuestionsCorrect(_allHighScores);
+
         }
 
         public void ToggleHighestScorePanel()
@@ -79,9 +86,9 @@ namespace _LetsQuiz
 
         public void ToggleCorrectPanel()
         {
-            OverallScorePanel.SetActive(false);
-            TotalCorrectPanel.SetActive(true);
-            TopQuestionPanel.SetActive(false);
+			OverallScorePanel.SetActive (false);
+			TotalCorrectPanel.SetActive (true);
+			TopQuestionPanel.SetActive(false);
             Debug.Log("[LeaderboardController] ToggleCorrectPanel(): Toggled Correct");
         }
 
@@ -107,7 +114,7 @@ namespace _LetsQuiz
             HighScoresObject[] sorted = allHighScorers.allHighScorers.OrderBy(c => c.getTotalScoreInt()).ToArray();
 
             //for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items.
-            for (int i = sorted.Length - 1; i > sorted.Length - 20; i--)
+            for (int i = sorted.Length - 1; i > sorted.Length - 11; i--)
             {
                 GameObject highScorerGameObject = highScorerObjectPool.GetObject(); //create new GameObejct
                 HighScoresObject currentHighScore = sorted[i]; 						//get current highscorer
@@ -136,7 +143,7 @@ namespace _LetsQuiz
             QuestAndSub[] sortedQuestionsByRating = unsortedQuestions.OrderBy(c => c.getRating()).ToArray();
 
             //for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items.
-            for (int i = sortedQuestionsByRating.Length - 1; i > sortedQuestionsByRating.Length - 20; i--)
+            for (int i = sortedQuestionsByRating.Length - 1; i > sortedQuestionsByRating.Length - 11; i--)
             {
                 GameObject questionHighScoreObject = questionHighscoreObjectPool.GetObject(); //create new GameObejct
                 QuestAndSub currentQuestionHighscore = sortedQuestionsByRating[i];                      //get current highscorer
@@ -168,7 +175,7 @@ namespace _LetsQuiz
             HighScoresObject[] sorted = allHighScorers.allHighScorers.OrderBy(c => c.getTotalCorrect()).ToArray();
 
             //for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items.
-            for (int i = sorted.Length - 1; i > sorted.Length - 20; i--)
+            for (int i = sorted.Length - 1; i > sorted.Length - 11; i--)
             {
                 GameObject totalCorrectgameObject = TotalCorrectObjectPool.GetObject(); //create new GameObejct
                 HighScoresObject currentHighScore = sorted[i]; 						//get current highscorer

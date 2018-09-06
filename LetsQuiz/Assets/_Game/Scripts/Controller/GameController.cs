@@ -382,15 +382,15 @@ namespace _LetsQuiz
         public void ReportQuestion()
         {
             FeedbackClick.Play();
+			DownvoteButton();
             FeedbackAlert.Show("Report question");
-            DownvoteButton();
         }
 
         public void LikeQuestion()
         {
             FeedbackClick.Play();
+			UpvoteButton();
             FeedbackAlert.Show("Like question");
-            UpvoteButton();
         }
 
         #endregion like & dislike buttons

@@ -602,7 +602,7 @@ Prefab:
     - target: {fileID: 224370651110136194, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 257.5675
+      value: 257.69727
       objectReference: {fileID: 0}
     - target: {fileID: 224370651110136194, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
         type: 2}
@@ -612,7 +612,7 @@ Prefab:
     - target: {fileID: 224625218428254940, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 220.56886
+      value: 222.20601
       objectReference: {fileID: 0}
     - target: {fileID: 224625218428254940, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
         type: 2}
@@ -622,7 +622,7 @@ Prefab:
     - target: {fileID: 224774913129751158, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: 276.06683
+      value: 277.7575
       objectReference: {fileID: 0}
     - target: {fileID: 224774913129751158, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
         type: 2}
@@ -643,6 +643,31 @@ Prefab:
         type: 2}
       propertyPath: m_SizeDelta.x
       value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1337855368205804, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1780427487384318, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224186828620272322, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0.000000059604645
+      objectReference: {fileID: 0}
+    - target: {fileID: 1026013295009112, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f, type: 2}
+      propertyPath: m_Name
+      value: OverallScorePanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 1337855368205804, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f, type: 2}
+      propertyPath: m_Name
+      value: TopQuestionPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 1780427487384318, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f, type: 2}
+      propertyPath: m_Name
+      value: TotalCorrectPanel
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3d36cdc4f525a0d4fb2501bfa4919f2f, type: 2}
