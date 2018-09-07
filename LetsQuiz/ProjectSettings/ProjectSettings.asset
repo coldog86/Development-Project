@@ -126,7 +126,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 3.0
+  bundleVersion: 4
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -162,9 +162,9 @@ PlayerSettings:
     Standalone: com.QuizCSU.LetsQuiz
     iOS: com.QuizCSU.LetsQuiz
   buildNumber:
-    Standalone: 3
-    iOS: 3
-  AndroidBundleVersionCode: 3
+    Standalone: 4
+    iOS: 4
+  AndroidBundleVersionCode: 4
   AndroidMinSdkVersion: 21
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1

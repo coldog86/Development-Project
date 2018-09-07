@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace _LetsQuiz
 {
@@ -42,14 +42,14 @@ namespace _LetsQuiz
 
         // used to show the modal from external sources
         // closeOnAction is optional - might wish to not close it on action
-        public static void Show(string heading, string message, string postive, string negative, UnityAction positiveAction, UnityAction negativeAction, bool closeOnAction = true)
+        public static void Show(string heading, string message, string positive, string negative, UnityAction positiveAction, UnityAction negativeAction, bool closeOnAction = true)
         {
             Create();
 
             // set the heading, message, and button text
             _heading.text = heading;
             _message.text = message;
-            _positiveText.text = postive;
+            _positiveText.text = positive;
             _negativeText.text = negative;
 
             // set the actions of the buttons
@@ -72,6 +72,7 @@ namespace _LetsQuiz
         {
             // hide the modal
             _instance.gameObject.SetActive(false);
+
             if (!_instance.gameObject.activeInHierarchy)
                 Destroy(_instance);
         }

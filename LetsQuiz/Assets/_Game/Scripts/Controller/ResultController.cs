@@ -18,6 +18,7 @@ namespace _LetsQuiz
         public Text rank;
         public Text worldText;
         public GameObject finalResultsPanel;
+        public Text WinnerText;
 
         [Header("Connection")]
         public float connectionTimer = 0;
@@ -27,29 +28,6 @@ namespace _LetsQuiz
         private FeedbackMusic _music;
 
         #endregion variables
-
-        #region properties
-
-        public DataController DataController
-        {
-            get
-            {
-                if (DataController.Initialised)
-                    return DataController.Instance;
-                else return null;
-            }
-        }
-        public PlayerController PlayerController
-        {
-            get
-            {
-                if (PlayerController.Initialised)
-                    return PlayerController.Instance;
-                else return null;
-            }
-        }
-
-        #endregion properties
 
         #region methods
 
@@ -63,7 +41,7 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            if (PlayerController.GetPlayerType() == PlayerStatus.LoggedIn)
+            if (PlayerController.Instance.GetPlayerType() == PlayerStatus.LoggedIn)
             {
                 score.enabled = true;
                 username.enabled = true;
@@ -79,9 +57,15 @@ namespace _LetsQuiz
                 rankText.enabled = true;
                 worldText.enabled = false;
             }
-            if (DataController.TurnNumber == 6)
+            if (DataController.Instance.TurnNumber == 6)
             {
                 finalResultsPanel.SetActive(true);
+
+                if (DataController.Instance.OngoingGameData.overAllScore == -1)
+                    WinnerText.text = DataController.Instance.OngoingGameData.opponent;
+
+                if (DataController.Instance.OngoingGameData.overAllScore == 1)
+                    WinnerText.text = DataController.Instance.OngoingGameData.player;
             }
 
             StartCoroutine(FindRanking());
@@ -100,16 +84,16 @@ namespace _LetsQuiz
 
         private void Display()
         {
-            if (PlayerController.GetPlayerType() == PlayerStatus.LoggedIn)
+            if (PlayerController.Instance.GetPlayerType() == PlayerStatus.LoggedIn)
             {
-                score.text = PlayerController.UserScore.ToString();
-                username.text = PlayerController.GetUsername();
+                score.text = PlayerController.Instance.UserScore.ToString();
+                username.text = PlayerController.Instance.GetUsername();
             }
             else
             {
-                username.text = PlayerController.GetUsername();
+                username.text = PlayerController.Instance.GetUsername();
                 rankText.text = "Your final score was";
-                rank.text = PlayerController.UserScore.ToString();
+                rank.text = PlayerController.Instance.UserScore.ToString();
             }
         }
 
@@ -127,7 +111,7 @@ namespace _LetsQuiz
             {
                 if (_downloadTimer < 0)
                 {
-                    Debug.LogError("ResultController : FindRanking(): " + download.error);
+                    Debug.LogErrorFormat("[{0}] FindRanking() : Error {1}", GetType().Name, download.error);
                     break;
                 }
                 _downloadTimer -= Time.deltaTime;
@@ -139,14 +123,14 @@ namespace _LetsQuiz
             {
                 /* if we cannot connect to the server or there is some error in the data,
                  * check the prefs for previously saved questions */
-                Debug.LogError("ResultController : FindRanking(): " + download.error);
-                Debug.Log("Failed to hit the server.");
+                Debug.LogErrorFormat("[{0}] FindRanking() : Error {1}", GetType().Name, download.error);
+                Debug.LogErrorFormat("[{0}] FindRanking() : Error : Failed to hit the server.");
                 yield return null;
             }
             else
             {
                 // we got the string from the server, it is every question in JSON format
-                Debug.Log("ResultController: FindRanking() : " + download.text);
+                Debug.LogFormat("[{0}] FindRanking() : {1}", GetType().Name, download.text);
                 yield return download;
                 calculateRanking(download.text);
             }
@@ -164,22 +148,20 @@ namespace _LetsQuiz
             _ranking = 0;
             for (int i = list.Count - 1; i > 0; i--)
             {
-                if (PlayerController.UserScore <= list[i])
+                if (PlayerController.Instance.UserScore <= list[i])
                     _ranking = i - 1;
             }
 
             rank.text = (list.Count - _ranking) + " out of " + list.Count;
             submitRanking();
-
-
         }
 
         private bool submitRanking()
         {
             WWWForm form = new WWWForm();
 
-            form.AddField("username", PlayerController.GetUsername());
-            form.AddField("score", PlayerController.UserScore);
+            form.AddField("username", PlayerController.Instance.GetUsername());
+            form.AddField("score", PlayerController.Instance.UserScore);
 
             WWW submitRank = new WWW(ServerHelper.Host + ServerHelper.SetRanking, form);
 
@@ -200,7 +182,7 @@ namespace _LetsQuiz
                 if (connectionTimer > connectionTimeLimit || submitRank.error != null)
                 {
                     FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("ResultController : ValidSubmission() : " + submitRank.error);
+                    Debug.LogErrorFormat("[{0}] submitRanking() : Error {1} ", GetType().Name, submitRank.error);
                     Debug.Log(submitRank.text);
                     return false;
                 }
@@ -209,7 +191,7 @@ namespace _LetsQuiz
             if (submitRank.error != null)
             {
                 FeedbackAlert.Show("Connection error. Please try again.");
-                Debug.Log("ResultController : ValidSubmission() : " + submitRank.error);
+                Debug.LogErrorFormat("[{0}] submitRanking() : Error {1} ", GetType().Name, submitRank.error);
                 return false;
             }
 
@@ -217,7 +199,8 @@ namespace _LetsQuiz
             {
                 if (!string.IsNullOrEmpty(submitRank.text))
                 {
-                    Debug.Log(submitRank.text);
+                    FeedbackAlert.Show("Submission succesful.");
+                    Debug.LogFormat("[{0}] submitRanking() : {1}", GetType().Name, submitRank.text);
                     return true;
                 }
                 else

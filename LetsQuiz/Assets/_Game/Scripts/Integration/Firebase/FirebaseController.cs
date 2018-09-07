@@ -37,7 +37,7 @@ namespace _LetsQuiz
             DontDestroyOnLoad(gameObject);
         }
 
-        private void Start()
+        private void Awake()
         {
             FirebaseMessaging.TokenReceived += OnTokenReceived;
             FirebaseMessaging.MessageReceived += OnMessageReceived;
@@ -62,8 +62,12 @@ namespace _LetsQuiz
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             Debug.Log("[FirebaseController] OnMessageReceived() Notification received from : " + e.Message.From + " with title : " + e.Message.Notification.Title + " with messgae : " + e.Message.Notification.Body);
+
             Header = e.Message.Notification.Title;
             Message = e.Message.Notification.Body;
+
+            FeedbackAlert.Show(Message);
+            FeedbackAlert.Hide();
         }
 
         #endregion events
@@ -90,12 +94,16 @@ namespace _LetsQuiz
 
         public void CreateNotification(string token, string header, string message)
         {
+            Debug.LogFormat("[{0}] CreateNotification() : \nToken {1}\nHeading {2}\nMessage {3}", GetType().Name, token, header, message);
+
             if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
                 StartCoroutine(SendNotification(token, header, message));
         }
 
         private IEnumerator SendNotification(string token, string header, string message)
         {
+            Debug.LogFormat("[{0}] SendNotification() : \nToken {1}\nHeading {2}\nMessage {3}", GetType().Name, token, header, message);
+
             WWWForm form = new WWWForm();
 
             form.AddField("recipient", token);

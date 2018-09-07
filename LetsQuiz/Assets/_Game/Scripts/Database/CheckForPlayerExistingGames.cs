@@ -25,39 +25,6 @@ namespace _LetsQuiz
 
         #endregion variables
 
-        #region properties
-
-        public DataController DataController
-        {
-            get
-            {
-                if (DataController.Initialised)
-                    return DataController.Instance;
-                else return null;
-            }
-        }
-        public PlayerController PlayerController
-        {
-            get
-            {
-                if (PlayerController.Initialised)
-                    return PlayerController.Instance;
-                else return null;
-            }
-        }
-
-        public GameLobbyController GameLobbyController
-        {
-            get
-            {
-                if (GameLobbyController.Initialised)
-                    return GameLobbyController.Instance;
-                else return null;
-            }
-        }
-
-        #endregion properties
-
         #region methods
 
         #region CheckForPlayerExistingGames specific
@@ -71,16 +38,16 @@ namespace _LetsQuiz
         {
             Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() : Checking players open games");
 
-			if (!PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
+            if (!PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
                 Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() :  Player has no open games in playerprefs");
 
-			if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
-				Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() : Player has open games: " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
+            if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
+                Debug.Log("[CheckForPlayerExistingGames] PlayersOpenGames() : Player has open games: " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
 
             WWWForm form = new WWWForm();
 
             //TODO need a better way to generate unique game numbers for the first game
-			form.AddField("gameNumbersPost", PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
+            form.AddField("gameNumbersPost", PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
 
             string address = ServerHelper.Host + ServerHelper.GetPlayersOpenGames;
             WWW submitRequest = new WWW(address, form);
@@ -144,13 +111,20 @@ namespace _LetsQuiz
                 OngoingGamesData gameData = gamesPlayerHasStarted.dataForOpenGame[i];
                 go.GetComponentInChildren<Button>().onClick.AddListener(() => ContinueGameButtonPressed(gameData));
 
+                var opponent = "";
+
+                if (!string.IsNullOrEmpty(gameData.opponent))
+                    opponent = gameData.opponent;
+                else
+                    opponent = "No opponent found yet.";
+
                 //this is what is written on each button
-                go.GetComponentInChildren<Text>().text = gameData.gameNumber.ToString();
+                go.GetComponentInChildren<Text>().text = "(" + gameData.gameNumber.ToString() + ") vs " + opponent;
 
                 isInteractable(gameData, go);
 
                 // the scale on my prefab is blowing out at runtime, this fixes that problem
-                go.transform.localScale = new Vector3(1, 1, 1);
+                go.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             }
         }
 
@@ -158,10 +132,10 @@ namespace _LetsQuiz
         {
             Debug.Log("[CheckForPlayerExistingGames] ContinueGameButtonPressed() : " + gameData.gameNumber);
 
-            DataController.OngoingGameData = gameData;
-            DataController.TurnNumber = DataController.OngoingGameData.turnNumber;
-            DataController.TurnNumber++;
-            GameLobbyController.PresentPopUp();
+            DataController.Instance.OngoingGameData = gameData;
+            DataController.Instance.TurnNumber = DataController.Instance.OngoingGameData.turnNumber;
+            DataController.Instance.TurnNumber++;
+            GameLobbyController.Instance.PresentPopUp();
         }
 
         private void isInteractable(OngoingGamesData gameData, GameObject go)
@@ -170,7 +144,7 @@ namespace _LetsQuiz
 
             var colors = go.GetComponentInChildren<Button>().colors;
 
-            if (PlayerController.GetUsername() == gameData.player)
+            if (PlayerController.Instance.GetUsername() == gameData.player)
             {
                 if (gameData.turnNumber == 1 || gameData.turnNumber == 2 || gameData.turnNumber == 5)
                 {
@@ -188,7 +162,7 @@ namespace _LetsQuiz
                 }
             }
 
-            if (PlayerController.GetUsername() == gameData.opponent)
+            if (PlayerController.Instance.GetUsername() == gameData.opponent)
             {
                 if (gameData.turnNumber == 1)
                     Debug.LogError("[CheckForPlayerExistingGames] IsInteractable() : this should not happen");

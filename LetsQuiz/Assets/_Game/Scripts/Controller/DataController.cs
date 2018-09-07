@@ -57,9 +57,6 @@ namespace _LetsQuiz
             if (PlayerController.Initialised)
                 PlayerController.Instance.Load();
 
-            if (SettingsController.Initialised)
-                SettingsController.Instance.Load();
-
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
 

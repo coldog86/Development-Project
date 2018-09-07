@@ -12,7 +12,6 @@
         public static int SubmitQuestion = 7;
         public static int Settings = 8;
         public static int GameLobby = 9;
+        public static int NotificationHelper = 10;
     }
 }
-
-

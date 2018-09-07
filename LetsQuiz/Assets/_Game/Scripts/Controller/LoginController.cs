@@ -59,30 +59,6 @@ namespace _LetsQuiz
 
         #endregion variables
 
-        #region properties
-
-        public PlayerController PlayerController
-        {
-            get
-            {
-                if (PlayerController.Initialised)
-                    return PlayerController.Instance;
-                else return null;
-            }
-        }
-
-        public SettingsController SettingsController
-        {
-            get
-            {
-                if (SettingsController.Initialised)
-                    return SettingsController.Instance;
-                else return null;
-            }
-        }
-
-        #endregion properties
-
         #region methods
 
         #region unity
@@ -106,7 +82,7 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            PlayerController.Load();
+            PlayerController.Instance.Load();
         }
 
         #endregion unity
@@ -142,9 +118,9 @@ namespace _LetsQuiz
             {
                 if (ValidRegister(username, email, password))
                 {
-                    PlayerController.SetUsername(username);
-                    PlayerController.SetPassword(password);
-                    PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
+                    PlayerController.Instance.SetUsername(username);
+                    PlayerController.Instance.SetPassword(password);
+                    PlayerController.Instance.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }
             }
@@ -214,7 +190,7 @@ namespace _LetsQuiz
                         _player = JsonUtility.FromJson<Player>(_playerString);
 
                         if (_player != null)
-                            PlayerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
+                            PlayerController.Instance.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
                                 _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
                                 _player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
@@ -246,7 +222,7 @@ namespace _LetsQuiz
 
             if (ValidRegister(guest, guest, guest))
             {
-                PlayerController.SetPlayerType(PlayerStatus.Guest);
+                PlayerController.Instance.SetPlayerType(PlayerStatus.Guest);
                 LoadMenu();
             }
         }
@@ -272,9 +248,9 @@ namespace _LetsQuiz
             {
                 if (ValidLogin(username, password))
                 {
-                    PlayerController.SetUsername(username);
-                    PlayerController.SetPassword(password);
-                    PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
+                    PlayerController.Instance.SetUsername(username);
+                    PlayerController.Instance.SetPassword(password);
+                    PlayerController.Instance.SetPlayerType(PlayerStatus.LoggedIn);
                     LoadMenu();
                 }
             }
@@ -343,7 +319,7 @@ namespace _LetsQuiz
                         _player = _player = JsonUtility.FromJson<Player>(_playerString);
 
                         if (_player != null)
-                            PlayerController.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
+                            PlayerController.Instance.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
                                 _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
                                 _player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
@@ -462,7 +438,7 @@ namespace _LetsQuiz
                 {
                     if (ValidRegister(username, email, password))
                     {
-                        PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
+                        PlayerController.Instance.SetPlayerType(PlayerStatus.LoggedIn);
                         LoadMenu();
                     }
                 }
@@ -470,7 +446,7 @@ namespace _LetsQuiz
                 {
                     if (ValidLogin(username, password))
                     {
-                        PlayerController.SetPlayerType(PlayerStatus.LoggedIn);
+                        PlayerController.Instance.SetPlayerType(PlayerStatus.LoggedIn);
                         LoadMenu();
                     }
                 }

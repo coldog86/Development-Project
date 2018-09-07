@@ -28,7 +28,7 @@ namespace _LetsQuiz
 
         #region unity
 
-        private void Start()
+        private void Awake()
         {
             Load();
         }

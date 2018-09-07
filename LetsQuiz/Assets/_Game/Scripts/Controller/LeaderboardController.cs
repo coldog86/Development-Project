@@ -34,7 +34,7 @@ namespace _LetsQuiz
         private List<GameObject> _totalQuestionsCorrectObjects = new List<GameObject>();
 
         [Header("Panels")]
-		public GameObject OverallScorePanel;
+        public GameObject OverallScorePanel;
         public GameObject TotalCorrectPanel;
         public GameObject TopQuestionPanel;
 
@@ -44,20 +44,15 @@ namespace _LetsQuiz
 
         #region unity
 
-        private void Awake()
-        {
-            
-        }
-
         private void Start()
         {
-			OverallScorePanel = GameObject.Find ("OverallScorePanel");
-			TotalCorrectPanel = GameObject.Find ("TotalCorrectPanel");
-			TopQuestionPanel = GameObject.Find ("TopQuestionPanel");
+            OverallScorePanel = GameObject.Find("OverallScorePanel");
+            TotalCorrectPanel = GameObject.Find("TotalCorrectPanel");
+            TopQuestionPanel = GameObject.Find("TopQuestionPanel");
 
-			OverallScorePanel.gameObject.SetActive (true);
-			TotalCorrectPanel.gameObject.SetActive (false);
-			TopQuestionPanel.gameObject.SetActive (false);
+            OverallScorePanel.gameObject.SetActive(true);
+            TotalCorrectPanel.gameObject.SetActive(false);
+            TopQuestionPanel.gameObject.SetActive(false);
 
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
@@ -73,7 +68,6 @@ namespace _LetsQuiz
             ShowQuestionHighScorers(_questandSub);
 
             ShowTotalQuestionsCorrect(_allHighScores);
-
         }
 
         public void ToggleHighestScorePanel()
@@ -86,9 +80,9 @@ namespace _LetsQuiz
 
         public void ToggleCorrectPanel()
         {
-			OverallScorePanel.SetActive (false);
-			TotalCorrectPanel.SetActive (true);
-			TopQuestionPanel.SetActive(false);
+            OverallScorePanel.SetActive(false);
+            TotalCorrectPanel.SetActive(true);
+            TopQuestionPanel.SetActive(false);
             Debug.Log("[LeaderboardController] ToggleCorrectPanel(): Toggled Correct");
         }
 

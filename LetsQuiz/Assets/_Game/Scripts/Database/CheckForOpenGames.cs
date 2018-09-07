@@ -13,40 +13,6 @@ namespace _LetsQuiz
 
         #endregion variables
 
-        #region properties
-
-        public DataController DataController
-        {
-            get
-            {
-                if (DataController.Initialised)
-                    return DataController.Instance;
-                else return null;
-            }
-        }
-
-        public PlayerController PlayerController
-        {
-            get
-            {
-                if (PlayerController.Initialised)
-                    return PlayerController.Instance;
-                else return null;
-            }
-        }
-
-        public GameLobbyController GameLobbyController
-        {
-            get
-            {
-                if (GameLobbyController.Initialised)
-                    return GameLobbyController.Instance;
-                else return null;
-            }
-        }
-
-        #endregion properties
-
         #region methods
 
         #region download specific
@@ -64,7 +30,7 @@ namespace _LetsQuiz
                 if (_downloadTimer < 0)
                 {
                     Debug.LogError("Server time out.");
-                    DataController.ServerConnected = false;
+                    DataController.Instance.ServerConnected = false;
                     break;
                 }
                 _downloadTimer -= Time.deltaTime;
@@ -77,7 +43,7 @@ namespace _LetsQuiz
                  * check the prefs for previously saved questions */
                 Debug.LogError(download.error);
                 Debug.Log("Failed to hit the server.");
-                DataController.ServerConnected = false;
+                DataController.Instance.ServerConnected = false;
             }
             else
             {
@@ -85,7 +51,7 @@ namespace _LetsQuiz
                 Debug.Log("Vox transmition recieved");
                 Debug.Log(download.text);
 
-                DataController.ServerConnected = true;
+                DataController.Instance.ServerConnected = true;
                 _openGamesJSON = download.text;
 
                 handleData();
@@ -102,44 +68,44 @@ namespace _LetsQuiz
             int n = -1;
             for (int i = 0; i < og.dataForOpenGame.Length; i++)
             { //check the current user did not start the open game
-                if (og.dataForOpenGame[i].player != PlayerController.GetUsername())
+                if (og.dataForOpenGame[i].player != PlayerController.Instance.GetUsername())
                     n = i;
             }
             if (n < 0)
             {
                 Debug.Log("no open games - turn = 1");
                 //continueExistingGame = false;
-                DataController.TurnNumber = 1;
+                DataController.Instance.TurnNumber = 1;
                 int rand = Random.Range(1, 100000);
                 Debug.Log("game number = " + rand);
-                DataController.GameNumber = rand;
+                DataController.Instance.GameNumber = rand;
             }
 
             if (n > -1)
             {
                 Debug.Log("there are open game(s) - turn = 2");
-                DataController.TurnNumber = 2;
+                DataController.Instance.TurnNumber = 2;
                 Debug.Log("****asked questions = " + og.dataForOpenGame[n].askedQuestions);
                 Debug.Log("****remaining questions = " + og.dataForOpenGame[n].questionsLeftInCat);
 
-				if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
+                if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
                 {
-					string games = PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername());
-                    games = games + "," + DataController.GameNumber.ToString();
-					PlayerPrefs.SetString(((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()), games);
-					Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
+                    string games = PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername());
+                    games = games + "," + DataController.Instance.GameNumber.ToString();
+                    PlayerPrefs.SetString(((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()), games);
+                    Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
                 }
-                if (!PlayerPrefs.HasKey(PlayerController.GetUsername()))
+                if (!PlayerPrefs.HasKey(PlayerController.Instance.GetUsername()))
                 {
-					PlayerPrefs.SetString(((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()), DataController.GameNumber.ToString());
-					Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
+                    PlayerPrefs.SetString(((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()), DataController.Instance.GameNumber.ToString());
+                    Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
                 }
 
-                DataController.OngoingGameData = og.dataForOpenGame[n];
-                DataController.GameNumber = og.dataForOpenGame[n].gameNumber;
+                DataController.Instance.OngoingGameData = og.dataForOpenGame[n];
+                DataController.Instance.GameNumber = og.dataForOpenGame[n].gameNumber;
             }
-            Debug.Log("turn number = " + DataController.TurnNumber);
-            GameLobbyController.PresentPopUp();
+            Debug.Log("turn number = " + DataController.Instance.TurnNumber);
+            GameLobbyController.Instance.PresentPopUp();
         }
 
         #endregion download specific

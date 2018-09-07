@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 114000011670529784}
   - component: {fileID: 114000012408705848}
   - component: {fileID: 114000010149718822}
-  - component: {fileID: 95000010551962768}
   m_Layer: 5
   m_Name: AnswerButton
   m_TagString: Untagged
@@ -50,23 +49,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &95000010551962768
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012940852226}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114000010149718822
 MonoBehaviour:
   m_ObjectHideFlags: 1

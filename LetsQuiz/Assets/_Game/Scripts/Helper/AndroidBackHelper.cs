@@ -7,27 +7,33 @@ namespace _LetsQuiz
     {
         #region variables
 
-        GameController _gameController;
+        private GameController _gameController;
+        private bool _showingModal = false;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
-        #if PLATFORM_ANDROID
         public void Update()
         {
-            if (SceneManager.GetActiveScene().buildIndex == BuildIndex.Splash ||
-                SceneManager.GetActiveScene().buildIndex == BuildIndex.Login ||
+            if (_showingModal)
+                return;
+
+            if (SceneManager.GetActiveScene().buildIndex == BuildIndex.Splash || SceneManager.GetActiveScene().buildIndex == BuildIndex.Login ||
                 SceneManager.GetActiveScene().buildIndex == BuildIndex.Menu)
             {
                 if (Input.GetKey(KeyCode.Escape))
-                    FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", Application.Quit, FeedbackTwoButtonModal.Hide);
-                
+                {
+                    if (!_showingModal)
+                    {
+                        FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", Application.Quit, Hide);
+                        _showingModal = true;
+                    }
+                }
             }
-            else if (SceneManager.GetActiveScene().buildIndex == BuildIndex.Account ||
-                     SceneManager.GetActiveScene().buildIndex == BuildIndex.Leaderboard ||
-                     SceneManager.GetActiveScene().buildIndex == BuildIndex.SubmitQuestion ||
-                     SceneManager.GetActiveScene().buildIndex == BuildIndex.Settings)
+            else if (SceneManager.GetActiveScene().buildIndex == BuildIndex.Account || SceneManager.GetActiveScene().buildIndex == BuildIndex.Leaderboard ||
+                     SceneManager.GetActiveScene().buildIndex == BuildIndex.SubmitQuestion || SceneManager.GetActiveScene().buildIndex == BuildIndex.Settings ||
+                     SceneManager.GetActiveScene().buildIndex == BuildIndex.GameLobby || SceneManager.GetActiveScene().buildIndex == BuildIndex.Result)
             {
                 if (Input.GetKey(KeyCode.Escape))
                     SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
@@ -37,18 +43,28 @@ namespace _LetsQuiz
                 if (Input.GetKey(KeyCode.Escape))
                 {
                     _gameController = FindObjectOfType<GameController>();
-                    FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to forfeit this game?", "Yes", "No", ForfeitGame, FeedbackTwoButtonModal.Hide);
-                }    
+
+                    if (!_showingModal)
+                    {
+                        FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to forfeit this game?", "Yes", "No", ForfeitGame, Hide);
+                        _showingModal = true;
+                    }
+                }
             }
         }
-        #endif
 
         private void ForfeitGame()
         {
+            _showingModal = false;
             _gameController.EndRound();
         }
 
-        #endregion
+        private void Hide()
+        {
+            _showingModal = false;
+            FeedbackTwoButtonModal.Hide();
+        }
+
+        #endregion methods
     }
 }
-

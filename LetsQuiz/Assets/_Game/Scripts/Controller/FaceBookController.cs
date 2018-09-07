@@ -1,10 +1,6 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
-using Facebook.Unity;
+﻿using Facebook.Unity;
 using System;
-using Random = UnityEngine.Random;
+using UnityEngine;
 
 public class FaceBookController : MonoBehaviour
 {

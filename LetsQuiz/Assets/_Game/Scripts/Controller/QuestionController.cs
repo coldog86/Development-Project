@@ -21,20 +21,6 @@ namespace _LetsQuiz
 
         #endregion variables
 
-        #region properties
-
-        public DataController DataController
-        {
-            get
-            {
-                if (DataController.Initialised)
-                    return DataController.Instance;
-                else return null;
-            }
-        }
-
-        #endregion properties
-
         #region methods
 
         #region unity
@@ -131,15 +117,15 @@ namespace _LetsQuiz
 
             if (DataController.Initialised)
             {
-                catagoryList = RemoveCatagory(catagoryList, DataController.OngoingGameData.Round1Catagory);
-                catagoryList = RemoveCatagory(catagoryList, DataController.OngoingGameData.Round2Catagory);
+                catagoryList = RemoveCatagory(catagoryList, DataController.Instance.OngoingGameData.Round1Catagory);
+                catagoryList = RemoveCatagory(catagoryList, DataController.Instance.OngoingGameData.Round2Catagory);
             }
 
             //gets random number between 0 and total number of questions
             int randomNumber = Random.Range(0, catagoryList.Count - 1);
 
             string catagory = catagoryList[randomNumber];
-            DataController.Catagory = catagory;
+            DataController.Instance.Catagory = catagory;
             return catagory;
         }
 
