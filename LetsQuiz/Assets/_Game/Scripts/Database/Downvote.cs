@@ -8,7 +8,7 @@ namespace _LetsQuiz
         #region variables
 
         private float _connectionTimer = 0.0f;
-        private const float _connectionTimeLimit = 1000000.0f;
+        private const float _connectionTimeLimit = 100000.0f;
 
         #endregion variables
 
@@ -62,7 +62,7 @@ namespace _LetsQuiz
 
             if (submitRequest.isDone)
             {
-                Debug.Log("Score submitted");
+                Debug.Log("Downvote submitted");
                 yield return submitRequest;
                 DestroyObject(gameObject);
             }

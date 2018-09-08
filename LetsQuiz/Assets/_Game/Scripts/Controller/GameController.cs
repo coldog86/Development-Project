@@ -341,15 +341,19 @@ namespace _LetsQuiz
         public void ReportQuestion()
         {
             FeedbackClick.Play();
-            DownvoteButton();
+            //DownvoteButton();
             FeedbackAlert.Show("Question disliked.", 1.0f);
+			Debug.Log("****current question is: " + currentQuestionData.questionText);
+			//_downVote.Dvote(currentQuestionData);
         }
 
         public void LikeQuestion()
         {
             FeedbackClick.Play();
-            UpvoteButton();
+            //UpvoteButton();
             FeedbackAlert.Show("Question liked.", 1.0f);
+			Debug.Log("****current question is: " + currentQuestionData.questionText);
+			//_upVote.Uvote(currentQuestionData);
         }
 
         #endregion like & dislike buttons
@@ -422,14 +426,12 @@ namespace _LetsQuiz
 
         public void UpvoteButton()
         {
-            Debug.Log("****current question is: " + currentQuestionData.questionText);
-            _upVote.Uvote(currentQuestionData);
+            
         }
 
         public void DownvoteButton()
         {
-            Debug.Log("****current question is: " + currentQuestionData.questionText);
-            _downVote.Dvote(currentQuestionData);
+            
         }
 
         #endregion navigation specific
