@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace _LetsQuiz
 {
@@ -135,6 +136,7 @@ namespace _LetsQuiz
         private void PopulateDropDown()
         {
             _catagoryList = QuestionController.Instance.GetAllCategories();
+			_catagoryList.Insert (0, "Random Catagory");
 
             if (DataController.Instance.TurnNumber == 3)
                 _catagoryList = QuestionController.Instance.RemoveCatagory(_catagoryList, DataController.Instance.OngoingGameData.Round1Catagory);
@@ -146,7 +148,15 @@ namespace _LetsQuiz
         {
             string catagory = (CatagoryDropDown.options[CatagoryDropDown.value]).text;
             Debug.Log("[GameLobbyController] CatagorySelected() : Catagory selected: " + catagory);
-            QuestionsPoolFromCatagory = QuestionController.Instance.GetQuestionsInCatagory(catagory);
+
+			_catagoryList = QuestionController.Instance.GetAllCategories();
+
+			if (catagory == "Random Catagory") 
+			{
+				int randomNumber = Random.Range(0, _catagoryList.Count - 1); //gets random number between 0 and total number of catagories
+				catagory = _catagoryList[randomNumber];
+			}
+			QuestionsPoolFromCatagory = QuestionController.Instance.GetQuestionsInCatagory(catagory);
             DataController.Instance.Catagory = catagory;
             _menuController.StartGame();
         }
