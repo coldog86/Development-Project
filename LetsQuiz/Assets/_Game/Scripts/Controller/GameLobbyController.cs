@@ -60,12 +60,6 @@ namespace _LetsQuiz
                 Debug.Log("[GameLobbyController] Start() : Player has no ongoing games");
         }
 
-        private void Update()
-        {
-            if (Input.GetKey(KeyCode.Escape))
-                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", BackToMenu, FeedbackTwoButtonModal.Hide);
-        }
-
         #endregion unity
 
         #region GameLobbyController specific
@@ -136,7 +130,7 @@ namespace _LetsQuiz
         private void PopulateDropDown()
         {
             _catagoryList = QuestionController.Instance.GetAllCategories();
-			_catagoryList.Insert (0, "Random Catagory");
+            _catagoryList.Insert(0, "Random Catagory");
 
             if (DataController.Instance.TurnNumber == 3)
                 _catagoryList = QuestionController.Instance.RemoveCatagory(_catagoryList, DataController.Instance.OngoingGameData.Round1Catagory);
@@ -149,14 +143,14 @@ namespace _LetsQuiz
             string catagory = (CatagoryDropDown.options[CatagoryDropDown.value]).text;
             Debug.Log("[GameLobbyController] CatagorySelected() : Catagory selected: " + catagory);
 
-			_catagoryList = QuestionController.Instance.GetAllCategories();
+            _catagoryList = QuestionController.Instance.GetAllCategories();
 
-			if (catagory == "Random Catagory") 
-			{
-				int randomNumber = Random.Range(0, _catagoryList.Count - 1); //gets random number between 0 and total number of catagories
-				catagory = _catagoryList[randomNumber];
-			}
-			QuestionsPoolFromCatagory = QuestionController.Instance.GetQuestionsInCatagory(catagory);
+            if (catagory == "Random Catagory")
+            {
+                int randomNumber = Random.Range(0, _catagoryList.Count - 1); //gets random number between 0 and total number of catagories
+                catagory = _catagoryList[randomNumber];
+            }
+            QuestionsPoolFromCatagory = QuestionController.Instance.GetQuestionsInCatagory(catagory);
             DataController.Instance.Catagory = catagory;
             _menuController.StartGame();
         }
@@ -164,6 +158,11 @@ namespace _LetsQuiz
         public void catagoryAcknowledged()
         {
             _menuController.StartGame();
+        }
+
+        public void Refresh()
+        {
+            SceneManager.LoadScene(BuildIndex.GameLobby);
         }
     }
 
