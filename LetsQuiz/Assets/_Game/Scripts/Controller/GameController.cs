@@ -340,20 +340,22 @@ namespace _LetsQuiz
 
         public void ReportQuestion()
         {
+            FeedbackAlert.Show("Question disliked.", 1.0f);
             FeedbackClick.Play();
             //DownvoteButton();
-            FeedbackAlert.Show("Question disliked.", 1.0f);
-			Debug.Log("****current question is: " + currentQuestionData.questionText);
-			//_downVote.Dvote(currentQuestionData);
+
+            Debug.Log("****current question is: " + currentQuestionData.questionText);
+            //_downVote.Dvote(currentQuestionData);
         }
 
         public void LikeQuestion()
         {
+            FeedbackAlert.Show("Question liked.", 1.0f);
             FeedbackClick.Play();
             //UpvoteButton();
-            FeedbackAlert.Show("Question liked.", 1.0f);
-			Debug.Log("****current question is: " + currentQuestionData.questionText);
-			//_upVote.Uvote(currentQuestionData);
+
+            Debug.Log("****current question is: " + currentQuestionData.questionText);
+            //_upVote.Uvote(currentQuestionData);
         }
 
         #endregion like & dislike buttons
@@ -404,10 +406,10 @@ namespace _LetsQuiz
             if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
                 FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "That's a wrap, folks!", "Your game has ended!");
 
-            SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
-
             Debug.Log("GameController : EndRound(): End of Round");
             Debug.Log(PlayerController.Instance.ScoreStatus);
+
+            SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
         }
 
         public void SubmitToOngoingGamesDB()
@@ -426,12 +428,10 @@ namespace _LetsQuiz
 
         public void UpvoteButton()
         {
-            
         }
 
         public void DownvoteButton()
         {
-            
         }
 
         #endregion navigation specific

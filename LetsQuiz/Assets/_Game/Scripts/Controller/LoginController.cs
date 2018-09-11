@@ -1,5 +1,4 @@
 ﻿using Facebook.Unity;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -128,6 +127,8 @@ namespace _LetsQuiz
 
         private bool ValidRegister(string username, string email, string password)
         {
+            FeedbackAlert.Show("Attempting to create your account.");
+
             WWWForm form = new WWWForm();
 
             form.AddField("usernamePost", username);
@@ -140,8 +141,6 @@ namespace _LetsQuiz
 
             while (!registerRequest.isDone)
             {
-                FeedbackAlert.Show("Attempting to create your account.");
-
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
@@ -258,6 +257,8 @@ namespace _LetsQuiz
 
         private bool ValidLogin(string username, string password)
         {
+            FeedbackAlert.Show("Validating credentials...");
+
             WWWForm form = new WWWForm();
 
             form.AddField("usernamePost", username);
@@ -269,8 +270,6 @@ namespace _LetsQuiz
 
             while (!loginRequest.isDone)
             {
-                FeedbackAlert.Show("Validating to credentials...");
-
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");

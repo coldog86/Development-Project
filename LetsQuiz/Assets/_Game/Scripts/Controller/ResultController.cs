@@ -158,8 +158,6 @@ namespace _LetsQuiz
 
         private bool submitRanking()
         {
-            FeedbackAlert.Show("Attempting to submit ranking.");
-
             WWWForm form = new WWWForm();
 
             form.AddField("username", PlayerController.Instance.GetUsername());
