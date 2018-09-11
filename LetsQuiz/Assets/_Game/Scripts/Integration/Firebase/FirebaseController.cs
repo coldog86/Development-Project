@@ -72,24 +72,6 @@ namespace _LetsQuiz
 
         #endregion events
 
-        #region subscription
-
-        public void ToogleSubscription(bool subscribeStatus)
-        {
-            if (subscribeStatus)
-            {
-                FirebaseMessaging.SubscribeAsync("/topics/all");
-                FirebaseMessaging.SubscribeAsync(Token);
-            }
-            else
-            {
-                FirebaseMessaging.UnsubscribeAsync("/topics/all");
-                FirebaseMessaging.UnsubscribeAsync(Token);
-            }
-        }
-
-        #endregion subscription
-
         #region notification
 
         public void CreateNotification(string token, string header, string message)

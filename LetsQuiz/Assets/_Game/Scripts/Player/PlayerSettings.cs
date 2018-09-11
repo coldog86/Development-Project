@@ -8,7 +8,5 @@
 
         public float BackgroundMusicVolume = -10;
         public int BackgroundMusicToggle = 1;
-
-        public int NotificationsToggle = 1;
     }
 }

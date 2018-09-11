@@ -304,7 +304,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2061157234
+--- !u!1001 &1890685231
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -406,17 +406,12 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 511447649}
-    - target: {fileID: 114516985457016038, guid: 0705ab9c87df4f1428ac33c5bab6412b,
+    - target: {fileID: 114539095578770918, guid: 0705ab9c87df4f1428ac33c5bab6412b,
         type: 2}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
       objectReference: {fileID: 511447649}
     - target: {fileID: 114344282881469040, guid: 0705ab9c87df4f1428ac33c5bab6412b,
-        type: 2}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[2].m_Target
-      value: 
-      objectReference: {fileID: 511447649}
-    - target: {fileID: 114539095578770918, guid: 0705ab9c87df4f1428ac33c5bab6412b,
         type: 2}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
