@@ -29,10 +29,10 @@ namespace _LetsQuiz
 
             WWW submitRequest = new WWW(ServerHelper.Host + ServerHelper.Upvote, form);
 
+            _connectionTimer += Time.deltaTime;
+
             while (!submitRequest.isDone)
             {
-                _connectionTimer += Time.deltaTime;
-
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");

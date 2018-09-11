@@ -158,6 +158,8 @@ namespace _LetsQuiz
 
         private bool submitRanking()
         {
+            FeedbackAlert.Show("Attempting to submit ranking.");
+
             WWWForm form = new WWWForm();
 
             form.AddField("username", PlayerController.Instance.GetUsername());
@@ -165,11 +167,10 @@ namespace _LetsQuiz
 
             WWW submitRank = new WWW(ServerHelper.Host + ServerHelper.SetRanking, form);
 
+            connectionTimer += Time.deltaTime;
+
             while (!submitRank.isDone)
             {
-                connectionTimer += Time.deltaTime;
-                FeedbackAlert.Show("Attempting to submit ranking.");
-
                 if (connectionTimer > connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
@@ -199,7 +200,6 @@ namespace _LetsQuiz
             {
                 if (!string.IsNullOrEmpty(submitRank.text))
                 {
-                    FeedbackAlert.Show("Submission succesful.");
                     Debug.LogFormat("[{0}] submitRanking() : {1}", GetType().Name, submitRank.text);
                     return true;
                 }
@@ -217,6 +217,8 @@ namespace _LetsQuiz
         {
             FeedbackClick.Play();
             _music.PlayBackgroundMusic();
+            DestroyImmediate(GameLobbyController.Instance.gameObject);
+            DestroyImmediate(MenuController.Instance.gameObject);
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
