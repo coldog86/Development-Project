@@ -51,6 +51,7 @@ namespace _LetsQuiz
         {
             Debug.Log("[FirebaseController] OnTokenRecieved() Token : " + e.Token);
 
+            FirebaseMessaging.SubscribeAsync(Token);
             FirebaseMessaging.SubscribeAsync("/topics/all");
 
             Token = e.Token;
