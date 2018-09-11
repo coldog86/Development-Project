@@ -73,11 +73,10 @@ namespace _LetsQuiz
             if (string.IsNullOrEmpty(category))
                 FeedbackAlert.Show("Category cannot be empty.");
 
-            if (!string.IsNullOrEmpty(question) && !string.IsNullOrEmpty(correctAnswer) && !string.IsNullOrEmpty(wrong1Answer) && !string.IsNullOrEmpty(wrong2Answer) && !string.IsNullOrEmpty(wrong3Answer))
+            if (!string.IsNullOrEmpty(question) && !string.IsNullOrEmpty(correctAnswer) && !string.IsNullOrEmpty(wrong1Answer) && !string.IsNullOrEmpty(wrong2Answer) && !string.IsNullOrEmpty(wrong3Answer) && !string.IsNullOrEmpty(category))
             {
-                if (ValidSubmission(question, correctAnswer, wrong1Answer, wrong2Answer, wrong3Answer))
+                if (ValidSubmission(question, correctAnswer, wrong1Answer, wrong2Answer, wrong3Answer, category))
                 {
-                    FeedbackAlert.Show("Question submitted sucessfully.");
                     questionInput.text = "";
                     correctInput.text = "";
                     wrong1Input.text = "";
@@ -85,12 +84,10 @@ namespace _LetsQuiz
                     wrong3Input.text = "";
                     categorySelection.value = 0;
                 }
-                else
-                    FeedbackAlert.Show("Question submitted unucessfully.");
             }
         }
 
-        private bool ValidSubmission(string question, string correctAnswer, string wrong1Answer, string wrong2Answer, string wrong3Answer, string category = "User Submitted Question")
+        private bool ValidSubmission(string question, string correctAnswer, string wrong1Answer, string wrong2Answer, string wrong3Answer, string category)
         {
             Debug.Log("SubmitController: ValidSubmisstion() : Attempting to Submit");
 
@@ -101,15 +98,14 @@ namespace _LetsQuiz
             form.AddField("wrong1", wrong1Answer);
             form.AddField("wrong2", wrong2Answer);
             form.AddField("wrong3", wrong3Answer);
-            form.AddField("catgory", category);
+            form.AddField("catagory", category);
 
             WWW submitQuestion = new WWW(ServerHelper.Host + ServerHelper.SubmitUserQuestion, form);
 
+            connectionTimer += Time.deltaTime;
+
             while (!submitQuestion.isDone)
             {
-                connectionTimer += Time.deltaTime;
-                FeedbackAlert.Show("Attempting to submit question.");
-
                 if (connectionTimer > connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
