@@ -660,7 +660,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Username
+  m_Text: Header
 --- !u!114 &114359805687209844
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1026,7 +1026,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Password
+  m_Text: Message
 --- !u!114 &114848100464862448
 MonoBehaviour:
   m_ObjectHideFlags: 1
