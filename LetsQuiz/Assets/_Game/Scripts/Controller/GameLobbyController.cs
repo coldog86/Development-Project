@@ -19,7 +19,6 @@ namespace _LetsQuiz
         public Text CatagoryText;
 
         private CheckForOpenGames _checkForOpenGames;
-        private MenuController _menuController;
         private CheckForPlayerExistingGames _checkForPlayerExistingGames;
 
         private int[] _gameNumbers;
@@ -39,6 +38,9 @@ namespace _LetsQuiz
 
         protected override void OnEnable()
         {
+            if (Initialised)
+                return;
+
             base.OnEnable();
             DontDestroyOnLoad(gameObject);
         }
@@ -46,7 +48,6 @@ namespace _LetsQuiz
         private void Start()
         {
             _checkForOpenGames = FindObjectOfType<CheckForOpenGames>();
-            _menuController = FindObjectOfType<MenuController>();
             _checkForPlayerExistingGames = FindObjectOfType<CheckForPlayerExistingGames>();
 
             Debug.Log("[GameLobbyController] Start() : Here we go");
@@ -78,6 +79,8 @@ namespace _LetsQuiz
         public void BackToMenu()
         {
             FeedbackClick.Play();
+            DestroyImmediate(gameObject);
+            DestroyImmediate(MenuController.Instance.gameObject);
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
@@ -152,16 +155,17 @@ namespace _LetsQuiz
             }
             QuestionsPoolFromCatagory = QuestionController.Instance.GetQuestionsInCatagory(catagory);
             DataController.Instance.Catagory = catagory;
-            _menuController.StartGame();
+            MenuController.Instance.StartGame();
         }
 
         public void catagoryAcknowledged()
         {
-            _menuController.StartGame();
+            MenuController.Instance.StartGame();
         }
 
         public void Refresh()
         {
+            DestroyImmediate(gameObject);
             SceneManager.LoadScene(BuildIndex.GameLobby);
         }
     }

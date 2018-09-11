@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace _LetsQuiz
 {
-    public class MenuController : MonoBehaviour
+    public class MenuController : Singleton<MenuController>
     {
         #region variables
 
@@ -23,10 +23,17 @@ namespace _LetsQuiz
 
         #region unity
 
+        protected override void OnEnable()
+        {
+            if (Initialised)
+                return;
+
+            base.OnEnable();
+            DontDestroyOnLoad(gameObject);
+        }
+
         private void Awake()
         {
-            DontDestroyOnLoad(gameObject);
-
             _usernameText = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
 
             var playerType = 0;
