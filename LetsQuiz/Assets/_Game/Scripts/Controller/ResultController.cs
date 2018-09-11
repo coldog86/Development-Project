@@ -62,13 +62,14 @@ namespace _LetsQuiz
                 finalResultsPanel.SetActive(true);
 
                 if (DataController.Instance.OngoingGameData.overAllScore == -1)
-                    WinnerText.text = DataController.Instance.OngoingGameData.opponent;
+                    WinnerText.text = DataController.Instance.OngoingGameData.opponent + " won";
 
                 if (DataController.Instance.OngoingGameData.overAllScore == 1)
-                    WinnerText.text = DataController.Instance.OngoingGameData.player;
+                    WinnerText.text = DataController.Instance.OngoingGameData.player + " won";
             }
 
             StartCoroutine(FindRanking());
+            submitRanking();
             Display();
         }
 
@@ -109,14 +110,13 @@ namespace _LetsQuiz
 
             while (!download.isDone)
             {
+                _downloadTimer -= Time.deltaTime;
+
                 if (_downloadTimer < 0)
                 {
                     Debug.LogErrorFormat("[{0}] FindRanking() : Error {1}", GetType().Name, download.error);
-                    break;
+                    yield return null;
                 }
-                _downloadTimer -= Time.deltaTime;
-
-                yield return null;
             }
 
             if (!download.isDone || download.error != null)
@@ -127,7 +127,8 @@ namespace _LetsQuiz
                 Debug.LogErrorFormat("[{0}] FindRanking() : Error : Failed to hit the server.");
                 yield return null;
             }
-            else
+
+            if (download.isDone)
             {
                 // we got the string from the server, it is every question in JSON format
                 Debug.LogFormat("[{0}] FindRanking() : {1}", GetType().Name, download.text);
@@ -153,10 +154,10 @@ namespace _LetsQuiz
             }
 
             rank.text = (list.Count - _ranking) + " out of " + list.Count;
-            submitRanking();
+            //submitRanking();
         }
 
-        private bool submitRanking()
+        private void submitRanking()
         {
             WWWForm form = new WWWForm();
 
@@ -174,7 +175,7 @@ namespace _LetsQuiz
                     FeedbackAlert.Show("Server time out.");
                     Debug.LogError("ResultController : ValidSubmission() : " + submitRank.error);
                     Debug.Log(submitRank.text);
-                    return false;
+                    return;
                 }
 
                 // extra check just to ensure a stream error doesn't come up
@@ -183,7 +184,7 @@ namespace _LetsQuiz
                     FeedbackAlert.Show("Server time out.");
                     Debug.LogErrorFormat("[{0}] submitRanking() : Error {1} ", GetType().Name, submitRank.error);
                     Debug.Log(submitRank.text);
-                    return false;
+                    return;
                 }
             }
 
@@ -191,7 +192,7 @@ namespace _LetsQuiz
             {
                 FeedbackAlert.Show("Connection error. Please try again.");
                 Debug.LogErrorFormat("[{0}] submitRanking() : Error {1} ", GetType().Name, submitRank.error);
-                return false;
+                return;
             }
 
             if (submitRank.isDone)
@@ -199,12 +200,9 @@ namespace _LetsQuiz
                 if (!string.IsNullOrEmpty(submitRank.text))
                 {
                     Debug.LogFormat("[{0}] submitRanking() : {1}", GetType().Name, submitRank.text);
-                    return true;
+                    return;
                 }
-                else
-                    return false;
             }
-            return false;
         }
 
         #endregion rank specific
@@ -214,7 +212,6 @@ namespace _LetsQuiz
         public void BackToMenu()
         {
             FeedbackClick.Play();
-            _music.PlayBackgroundMusic();
             DestroyImmediate(GameLobbyController.Instance.gameObject);
             DestroyImmediate(MenuController.Instance.gameObject);
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);

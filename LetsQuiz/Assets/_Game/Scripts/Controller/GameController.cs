@@ -44,6 +44,7 @@ namespace _LetsQuiz
         private Upvote _upVote;
         private Downvote _downVote;
 
+        [SerializeField] private string _token;
         private float _timeRemaining = 20;
 
         //TODO the in game slider does not work until the timer is 20 or less
@@ -85,6 +86,9 @@ namespace _LetsQuiz
             PlayerController.Instance.AddToGamesPlayed();
             PlayerController.Instance.UserScore = 0;
             QuestionController.Instance.Load();
+
+            if (FirebaseController.Initialised)
+                _token = FirebaseController.Instance.Token;
 
             _questionPool = GetQuestionPool();
 
@@ -340,7 +344,6 @@ namespace _LetsQuiz
 
         public void ReportQuestion()
         {
-            FeedbackAlert.Show("Question disliked.", 1.0f);
             FeedbackClick.Play();
             //DownvoteButton();
 
@@ -350,7 +353,6 @@ namespace _LetsQuiz
 
         public void LikeQuestion()
         {
-            FeedbackAlert.Show("Question liked.", 1.0f);
             FeedbackClick.Play();
             //UpvoteButton();
 

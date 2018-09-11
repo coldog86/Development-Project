@@ -153,6 +153,7 @@ namespace _LetsQuiz
                 int randomNumber = Random.Range(0, _catagoryList.Count - 1); //gets random number between 0 and total number of catagories
                 catagory = _catagoryList[randomNumber];
             }
+
             QuestionsPoolFromCatagory = QuestionController.Instance.GetQuestionsInCatagory(catagory);
             DataController.Instance.Catagory = catagory;
             MenuController.Instance.StartGame();

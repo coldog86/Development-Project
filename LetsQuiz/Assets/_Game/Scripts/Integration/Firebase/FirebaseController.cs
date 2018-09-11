@@ -43,6 +43,13 @@ namespace _LetsQuiz
             FirebaseMessaging.MessageReceived += OnMessageReceived;
         }
 
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            FirebaseMessaging.TokenReceived -= OnTokenReceived;
+            FirebaseMessaging.MessageReceived -= OnMessageReceived;
+        }
+
         #endregion unity
 
         #region events
@@ -66,9 +73,6 @@ namespace _LetsQuiz
 
             Header = e.Message.Notification.Title;
             Message = e.Message.Notification.Body;
-
-            FeedbackAlert.Show(Message);
-            FeedbackAlert.Hide();
         }
 
         #endregion events
