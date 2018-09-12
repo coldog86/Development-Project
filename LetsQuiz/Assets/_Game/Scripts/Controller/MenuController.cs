@@ -49,6 +49,7 @@ namespace _LetsQuiz
                 accountButton.gameObject.SetActive(false);
                 leaderboardButton.gameObject.SetActive(false);
                 submitQuestionButton.gameObject.SetActive(false);
+
             }
         }
 

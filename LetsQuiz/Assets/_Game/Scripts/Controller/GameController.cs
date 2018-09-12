@@ -106,8 +106,6 @@ namespace _LetsQuiz
 					PlayerPrefs.SetString (((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ()), DataController.Instance.GameNumber.ToString ());
 					Debug.Log ("games in player prefs = " + PlayerPrefs.GetString ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ()));
 				}
-			} else {
-				DataController.Instance.TurnNumber = 0;
 			}
 
             ShowQuestion();

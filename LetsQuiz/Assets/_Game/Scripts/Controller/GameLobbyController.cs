@@ -24,6 +24,7 @@ namespace _LetsQuiz
         private int[] _gameNumbers;
         private List<string> _catagoryList;
 
+
         #endregion variables
 
         #region properties
@@ -47,18 +48,25 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            _checkForOpenGames = FindObjectOfType<CheckForOpenGames>();
-            _checkForPlayerExistingGames = FindObjectOfType<CheckForPlayerExistingGames>();
+			var playerType = 0;
+			if (PlayerController.Initialised)
+				playerType = PlayerController.Instance.GetPlayerType();
+			
+			if (playerType == PlayerStatus.LoggedIn) {
+				_checkForOpenGames = FindObjectOfType<CheckForOpenGames> ();
+				_checkForPlayerExistingGames = FindObjectOfType<CheckForPlayerExistingGames> ();
 
-            Debug.Log("[GameLobbyController] Start() : Here we go");
+				Debug.Log ("[GameLobbyController] Start() : Here we go");
 
-            if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
-            {
-                Debug.Log("[GameLobbyController] Start() : Found player: " + PlayerPrefs.GetString(DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername());
-                _checkForPlayerExistingGames.GetPlayersOpenGames();
-            }
-            else
-                Debug.Log("[GameLobbyController] Start() : Player has no ongoing games");
+				if (PlayerPrefs.HasKey ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ())) {
+					Debug.Log ("[GameLobbyController] Start() : Found player: " + PlayerPrefs.GetString (DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ());
+					_checkForPlayerExistingGames.GetPlayersOpenGames ();
+				} else
+					Debug.Log ("[GameLobbyController] Start() : Player has no ongoing games");
+			} else {
+				Debug.Log ("[GameLobbyController] Start() : Player has no internet connection");
+				DataController.Instance.TurnNumber = 0;
+			}
         }
 
         #endregion unity
@@ -67,13 +75,21 @@ namespace _LetsQuiz
 
         public void StartOpenGame(OngoingGamesData _ongoingGameData)
         {
-            Debug.Log(_ongoingGameData.askedQuestions);
+				Debug.Log (_ongoingGameData.askedQuestions);
+				SceneManager.LoadScene(BuildIndex.Game, LoadSceneMode.Single);
         }
 
         public void StartNewGame()
         {
-            Debug.Log("[GameLobbyController] StartNewGame() : Checking for open games");
-            _checkForOpenGames.CheckForGamesNeedingOpponents();
+			var playerType = 0;
+			if (PlayerController.Initialised)
+				playerType = PlayerController.Instance.GetPlayerType();
+			if (playerType == PlayerStatus.LoggedIn) {
+				Debug.Log ("[GameLobbyController] StartNewGame() : Checking for open games");
+				_checkForOpenGames.CheckForGamesNeedingOpponents ();
+			} else {
+				SceneManager.LoadScene(BuildIndex.Game, LoadSceneMode.Single);
+			}
         }
 
         public void BackToMenu()

@@ -306,7 +306,8 @@ namespace _LetsQuiz
 
 		//create an offline state, similar to normal but with quest parameters
 		private void offlineLoadState() {
-
+			PlayerController.Instance.PlayerType = PlayerStatus.Guest;
+			DataController.Instance.TurnNumber = 0;
 
 
 			//loads the menu scene
