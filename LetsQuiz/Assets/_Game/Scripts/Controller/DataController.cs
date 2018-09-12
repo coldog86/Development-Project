@@ -210,8 +210,14 @@ namespace _LetsQuiz
         private void RetryPullData()
         {
             Debug.Log("[DataController] RetryPullData()");
-            FeedbackAlert.Show("Retrying connection...", 1.0f);
-            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+            //FeedbackAlert.Show("Retrying connection...", 1.0f);  //alert breaking game
+			checkForConnection();
+			if (ConnectionAvailable) {
+				StartCoroutine (_questionDownload.PullAllQuestionsFromServer ());
+			} else {
+				Debug.Log ("no server connected");
+				DisplayRetryModal ("Still no server connection");
+			}
         }
 
         #endregion server specific
@@ -222,7 +228,7 @@ namespace _LetsQuiz
         // negative action - quit application
         private void DisplayRetryModal(string message)
         {
-			FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, offlineLoadState);
+			FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "Play offline", RetryPullData, offlineLoadState);
 			//No option to play offline, changing "no" answer to load an offline state
         }
 

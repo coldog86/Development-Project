@@ -43,6 +43,7 @@ namespace _LetsQuiz
         [Header("Other")]
         private Upvote _upVote;
         private Downvote _downVote;
+		private bool ConnectionAvailable;
 
         [SerializeField] private string _token;
         private float _timeRemaining = 20;
@@ -93,19 +94,21 @@ namespace _LetsQuiz
             _questionPool = GetQuestionPool();
 
             Destroy(GameLobbyController.Instance);
+			checkForConnection ();
+			if (ConnectionAvailable) {
 
-            if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
-            {
-                string numbers = PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername());
-                numbers = numbers + "," + DataController.Instance.GameNumber;
-                PlayerPrefs.SetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername(), numbers);
-                Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()) + PlayerController.Instance.GetUsername());
-            }
-            else
-            {
-                PlayerPrefs.SetString(((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()), DataController.Instance.GameNumber.ToString());
-                Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
-            }
+				if (PlayerPrefs.HasKey ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ())) {
+					string numbers = PlayerPrefs.GetString ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ());
+					numbers = numbers + "," + DataController.Instance.GameNumber;
+					PlayerPrefs.SetString ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername (), numbers);
+					Debug.Log ("games in player prefs = " + PlayerPrefs.GetString ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ()) + PlayerController.Instance.GetUsername ());
+				} else {
+					PlayerPrefs.SetString (((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ()), DataController.Instance.GameNumber.ToString ());
+					Debug.Log ("games in player prefs = " + PlayerPrefs.GetString ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ()));
+				}
+			} else {
+				DataController.Instance.TurnNumber = 0;
+			}
 
             ShowQuestion();
         }
@@ -437,6 +440,27 @@ namespace _LetsQuiz
         }
 
         #endregion navigation specific
+
+		#region internet specific
+		public void checkForConnection()
+		{
+			//testing for network connectivity
+			switch (Application.internetReachability) {
+			case NetworkReachability.NotReachable:
+				ConnectionAvailable = false;
+				break;
+
+			case NetworkReachability.ReachableViaCarrierDataNetwork:
+				ConnectionAvailable = true;
+				break;
+
+			case NetworkReachability.ReachableViaLocalAreaNetwork:
+				ConnectionAvailable = true;
+				break;
+			}
+		}
+
+		#endregion internet specific
 
         #endregion methods
     }
