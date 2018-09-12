@@ -36,6 +36,8 @@ namespace _LetsQuiz
                 if (_downloadTimer < 0)
                 {
                     Debug.LogError("[GetAllQuestions] PullAllQuestionsFromServer() : Server time out.");
+					Debug.Log ("Server time out: Loading Quesitons from local storage");
+					_playerController.SetQuestionData (_playerController.GetSavedQuestionData ());
                     _dataController.ServerConnected = false;
                     break;
                 }
@@ -50,6 +52,8 @@ namespace _LetsQuiz
                  * check the prefs for previously saved questions */
                 Debug.LogError(download.error);
                 Debug.Log("[GetAllQuestions] PullAllQuestionsFromServer() : Failed to hit the server.");
+				Debug.Log ("Server could not be hit: Loading Quesitons from local storage");
+				_playerController.SetQuestionData (_playerController.GetSavedQuestionData ());
                 _dataController.ServerConnected = false;
             }
             else
@@ -63,11 +67,26 @@ namespace _LetsQuiz
                 yield return download;
 
                 _playerController.SetQuestionData(download.text);
+				_playerController.SaveQuestionData ();   //saves the _questionData in PlayerPrefs to internal storage
 				if(QuestionController.Initialised)
 					QuestionController.Instance.Load();
                 _dataController.Init();
             }
         }
+
+		public void PullSavedQuestionsFromLocal()
+		{
+			Debug.Log ("No internet connection: Loading Quesitons from local storage");
+			string questionJSON = _playerController.GetSavedQuestionData ();
+			_playerController.SetQuestionData (questionJSON);
+			_dataController.ServerConnected = false;
+			_dataController.AllQuestionJSON = questionJSON;
+
+			if(QuestionController.Initialised)
+				QuestionController.Instance.Load();
+			_dataController.Init();
+			
+		}
 
         #endregion download specific
 

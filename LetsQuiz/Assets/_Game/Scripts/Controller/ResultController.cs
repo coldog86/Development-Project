@@ -154,7 +154,7 @@ namespace _LetsQuiz
             }
 
             rank.text = (list.Count - _ranking) + " out of " + list.Count;
-            //submitRanking();
+            submitRanking();
         }
 
         private void submitRanking()

@@ -37,6 +37,7 @@ namespace _LetsQuiz
         public bool ServerConnected { get; set; }
         public string AllQuestionJSON { get; set; }
         public string AllHighScoreJSON { get; set; }
+		public bool ConnectionAvailable;
 
         #endregion properties
 
@@ -54,45 +55,61 @@ namespace _LetsQuiz
 
         private void Start()
         {
+			Debug.Log ("start");
             if (PlayerController.Initialised)
                 PlayerController.Instance.Load();
 
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
 
-            _questionDownload = FindObjectOfType<GetAllQuestions>();
-            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+			_questionDownload = FindObjectOfType<GetAllQuestions> ();
+			_highscoreDownload = FindObjectOfType<GetHighScores> ();
+			_questAndSub = GetComponent<GetPlayerQuestionSubmissions> ();
 
-            _highscoreDownload = FindObjectOfType<GetHighScores>();
-            StartCoroutine(_highscoreDownload.PullAllHighScoresFromServer());
+			//check for internet connection
+			checkForConnection();
 
-            // add in for the Submitted Questions Highscore table.
-            _questAndSub = GetComponent<GetPlayerQuestionSubmissions>();
-            StartCoroutine(_questAndSub.PullQuestionSubmitters());
+			if (ConnectionAvailable) {
+				
+				StartCoroutine (_questionDownload.PullAllQuestionsFromServer ());
+
+				StartCoroutine (_highscoreDownload.PullAllHighScoresFromServer ());
+
+				// add in for the Submitted Questions Highscore table.
+				StartCoroutine (_questAndSub.PullQuestionSubmitters ());
+
+				if (PlayerController.Initialised)
+					PlayerController.Instance.SetSavedGames(LoadSavedJSON<SavedGameContainer>(DataHelper.File.SAVE_LOCATION));
+
+				// retrive player username and password from PlayerPrefs if they have an id
+				if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.ID))
+				{
+					// TODO : is any of these ever used?
+					// NOTE : used to determine if player has already logged in or not for automatic login
+					_status = PlayerController.Instance.GetPlayerType();
+					_username = PlayerController.Instance.GetUsername().ToString();
+					_password = PlayerController.Instance.GetPassword().ToString();
+				}
+
+			} else {
+				
+				Debug.Log ("no server connected");
+				_questionDownload.PullSavedQuestionsFromLocal ();
+
+			}
 
             if (QuestionController.Initialised)
                 QuestionController.Instance.Load();
 
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
-
+			
             List<string> categories = new List<string>();
 
             if (!File.Exists(DataHelper.File.SAVE_LOCATION))
                 File.WriteAllText(DataHelper.File.SAVE_LOCATION, " { }");
+   
 
-            if (PlayerController.Initialised)
-                PlayerController.Instance.SetSavedGames(LoadSavedJSON<SavedGameContainer>(DataHelper.File.SAVE_LOCATION));
-
-            // retrive player username and password from PlayerPrefs if they have an id
-            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.ID))
-            {
-                // TODO : is any of these ever used?
-                // NOTE : used to determine if player has already logged in or not for automatic login
-                _status = PlayerController.Instance.GetPlayerType();
-                _username = PlayerController.Instance.GetUsername().ToString();
-                _password = PlayerController.Instance.GetPassword().ToString();
-            }
         }
 
         #endregion unity
@@ -205,7 +222,8 @@ namespace _LetsQuiz
         // negative action - quit application
         private void DisplayRetryModal(string message)
         {
-            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Application.Quit);
+			FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, offlineLoadState);
+			//No option to play offline, changing "no" answer to load an offline state
         }
 
         public int getOverAllScore()
@@ -261,6 +279,33 @@ namespace _LetsQuiz
             else
                 File.WriteAllText(location, "{ }");
         }
+
+		public void checkForConnection()
+		{
+			//testing for network connectivity
+			switch (Application.internetReachability) {
+			case NetworkReachability.NotReachable:
+				ConnectionAvailable = false;
+				break;
+
+			case NetworkReachability.ReachableViaCarrierDataNetwork:
+				ConnectionAvailable = true;
+				break;
+
+			case NetworkReachability.ReachableViaLocalAreaNetwork:
+				ConnectionAvailable = true;
+				break;
+			}
+		}
+
+		//create an offline state, similar to normal but with quest parameters
+		private void offlineLoadState() {
+
+
+
+			//loads the menu scene
+			SceneManager.LoadScene(BuildIndex.Menu);
+		}
 
         #endregion offline redun
 

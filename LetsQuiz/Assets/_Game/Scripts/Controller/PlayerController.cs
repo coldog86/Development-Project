@@ -414,11 +414,17 @@ namespace _LetsQuiz
         }
 
         // save the player question data in playerprefs
-        private void SaveQuestionData()
+        public void SaveQuestionData()
         {
             PlayerPrefs.SetString(DataHelper.PlayerDataKey.QUESTION_DATA, _questionData);
             PlayerPrefs.Save();
         }
+
+		//get saved question data
+		public string GetSavedQuestionData()
+		{
+			return PlayerPrefs.GetString (DataHelper.PlayerDataKey.QUESTION_DATA, _questionData); //retrieve saved questionData
+		}
 
         // set the worldwide highscore data
         public void SetHighscoreData(string highScoreData)

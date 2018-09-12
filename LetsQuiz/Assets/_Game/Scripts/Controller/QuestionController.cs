@@ -106,6 +106,7 @@ namespace _LetsQuiz
             for (int i = 0; i < allQ.allRoundData.Length; i++)
             {
                 catagoryList.Add(allQ.allRoundData[i].name);
+				Debug.Log (allQ.allRoundData [i].name);
             }
 
             return catagoryList;
