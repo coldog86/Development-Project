@@ -1,3 +1,4 @@
+using Facebook.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace _LetsQuiz
         public Text rank;
         public Text worldText;
         public GameObject finalResultsPanel;
+		public GameObject shareButton;
         public Text WinnerText;
 
         [Header("Connection")]
@@ -37,12 +39,16 @@ namespace _LetsQuiz
         {
             _music = FindObjectOfType<FeedbackMusic>();
             _music.PlayBackgroundMusic();
+
+			if (!FB.IsLoggedIn) {
+				shareButton.SetActive (false);
+			}
         }
 
         private void Start()
         {
             if (PlayerController.Instance.GetPlayerType() == PlayerStatus.LoggedIn)
-            {
+			{
                 score.enabled = true;
                 username.enabled = true;
                 rank.enabled = true;
