@@ -144,11 +144,7 @@ namespace _LetsQuiz
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
                 Debug.Log("there are no open games, user set to player, starting brand new game");
                 _questionPool = GameLobbyController.Instance.QuestionsPoolFromCatagory;
-
-                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
-
-                return _questionPool;
+				return _questionPool;
             }
             if (DataController.Instance.TurnNumber == 2)
             {
@@ -156,20 +152,13 @@ namespace _LetsQuiz
                 string roundDataJSON = DataController.Instance.OngoingGameData.askedQuestions;
                 RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                 _questionPool = rd.questions;
-
-                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
-
-                return _questionPool;
+				return _questionPool;
             }
 
             if (DataController.Instance.TurnNumber == 3)
             {
                 //Continuing a game. The opponent now gets to pick the catagory
                 _questionPool = GameLobbyController.Instance.QuestionsPoolFromCatagory;
-
-                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
 
                 return _questionPool;
             }
@@ -180,22 +169,14 @@ namespace _LetsQuiz
                 string roundDataJSON = DataController.Instance.OngoingGameData.askedQuestions;
                 RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                 _questionPool = rd.questions;
-
-                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
-
-                return _questionPool;
+				return _questionPool;
             }
             if (DataController.Instance.TurnNumber == 5)
             {
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
                 _questionPool = GameLobbyController.Instance.QuestionsPoolFromCatagory;
                 Destroy(GameLobbyController.Instance);
-
-                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
-
-                return _questionPool;
+				return _questionPool;
             }
 
             if (DataController.Instance.TurnNumber == 6)
@@ -203,11 +184,7 @@ namespace _LetsQuiz
                 string roundDataJSON = DataController.Instance.OngoingGameData.askedQuestions;
                 RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                 _questionPool = rd.questions;
-
-                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
-
-                return _questionPool;
+				return _questionPool;
             }
             else
             {
@@ -272,8 +249,6 @@ namespace _LetsQuiz
                     _numberOfQuestionsAsked++;
                     ShowAnswers(currentQuestionData);
 
-                    if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                        FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
                 }
                 if (DataController.Instance.TurnNumber == 2 | DataController.Instance.TurnNumber == 4 | DataController.Instance.TurnNumber == 6)
                 {
@@ -284,8 +259,6 @@ namespace _LetsQuiz
                     _numberOfQuestionsAsked++;
                     ShowAnswers(currentQuestionData);
 
-                    if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                        FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "Your opponent is taking their turn!");
                 }
             }
         }
@@ -406,13 +379,12 @@ namespace _LetsQuiz
             SubmitToOngoingGamesDB();
             SubmitHighscoreData();
 
-            if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "That's a wrap, folks!", "Your game has ended!");
-
+            
             Debug.Log("GameController : EndRound(): End of Round");
             Debug.Log(PlayerController.Instance.ScoreStatus);
 
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
+			SendPushNotification ();
         }
 
         public void SubmitToOngoingGamesDB()
@@ -455,6 +427,39 @@ namespace _LetsQuiz
 			case NetworkReachability.ReachableViaLocalAreaNetwork:
 				ConnectionAvailable = true;
 				break;
+			}
+		}
+
+		private void SendPushNotification()
+		{
+
+			if (DataController.Instance.TurnNumber == 2)
+			{
+				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "You've got a new opponent!", "Take your turn now");
+			}
+
+			if (DataController.Instance.TurnNumber == 3)
+			{
+				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+			}
+
+			if (DataController.Instance.TurnNumber == 4)
+			{
+				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Ready?", "Last round");
+			}
+			if (DataController.Instance.TurnNumber == 5)
+			{
+				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+			}
+
+			if (DataController.Instance.TurnNumber == 6)
+			{
+				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
 			}
 		}
 

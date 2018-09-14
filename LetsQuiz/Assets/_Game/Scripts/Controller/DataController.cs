@@ -234,8 +234,8 @@ namespace _LetsQuiz
         }
 
         public int getOverAllScore()
-        {
-            if (PlayerController.Instance.UserScore > OngoingGameData.playerScore)
+		{
+		    if (PlayerController.Instance.UserScore > OngoingGameData.playerScore)
             {
                 OngoingGameData.overAllScore = -1; //opponent won the round
 

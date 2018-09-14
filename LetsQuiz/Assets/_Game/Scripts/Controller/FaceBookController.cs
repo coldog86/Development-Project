@@ -29,7 +29,7 @@ public class FaceBookController : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
         instance = this;
         isLoggedIn = true;
     }
