@@ -37,7 +37,7 @@ namespace _LetsQuiz
         public bool ServerConnected { get; set; }
         public string AllQuestionJSON { get; set; }
         public string AllHighScoreJSON { get; set; }
-		public bool ConnectionAvailable;
+        public bool ConnectionAvailable;
 
         #endregion properties
 
@@ -55,61 +55,59 @@ namespace _LetsQuiz
 
         private void Start()
         {
-			Debug.Log ("start");
+            Debug.LogFormat("[{0}] Start()", GetType().Name);
+
             if (PlayerController.Initialised)
                 PlayerController.Instance.Load();
 
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
 
-			_questionDownload = FindObjectOfType<GetAllQuestions> ();
-			_highscoreDownload = FindObjectOfType<GetHighScores> ();
-			_questAndSub = GetComponent<GetPlayerQuestionSubmissions> ();
+            _questionDownload = FindObjectOfType<GetAllQuestions>();
+            _highscoreDownload = FindObjectOfType<GetHighScores>();
+            _questAndSub = GetComponent<GetPlayerQuestionSubmissions>();
 
-			//check for internet connection
-			checkForConnection();
+            //check for internet connection
+            checkForConnection();
 
-			if (ConnectionAvailable) {
-				
-				StartCoroutine (_questionDownload.PullAllQuestionsFromServer ());
+            if (ConnectionAvailable)
+            {
+                StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
 
-				StartCoroutine (_highscoreDownload.PullAllHighScoresFromServer ());
+                StartCoroutine(_highscoreDownload.PullAllHighScoresFromServer());
 
-				// add in for the Submitted Questions Highscore table.
-				StartCoroutine (_questAndSub.PullQuestionSubmitters ());
+                // add in for the Submitted Questions Highscore table.
+                StartCoroutine(_questAndSub.PullQuestionSubmitters());
 
-				if (PlayerController.Initialised)
-					PlayerController.Instance.SetSavedGames(LoadSavedJSON<SavedGameContainer>(DataHelper.File.SAVE_LOCATION));
+                if (PlayerController.Initialised)
+                    PlayerController.Instance.SetSavedGames(LoadSavedJSON<SavedGameContainer>(DataHelper.File.SAVE_LOCATION));
 
-				// retrive player username and password from PlayerPrefs if they have an id
-				if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.ID))
-				{
-					// TODO : is any of these ever used?
-					// NOTE : used to determine if player has already logged in or not for automatic login
-					_status = PlayerController.Instance.GetPlayerType();
-					_username = PlayerController.Instance.GetUsername().ToString();
-					_password = PlayerController.Instance.GetPassword().ToString();
-				}
-
-			} else {
-				
-				Debug.Log ("no server connected");
-				_questionDownload.PullSavedQuestionsFromLocal ();
-
-			}
+                // retrive player username and password from PlayerPrefs if they have an id
+                if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.ID))
+                {
+                    // TODO : is any of these ever used?
+                    // NOTE : used to determine if player has already logged in or not for automatic login
+                    _status = PlayerController.Instance.GetPlayerType();
+                    _username = PlayerController.Instance.GetUsername().ToString();
+                    _password = PlayerController.Instance.GetPassword().ToString();
+                }
+            }
+            else
+            {
+                Debug.LogErrorFormat("[{0}] Start() : Error {1} ", GetType().Name, "No server connection found");
+                _questionDownload.PullSavedQuestionsFromLocal();
+            }
 
             if (QuestionController.Initialised)
                 QuestionController.Instance.Load();
 
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
-			
+
             List<string> categories = new List<string>();
 
             if (!File.Exists(DataHelper.File.SAVE_LOCATION))
                 File.WriteAllText(DataHelper.File.SAVE_LOCATION, " { }");
-   
-
         }
 
         #endregion unity
@@ -211,13 +209,16 @@ namespace _LetsQuiz
         {
             Debug.Log("[DataController] RetryPullData()");
             //FeedbackAlert.Show("Retrying connection...", 1.0f);  //alert breaking game
-			checkForConnection();
-			if (ConnectionAvailable) {
-				StartCoroutine (_questionDownload.PullAllQuestionsFromServer ());
-			} else {
-				Debug.Log ("no server connected");
-				DisplayRetryModal ("Still no server connection");
-			}
+            checkForConnection();
+            if (ConnectionAvailable)
+            {
+                StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+            }
+            else
+            {
+                Debug.Log("no server connected");
+                DisplayRetryModal("Still no server connection");
+            }
         }
 
         #endregion server specific
@@ -228,8 +229,8 @@ namespace _LetsQuiz
         // negative action - quit application
         private void DisplayRetryModal(string message)
         {
-			FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "Play offline", RetryPullData, offlineLoadState);
-			//No option to play offline, changing "no" answer to load an offline state
+            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "Play offline", RetryPullData, offlineLoadState);
+            //No option to play offline, changing "no" answer to load an offline state
         }
 
         public int getOverAllScore()
@@ -286,33 +287,34 @@ namespace _LetsQuiz
                 File.WriteAllText(location, "{ }");
         }
 
-		public void checkForConnection()
-		{
-			//testing for network connectivity
-			switch (Application.internetReachability) {
-			case NetworkReachability.NotReachable:
-				ConnectionAvailable = false;
-				break;
+        public void checkForConnection()
+        {
+            //testing for network connectivity
+            switch (Application.internetReachability)
+            {
+                case NetworkReachability.NotReachable:
+                    ConnectionAvailable = false;
+                    break;
 
-			case NetworkReachability.ReachableViaCarrierDataNetwork:
-				ConnectionAvailable = true;
-				break;
+                case NetworkReachability.ReachableViaCarrierDataNetwork:
+                    ConnectionAvailable = true;
+                    break;
 
-			case NetworkReachability.ReachableViaLocalAreaNetwork:
-				ConnectionAvailable = true;
-				break;
-			}
-		}
+                case NetworkReachability.ReachableViaLocalAreaNetwork:
+                    ConnectionAvailable = true;
+                    break;
+            }
+        }
 
-		//create an offline state, similar to normal but with quest parameters
-		private void offlineLoadState() {
-			PlayerController.Instance.PlayerType = PlayerStatus.Guest;
-			DataController.Instance.TurnNumber = 0;
+        //create an offline state, similar to normal but with quest parameters
+        private void offlineLoadState()
+        {
+            PlayerController.Instance.PlayerType = PlayerStatus.Guest;
+            DataController.Instance.TurnNumber = 0;
 
-
-			//loads the menu scene
-			SceneManager.LoadScene(BuildIndex.Menu);
-		}
+            //loads the menu scene
+            SceneManager.LoadScene(BuildIndex.Menu);
+        }
 
         #endregion offline redun
 

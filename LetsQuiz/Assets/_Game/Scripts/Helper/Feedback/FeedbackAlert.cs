@@ -30,7 +30,7 @@ namespace _LetsQuiz
 
         // used to show the alert from external sources
         // time is optional
-        public static void Show(string message, float time = 2.5f)
+        public static void Show(string message, float time = 2.0f)
         {
             Create();
 

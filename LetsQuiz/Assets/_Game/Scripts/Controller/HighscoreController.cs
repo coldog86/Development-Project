@@ -16,12 +16,12 @@ namespace _LetsQuiz
         {
             DontDestroyOnLoad(gameObject);
 
-            Debug.Log("[HighscoreController] Load()");
+            Debug.LogFormat("[{0}] Load()", GetType().Name);
 
             if (PlayerController.Initialised)
                 HighScoreData = PlayerController.Instance.HighScoreJSON;
 
-            Debug.Log("AllHighScore Data" + HighScoreData);
+            Debug.LogFormat("[{0}] Load() : AllHighScore Data {1}", GetType().Name, HighScoreData);
         }
 
         public HighScoresContainer ExtractHighScores()

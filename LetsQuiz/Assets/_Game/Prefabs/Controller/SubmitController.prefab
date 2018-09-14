@@ -56,4 +56,10 @@ MonoBehaviour:
   wrong1Input: {fileID: 0}
   wrong2Input: {fileID: 0}
   wrong3Input: {fileID: 0}
+  categorySelection: {fileID: 0}
+  _questionText: {fileID: 0}
+  _correctAnswerText: {fileID: 0}
+  _wrongAnswer1Text: {fileID: 0}
+  _wrongAnswer2Text: {fileID: 0}
+  _wrongAnswer3Text: {fileID: 0}
   connectionTimer: 0

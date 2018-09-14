@@ -106,7 +106,7 @@ namespace _LetsQuiz
             for (int i = 0; i < allQ.allRoundData.Length; i++)
             {
                 catagoryList.Add(allQ.allRoundData[i].name);
-				Debug.Log (allQ.allRoundData [i].name);
+                Debug.LogFormat("[{0}] GetAllCategories() : {1}", GetType().Name, allQ.allRoundData[i].name);
             }
 
             return catagoryList;
@@ -162,7 +162,7 @@ namespace _LetsQuiz
             };
 
             string askedQuestionsAsJSON = JsonUtility.ToJson(_RoundQuestions);
-            Debug.Log("[QuestionController] GetAskedQuestions() Asked Questions: " + askedQuestionsAsJSON);
+            Debug.LogFormat("[{1}] GetAskedQuestions() : Asked Questions : {1} ", GetType().Name, askedQuestionsAsJSON);
 
             //clear the list
             _askedQuestions = new List<QuestionData>();
@@ -179,7 +179,7 @@ namespace _LetsQuiz
             };
 
             string remainingQuestionsAsJSON = JsonUtility.ToJson(_RemainingQuestions);
-            Debug.Log("[QuestionController] GetAskedQuestions() Remaining Questions: " + remainingQuestionsAsJSON);
+            Debug.LogFormat("[{0}] GetAskedQuestions() Remaining Questions : {1} ", GetType().Name, remainingQuestionsAsJSON);
             return remainingQuestionsAsJSON;
         }
 

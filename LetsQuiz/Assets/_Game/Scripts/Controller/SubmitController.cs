@@ -17,6 +17,12 @@ namespace _LetsQuiz
         public InputField wrong3Input;
         public Dropdown categorySelection;
 
+        [SerializeField] private Text _questionText;
+        [SerializeField] private Text _correctAnswerText;
+        [SerializeField] private Text _wrongAnswer1Text;
+        [SerializeField] private Text _wrongAnswer2Text;
+        [SerializeField] private Text _wrongAnswer3Text;
+
         [Header("Connection")]
         public float connectionTimer = 0;
         public const float connectionTimeLimit = 10000.0f;
@@ -53,7 +59,7 @@ namespace _LetsQuiz
             var wrong1Answer = wrong1Input.text;
             var wrong2Answer = wrong2Input.text;
             var wrong3Answer = wrong3Input.text;
-            var category = categorySelection.itemText.text;
+            var category = categorySelection.options[categorySelection.value].text;
 
             if (string.IsNullOrEmpty(question))
                 FeedbackAlert.Show("Question cannot be empty.");
@@ -77,20 +83,37 @@ namespace _LetsQuiz
             {
                 if (ValidSubmission(question, correctAnswer, wrong1Answer, wrong2Answer, wrong3Answer, category))
                 {
-                    questionInput.text = "";
-                    correctInput.text = "";
-                    wrong1Input.text = "";
-                    wrong2Input.text = "";
-                    wrong3Input.text = "";
-                    categorySelection.value = 0;
+                    FeedbackAlert.Show("Submission successful", 1.0f);
+
+                    // clears input on sucessful submission
+                    questionInput.text = string.Empty;
+                    _questionText.text = string.Empty;
+
+                    correctInput.text = string.Empty;
+                    _correctAnswerText.text = string.Empty;
+
+                    wrong1Input.text = string.Empty;
+                    _wrongAnswer1Text.text = string.Empty;
+
+                    wrong2Input.text = string.Empty;
+                    _wrongAnswer2Text.text = string.Empty;
+
+                    wrong3Input.text = string.Empty;
+                    _wrongAnswer3Text.text = string.Empty;
+
+                    categorySelection.value = 6;
+                }
+                else
+                {
+                    FeedbackAlert.Show("Submission unsuccesful", 1.0f);
                 }
             }
+
+            FeedbackAlert.Hide();
         }
 
         private bool ValidSubmission(string question, string correctAnswer, string wrong1Answer, string wrong2Answer, string wrong3Answer, string category)
         {
-            Debug.Log("SubmitController: ValidSubmisstion() : Attempting to Submit");
-
             WWWForm form = new WWWForm();
 
             form.AddField("questionText", question);
@@ -99,6 +122,8 @@ namespace _LetsQuiz
             form.AddField("wrong2", wrong2Answer);
             form.AddField("wrong3", wrong3Answer);
             form.AddField("catagory", category);
+
+            bool complete = false;
 
             WWW submitQuestion = new WWW(ServerHelper.Host + ServerHelper.SubmitUserQuestion, form);
 
@@ -109,39 +134,40 @@ namespace _LetsQuiz
                 if (connectionTimer > connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("SubmitController : ValidSubmission() : " + submitQuestion.error);
+                    Debug.LogErrorFormat("[{0}] ValidSubmission() : {1}", GetType().Name, submitQuestion.error);
                     Debug.Log(submitQuestion.text);
-                    return false;
+                    complete = false;
                 }
 
                 // extra check just to ensure a stream error doesn't come up
                 if (connectionTimer > connectionTimeLimit || submitQuestion.error != null)
                 {
                     FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("SubmitController : ValidSubmission() : " + submitQuestion.error);
+                    Debug.LogErrorFormat("[{0}] ValidSubmission() : {1}", GetType().Name, submitQuestion.error);
                     Debug.Log(submitQuestion.text);
-                    return false;
+                    complete = false;
                 }
             }
 
             if (submitQuestion.error != null)
             {
                 FeedbackAlert.Show("Connection error. Please try again.");
-                Debug.Log("SubmitController : ValidSubmission() : " + submitQuestion.error);
-                return false;
+                Debug.LogErrorFormat("[{0}] ValidSubmission() : {1}", GetType().Name, submitQuestion.error);
+                complete = false;
             }
 
             if (submitQuestion.isDone)
             {
                 if (!string.IsNullOrEmpty(submitQuestion.text))
                 {
-                    Debug.Log(submitQuestion.text);
-                    return true;
+                    Debug.LogFormat("[{0}] ValidSubmission() : Submission {1}", GetType().Name, submitQuestion.text);
+                    complete = true;
                 }
                 else
-                    return false;
+                    complete = false;
             }
-            return false;
+
+            return complete;
         }
 
         public void CategorySelected()
