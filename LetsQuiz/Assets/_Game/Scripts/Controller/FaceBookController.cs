@@ -1,5 +1,7 @@
 ﻿using Facebook.Unity;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class FaceBookController : MonoBehaviour
@@ -138,9 +140,12 @@ public class FaceBookController : MonoBehaviour
     public void share()
     {
         InitFB();
+		List<string> permissions = new List<string>();
+		permissions.Add("user_post");
+		FB.LogInWithPublishPermissions (permissions, shareCallBack);
         FB.FeedShare(
             string.Empty,
-            new Uri("https://developers.facebook.com/"),
+			new Uri("https://play.google.com/store/apps/details?id=com.QuizCSU.LetsQuiz"),
             "Let's Quiz",
             "Come play",
             "Check out this game",
@@ -166,4 +171,6 @@ public class FaceBookController : MonoBehaviour
             Debug.Log("Success on share");
         }
     }
+
+
 }

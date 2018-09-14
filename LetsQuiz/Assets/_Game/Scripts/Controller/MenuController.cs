@@ -108,19 +108,16 @@ namespace _LetsQuiz
         }
 
         public void Logout()
-        {
-            FeedbackClick.Play();
-            FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
-        }
-
-        	//	public void FacebookLogout()
-        	 //  {
-        	//		FeedbackClick.Play();
-        	//		if (FB.IsLoggedIn) {
-        		//		FB.LogOut ();
-        		//		FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
-        		//	}
-        		//}
+		{
+			FeedbackClick.Play();
+			if (FB.IsLoggedIn) {
+				FB.LogOut ();
+				FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
+			}else{
+				FeedbackClick.Play();
+				FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
+			}
+		}
 
         private void OpenLogin()
         {
