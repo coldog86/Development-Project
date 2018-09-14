@@ -113,8 +113,14 @@ namespace _LetsQuiz
 
                 var opponent = "";
 
-                if (!string.IsNullOrEmpty(gameData.opponent))
-                    opponent = gameData.opponent;
+				if (!string.IsNullOrEmpty (gameData.opponent)) 
+				{
+					if(PlayerController.Instance.GetUsername() == gameData.opponent)
+						opponent = gameData.player;
+					else
+						opponent = gameData.opponent;
+
+				}
                 else
                     opponent = "No opponent found yet.";
 
