@@ -43,7 +43,7 @@ namespace _LetsQuiz
                 _questionData = PlayerController.Instance.GetQuestionData();
 
             //re-attempt round upload
-            UploadExistingRounds();
+            //UploadExistingRounds();
         }
 
         #endregion load
@@ -234,74 +234,74 @@ namespace _LetsQuiz
 
         #region offline redun
 
-        public void UploadExistingRounds()
-        {
-            Debug.Log("[QuestionController] UploadExistingRounds(): Attempting to upload existing games");
+        //public void UploadExistingRounds()
+        //{
+        //    Debug.Log("[QuestionController] UploadExistingRounds(): Attempting to upload existing games");
 
-            if (PlayerController.Initialised)
-            {
-                if (PlayerController.Instance.SavedGames.AllSavedRounds.Count > 0)
-                {
-                    SavedGameContainer games = PlayerController.Instance.GetSavedGames();
+        //    if (PlayerController.Initialised)
+        //    {
+        //        if (PlayerController.Instance.SavedGames.AllSavedRounds.Count > 0)
+        //        {
+        //            SavedGameContainer games = PlayerController.Instance.GetSavedGames();
 
-                    //iterate through length of saved games
-                    for (int i = 0; i < games.AllSavedRounds.Count; i++)
-                    {
-                        //for each game, attempt to upload.
-                        //if successful then remove from list
-                        _connectionTimer += Time.deltaTime;
+        //            //iterate through length of saved games
+        //            for (int i = 0; i < games.AllSavedRounds.Count; i++)
+        //            {
+        //                //for each game, attempt to upload.
+        //                //if successful then remove from list
+        //                _connectionTimer += Time.deltaTime;
 
-                        WWW submitRequest = games.AllSavedRounds[i]._submitRequest;
+        //                WWW submitRequest = games.AllSavedRounds[i]._submitRequest;
 
-                        if (submitRequest == null)
-                            return;
+        //                if (submitRequest == null)
+        //                    return;
 
-                        while (!submitRequest.isDone)
-                        {
-                            if (_connectionTimer > _connectionTimeLimit)
-                            {
-                                FeedbackAlert.Show("Server time out.");
-                                Debug.LogError("[QuestionController] UploadExistingRounds() Error: " + submitRequest.error);
-                                break;
-                            }
+        //                while (!submitRequest.isDone)
+        //                {
+        //                    if (_connectionTimer > _connectionTimeLimit)
+        //                    {
+        //                        FeedbackAlert.Show("Server time out.");
+        //                        Debug.LogError("[QuestionController] UploadExistingRounds() Error: " + submitRequest.error);
+        //                        break;
+        //                    }
 
-                            // extra check just to ensure a stream error doesn't come up
-                            if (_connectionTimer > _connectionTimeLimit || submitRequest.error != null)
-                            {
-                                FeedbackAlert.Show("Server error.");
-                                Debug.LogError("[QuestionController] UploadExistingRounds() Error: " + submitRequest.error);
-                                break;
-                            }
-                        }
+        //                    // extra check just to ensure a stream error doesn't come up
+        //                    if (_connectionTimer > _connectionTimeLimit || submitRequest.error != null)
+        //                    {
+        //                        FeedbackAlert.Show("Server error.");
+        //                        Debug.LogError("[QuestionController] UploadExistingRounds() Error: " + submitRequest.error);
+        //                        break;
+        //                    }
+        //                }
 
-                        if (submitRequest.error != null)
-                        {
-                            FeedbackAlert.Show("Connection error. Please try again.");
-                            Debug.Log("[QuestionController] UploadExistingRounds() Error: " + submitRequest.error);
-                            break;
-                        }
+        //                if (submitRequest.error != null)
+        //                {
+        //                    FeedbackAlert.Show("Connection error. Please try again.");
+        //                    Debug.Log("[QuestionController] UploadExistingRounds() Error: " + submitRequest.error);
+        //                    break;
+        //                }
 
-                        if (submitRequest.isDone)
-                        {
-                            Debug.Log("[QuestionController] UploadExistingRounds() Submission complete");
-                            DestroyObject(gameObject);
-                            //remove from current list
-                            games.AllSavedRounds.RemoveAt(i);
-                        }
-                    }
+        //                if (submitRequest.isDone)
+        //                {
+        //                    Debug.Log("[QuestionController] UploadExistingRounds() Submission complete");
+        //                    DestroyObject(gameObject);
+        //                    //remove from current list
+        //                    games.AllSavedRounds.RemoveAt(i);
+        //                }
+        //            }
 
-                    //resave games List to player prefs, any outstanding uploads will be saved back.
-                    PlayerController.Instance.SetSavedGames(games);
-                }
-                else
-                {
-                    Debug.Log("[QuestionController] UploadExsistingRounds() : No outstanding games to upload");
-                }
-            }
-        }
+        //            //resave games List to player prefs, any outstanding uploads will be saved back.
+        //            PlayerController.Instance.SetSavedGames(games);
+        //        }
+        //        else
+        //        {
+        //            Debug.Log("[QuestionController] UploadExsistingRounds() : No outstanding games to upload");
+        //        }
+        //    }
+        //}
+
+        #endregion offline redun
     }
-
-    #endregion offline redun
 
     #endregion methods
 }
