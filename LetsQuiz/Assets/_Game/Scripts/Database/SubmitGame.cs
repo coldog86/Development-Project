@@ -5,20 +5,12 @@ namespace _LetsQuiz
 {
     public class SubmitGame : MonoBehaviour
     {
-        private PlayerController _playerController;
-        private QuestionController _questionController;
-        private DataController _dataController;
         private string _questionPool;
         private int _counter; //just used for testing, so the log can show what was submitted
         private bool ConnectionAvailable;
 
-        // Use this for initialization
-        private void Start()
-        {
-            _playerController = FindObjectOfType<PlayerController>();
-            _dataController = FindObjectOfType<DataController>();
-            _questionController = FindObjectOfType<QuestionController>();
-        }
+        private float _connectionTimer = 0.0f;
+        private const float _connectionTimeLimit = 1000000.0f;
 
         public void SubmitGameToDB(string _questionPool)
         {
@@ -32,116 +24,135 @@ namespace _LetsQuiz
         {
             string address = "";
             WWWForm form = new WWWForm();
-            if (_dataController.TurnNumber == 1)
+            if (DataController.Instance.TurnNumber == 1)
             {
-                form.AddField("gameNumberPost", _dataController.GameNumber); //TODO need a better way to generate unique game numbers for the first game
-                form.AddField("playerNamePost", _playerController.GetUsername());
-                form.AddField("askedQuestionsPost", _questionController.GetAskedQuestions());
+                form.AddField("gameNumberPost", DataController.Instance.GameNumber); //TODO need a better way to generate unique game numbers for the first game
+                form.AddField("playerNamePost", PlayerController.Instance.GetUsername());
+                form.AddField("askedQuestionsPost", QuestionController.Instance.GetAskedQuestions());
                 form.AddField("QuestionsLeftInCatagoryPost", _questionPool);
-                form.AddField("Round1CatagoryPost", _dataController.Catagory.ToString());
-                form.AddField("scorePost", _playerController.UserScore);
-                form.AddField("turnsCompletedPost", _dataController.TurnNumber);
+                form.AddField("Round1CatagoryPost", DataController.Instance.Catagory.ToString());
+                form.AddField("scorePost", PlayerController.Instance.UserScore);
+                form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
 
-                Debug.Log(_playerController.GetId().ToString() + " " + _playerController.GetGamesPlayed().ToString() + " " + _playerController.GetTotalQuestionsAnswered().ToString() + " " + _playerController.GetNumberCorrectAnswers().ToString());
-                form.AddField("userIDPost", _playerController.GetId().ToString());
-                form.AddField("totalGamesPlayedPost", _playerController.GetGamesPlayed().ToString());
-                form.AddField("totalQuestionsPost", _playerController.GetTotalQuestionsAnswered().ToString());
-                form.AddField("totalCorrectQuestionsPost", _playerController.GetNumberCorrectAnswers().ToString());
+                Debug.Log(PlayerController.Instance.GetId().ToString() + " " + PlayerController.Instance.GetGamesPlayed().ToString() + " " + PlayerController.Instance.GetTotalQuestionsAnswered().ToString() + " " + PlayerController.Instance.GetNumberCorrectAnswers().ToString());
+                form.AddField("userIDPost", PlayerController.Instance.GetId().ToString());
+                form.AddField("totalGamesPlayedPost", PlayerController.Instance.GetGamesPlayed().ToString());
+                form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
+                form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
                 _counter = 1;
 
                 address = ServerHelper.Host + ServerHelper.SubmitRound1Data;
             }
 
-            if (_dataController.TurnNumber == 2)
+            if (DataController.Instance.TurnNumber == 2)
             {
                 Debug.Log("Submitting round 2 data");
-                form.AddField("gameNumberPost", _dataController.OngoingGameData.gameNumber); //TODO need a better way to generate unique game numbers for the first game
+                form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber); //TODO need a better way to generate unique game numbers for the first game
                 form.AddField("askedQuestionsPost", "nothing");
-                form.AddField("opponentNamePost", _playerController.GetUsername());
-                form.AddField("scorePost", _playerController.UserScore);
+                form.AddField("opponentNamePost", PlayerController.Instance.GetUsername());
+                form.AddField("scorePost", PlayerController.Instance.UserScore);
                 form.AddField("gameRequiresOppoentPost", 0);
-                form.AddField("turnsCompletedPost", _dataController.TurnNumber);
-                form.AddField("overAllScorePost", _dataController.getOverAllScore());
+                form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
+                form.AddField("overAllScorePost", DataController.Instance.getOverAllScore());
 
-                Debug.Log(_playerController.GetId().ToString() + " " + _playerController.GetGamesPlayed().ToString() + " " + _playerController.GetTotalQuestionsAnswered().ToString() + " " + _playerController.GetNumberCorrectAnswers().ToString());
-                form.AddField("userIDPost", _playerController.GetId().ToString());
-                form.AddField("totalGamesPlayedPost", _playerController.GetGamesPlayed().ToString());
-                form.AddField("totalQuestionsPost", _playerController.GetTotalQuestionsAnswered().ToString());
-                form.AddField("totalCorrectQuestionsPost", _playerController.GetNumberCorrectAnswers().ToString());
+                Debug.Log(PlayerController.Instance.GetId().ToString() + " " + PlayerController.Instance.GetGamesPlayed().ToString() + " " + PlayerController.Instance.GetTotalQuestionsAnswered().ToString() + " " + PlayerController.Instance.GetNumberCorrectAnswers().ToString());
+                form.AddField("userIDPost", PlayerController.Instance.GetId().ToString());
+                form.AddField("totalGamesPlayedPost", PlayerController.Instance.GetGamesPlayed().ToString());
+                form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
+                form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
+
+                form.AddField("notificationTo", "all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 2");
 
                 _counter = 2;
 
                 address = ServerHelper.Host + ServerHelper.SubmitRound2Data;
             }
 
-            if (_dataController.TurnNumber == 3)
+            if (DataController.Instance.TurnNumber == 3)
             {
                 Debug.Log("Submitting round 3 data");
-                form.AddField("gameNumberPost", _dataController.OngoingGameData.gameNumber);
-                form.AddField("askedQuestionsPost", _questionController.GetAskedQuestions());
-                form.AddField("Round2CatagoryPost", _dataController.Catagory.ToString());
+                form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber);
+                form.AddField("askedQuestionsPost", QuestionController.Instance.GetAskedQuestions());
+                form.AddField("Round2CatagoryPost", DataController.Instance.Catagory.ToString());
                 form.AddField("QuestionsLeftInCatagoryPost", _questionPool);
-                form.AddField("scorePost", _playerController.UserScore);
-                form.AddField("turnsCompletedPost", _dataController.TurnNumber);
+                form.AddField("scorePost", PlayerController.Instance.UserScore);
+                form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
 
-                Debug.Log(_playerController.GetId().ToString() + " " + _playerController.GetGamesPlayed().ToString() + " " + _playerController.GetTotalQuestionsAnswered().ToString() + " " + _playerController.GetNumberCorrectAnswers().ToString());
-                form.AddField("userIDPost", _playerController.GetId().ToString());
-                form.AddField("totalGamesPlayedPost", _playerController.GetGamesPlayed().ToString());
-                form.AddField("totalQuestionsPost", _playerController.GetTotalQuestionsAnswered().ToString());
-                form.AddField("totalCorrectQuestionsPost", _playerController.GetNumberCorrectAnswers().ToString());
+                Debug.Log(PlayerController.Instance.GetId().ToString() + " " + PlayerController.Instance.GetGamesPlayed().ToString() + " " + PlayerController.Instance.GetTotalQuestionsAnswered().ToString() + " " + PlayerController.Instance.GetNumberCorrectAnswers().ToString());
+                form.AddField("userIDPost", PlayerController.Instance.GetId().ToString());
+                form.AddField("totalGamesPlayedPost", PlayerController.Instance.GetGamesPlayed().ToString());
+                form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
+                form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
+
+                form.AddField("notificationTo", "all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 3");
 
                 _counter = 3;
 
                 address = ServerHelper.Host + ServerHelper.SubmitRound3Data;
             }
-            if (_dataController.TurnNumber == 4)
+            if (DataController.Instance.TurnNumber == 4)
             {
                 Debug.Log("Submitting round 4 data");
-                form.AddField("gameNumberPost", _dataController.OngoingGameData.gameNumber);
-                form.AddField("scorePost", _playerController.UserScore);
-                form.AddField("turnsCompletedPost", _dataController.TurnNumber);
-                form.AddField("overAllScorePost", _dataController.getOverAllScore());
+                form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber);
+                form.AddField("scorePost", PlayerController.Instance.UserScore);
+                form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
+                form.AddField("overAllScorePost", DataController.Instance.getOverAllScore());
+
+                form.AddField("notificationTo", "all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 4");
 
                 _counter = 4;
 
                 address = ServerHelper.Host + ServerHelper.SubmitRound4Data;
             }
-            if (_dataController.TurnNumber == 5)
+            if (DataController.Instance.TurnNumber == 5)
             {
                 Debug.Log("Submitting round 5 data");
-                form.AddField("gameNumberPost", _dataController.OngoingGameData.gameNumber);
-                form.AddField("askedQuestionsPost", _questionController.GetAskedQuestions());
-                form.AddField("Round3CatagoryPost", _dataController.Catagory.ToString());
+                form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber);
+                form.AddField("askedQuestionsPost", QuestionController.Instance.GetAskedQuestions());
+                form.AddField("Round3CatagoryPost", DataController.Instance.Catagory.ToString());
                 form.AddField("QuestionsLeftInCatagoryPost", _questionPool);
-                form.AddField("scorePost", _playerController.UserScore);
-                form.AddField("turnsCompletedPost", _dataController.TurnNumber);
+                form.AddField("scorePost", PlayerController.Instance.UserScore);
+                form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
+
+                form.AddField("notificationTo", "all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 5");
 
                 _counter = 5;
 
                 address = ServerHelper.Host + ServerHelper.SubmitRound5Data;
             }
 
-            if (_dataController.TurnNumber == 6)
+            if (DataController.Instance.TurnNumber == 6)
             {
-                form.AddField("gameNumberPost", _dataController.OngoingGameData.gameNumber);
+                form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber);
                 address = ServerHelper.Host + ServerHelper.SubmitRound6Data;
-                _dataController.OngoingGameData.opponentScore = +_playerController.UserScore;
+                DataController.Instance.OngoingGameData.opponentScore = +PlayerController.Instance.UserScore;
+
+                form.AddField("notificationTo", "all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 6");
 
                 _counter = 6;
             }
 
+            _connectionTimer += Time.deltaTime;
+
             WWW submitRequest = new WWW(address, form);
             while (!submitRequest.isDone)
             {
-                float _connectionTimer = 0.0f;
-                const float _connectionTimeLimit = 1000000.0f;
-                _connectionTimer += Time.deltaTime;
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
                     Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
-                    _playerController.AddSavedGame(new SavedGame(submitRequest));
+                    PlayerController.Instance.AddSavedGame(new SavedGame(submitRequest));
                     yield return null;
                 }
 
@@ -150,7 +161,7 @@ namespace _LetsQuiz
                 {
                     FeedbackAlert.Show("Server error.");
                     Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
-                    _playerController.AddSavedGame(new SavedGame(submitRequest));
+                    PlayerController.Instance.AddSavedGame(new SavedGame(submitRequest));
                     yield return null;
                 }
             }
@@ -159,7 +170,7 @@ namespace _LetsQuiz
             {
                 FeedbackAlert.Show("Connection error. Please try again.");
                 Debug.Log("SubmitScore : Submit() : " + submitRequest.error);
-                _playerController.AddSavedGame(new SavedGame(submitRequest));
+                PlayerController.Instance.AddSavedGame(new SavedGame(submitRequest));
                 yield return null;
             }
 
@@ -204,21 +215,25 @@ namespace _LetsQuiz
         {
             Debug.Log("Attempting to upload Existing Games");
 
-            if (_playerController.GetSavedGames() != null)
+            if (PlayerController.Instance.GetSavedGames() != null)
             {
-                SavedGameContainer games = _playerController.GetSavedGames();
+                SavedGameContainer games = PlayerController.Instance.GetSavedGames();
+
+                if (games == null)
+                    Debug.Log("NULL");
+
                 //iterate through length of saved games
+                _connectionTimer += Time.deltaTime;
+
                 for (int i = 0; i < games.AllSavedRounds.Count; i++)
                 {
                     //for each game, attempt to upload.
                     //if successful then remove from list
 
                     WWW submitRequest = games.AllSavedRounds[i]._submitRequest;
+
                     while (!submitRequest.isDone)
                     {
-                        float _connectionTimer = 0.0f;
-                        const float _connectionTimeLimit = 1000000.0f;
-                        _connectionTimer += Time.deltaTime;
                         if (_connectionTimer > _connectionTimeLimit)
                         {
                             FeedbackAlert.Show("Server time out.");
@@ -251,7 +266,7 @@ namespace _LetsQuiz
                 }
 
                 //resave games List to player prefs, any outstanding uploads will be saved back.
-                _playerController.SetSavedGames(games);
+                PlayerController.Instance.SetSavedGames(games);
             }
             else
             {

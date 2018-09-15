@@ -7,6 +7,7 @@ namespace _LetsQuiz
     {
         [Header("Notification")]
         public InputField notifcationTitleInput;
+
         public InputField notifcationBodyInput;
 
         public void SendNotification()

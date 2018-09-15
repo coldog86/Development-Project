@@ -12,16 +12,11 @@ namespace _LetsQuiz
         [Header("Components")]
         public AudioMixer MasterMixer;
 
+        public PlayerSettings Settings;
         private Toggle _soundEffectSwitch;
         private Toggle _backgroundMusicSwitch;
 
         #endregion variables
-
-        #region properties
-
-        public PlayerSettings Settings;
-
-        #endregion properties
 
         #region methods
 
@@ -99,18 +94,24 @@ namespace _LetsQuiz
         // load player settings from playerprefs
         public void Load()
         {
+            Debug.LogFormat("[{0}] Load()", GetType().Name);
+
             if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.ID))
             {
-                Settings = new PlayerSettings
-                {
-                    SoundEffectVolume = PlayerPrefs.GetFloat(DataHelper.PlayerSettingsKey.EFFECT_VOLUME),
-                    SoundEffectToggle = PlayerPrefs.GetInt(DataHelper.PlayerSettingsKey.EFFECT_TOGGLE),
-                    BackgroundMusicVolume = PlayerPrefs.GetFloat(DataHelper.PlayerSettingsKey.MUSIC_VOLUME),
-                    BackgroundMusicToggle = PlayerPrefs.GetInt(DataHelper.PlayerSettingsKey.MUSIC_TOGGLE)
-                };
+                Settings.SoundEffectVolume = PlayerPrefs.GetFloat(DataHelper.PlayerSettingsKey.EFFECT_VOLUME);
+                Settings.SoundEffectToggle = PlayerPrefs.GetInt(DataHelper.PlayerSettingsKey.EFFECT_TOGGLE);
+                Settings.BackgroundMusicVolume = PlayerPrefs.GetFloat(DataHelper.PlayerSettingsKey.MUSIC_VOLUME);
+                Settings.BackgroundMusicToggle = PlayerPrefs.GetInt(DataHelper.PlayerSettingsKey.MUSIC_TOGGLE);
             }
             else
+            {
                 Settings = new PlayerSettings();
+
+                PlayerPrefs.SetInt(DataHelper.PlayerSettingsKey.MUSIC_TOGGLE, Settings.BackgroundMusicToggle);
+                PlayerPrefs.SetFloat(DataHelper.PlayerSettingsKey.MUSIC_VOLUME, Settings.BackgroundMusicVolume);
+                PlayerPrefs.SetInt(DataHelper.PlayerSettingsKey.MUSIC_TOGGLE, Settings.BackgroundMusicToggle);
+                PlayerPrefs.SetFloat(DataHelper.PlayerSettingsKey.MUSIC_VOLUME, Settings.BackgroundMusicVolume);
+            }
 
             if (SceneManager.GetActiveScene().buildIndex == BuildIndex.Settings)
             {
