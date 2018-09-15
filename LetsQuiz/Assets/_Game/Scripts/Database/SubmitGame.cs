@@ -62,7 +62,7 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("notificationTo", "all");
+                form.AddField("notificationTo", "/topics/all");
                 form.AddField("notificationTitle", "Let's Quiz");
                 form.AddField("notificationBody", "It's Round 2");
 
@@ -87,7 +87,7 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("notificationTo", "all");
+                form.AddField("notificationTo", "/topics/all");
                 form.AddField("notificationTitle", "Let's Quiz");
                 form.AddField("notificationBody", "It's Round 3");
 
@@ -103,7 +103,7 @@ namespace _LetsQuiz
                 form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
                 form.AddField("overAllScorePost", DataController.Instance.getOverAllScore());
 
-                form.AddField("notificationTo", "all");
+                form.AddField("notificationTo", "/topics/all");
                 form.AddField("notificationTitle", "Let's Quiz");
                 form.AddField("notificationBody", "It's Round 4");
 
@@ -121,7 +121,7 @@ namespace _LetsQuiz
                 form.AddField("scorePost", PlayerController.Instance.UserScore);
                 form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
 
-                form.AddField("notificationTo", "all");
+                form.AddField("notificationTo", "/topics/all");
                 form.AddField("notificationTitle", "Let's Quiz");
                 form.AddField("notificationBody", "It's Round 5");
 
@@ -136,7 +136,7 @@ namespace _LetsQuiz
                 address = ServerHelper.Host + ServerHelper.SubmitRound6Data;
                 DataController.Instance.OngoingGameData.opponentScore = +PlayerController.Instance.UserScore;
 
-                form.AddField("notificationTo", "all");
+                form.AddField("notificationTo", "/topics/all");
                 form.AddField("notificationTitle", "Let's Quiz");
                 form.AddField("notificationBody", "It's Round 6");
 
@@ -146,12 +146,13 @@ namespace _LetsQuiz
             _connectionTimer += Time.deltaTime;
 
             WWW submitRequest = new WWW(address, form);
+
             while (!submitRequest.isDone)
             {
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
+                    Debug.LogError("SubmitGame : Submit() : " + submitRequest.error);
                     PlayerController.Instance.AddSavedGame(new SavedGame(submitRequest));
                     yield return null;
                 }
@@ -160,7 +161,7 @@ namespace _LetsQuiz
                 if (_connectionTimer > _connectionTimeLimit || submitRequest.error != null)
                 {
                     FeedbackAlert.Show("Server error.");
-                    Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
+                    Debug.LogError("SubmitGame : Submit() : " + submitRequest.error);
                     PlayerController.Instance.AddSavedGame(new SavedGame(submitRequest));
                     yield return null;
                 }
@@ -169,7 +170,7 @@ namespace _LetsQuiz
             if (submitRequest.error != null)
             {
                 FeedbackAlert.Show("Connection error. Please try again.");
-                Debug.Log("SubmitScore : Submit() : " + submitRequest.error);
+                Debug.Log("SubmitGame : Submit() : " + submitRequest.error);
                 PlayerController.Instance.AddSavedGame(new SavedGame(submitRequest));
                 yield return null;
             }
@@ -215,22 +216,22 @@ namespace _LetsQuiz
         {
             Debug.Log("Attempting to upload Existing Games");
 
-            if (PlayerController.Instance.GetSavedGames() != null)
+            if (PlayerController.Instance.SavedGames.AllSavedRounds.Count > 0)
             {
                 SavedGameContainer games = PlayerController.Instance.GetSavedGames();
 
-                if (games == null)
-                    Debug.Log("NULL");
-
                 //iterate through length of saved games
-                _connectionTimer += Time.deltaTime;
 
                 for (int i = 0; i < games.AllSavedRounds.Count; i++)
                 {
                     //for each game, attempt to upload.
                     //if successful then remove from list
+                    _connectionTimer += Time.deltaTime;
 
                     WWW submitRequest = games.AllSavedRounds[i]._submitRequest;
+
+                    if (submitRequest == null)
+                        return;
 
                     while (!submitRequest.isDone)
                     {

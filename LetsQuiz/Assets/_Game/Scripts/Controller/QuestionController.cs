@@ -240,19 +240,21 @@ namespace _LetsQuiz
 
             if (PlayerController.Initialised)
             {
-                if (PlayerController.Instance.GetSavedGames() != null)
+                if (PlayerController.Instance.SavedGames.AllSavedRounds.Count > 0)
                 {
                     SavedGameContainer games = PlayerController.Instance.GetSavedGames();
-
-                    _connectionTimer += Time.deltaTime;
 
                     //iterate through length of saved games
                     for (int i = 0; i < games.AllSavedRounds.Count; i++)
                     {
                         //for each game, attempt to upload.
                         //if successful then remove from list
+                        _connectionTimer += Time.deltaTime;
 
                         WWW submitRequest = games.AllSavedRounds[i]._submitRequest;
+
+                        if (submitRequest == null)
+                            return;
 
                         while (!submitRequest.isDone)
                         {
@@ -297,9 +299,9 @@ namespace _LetsQuiz
                 }
             }
         }
-
-        #endregion offline redun
-
-        #endregion methods
     }
+
+    #endregion offline redun
+
+    #endregion methods
 }
