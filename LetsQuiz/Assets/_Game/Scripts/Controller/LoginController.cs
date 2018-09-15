@@ -14,6 +14,7 @@ namespace _LetsQuiz
 
         [Header("Panel")]
         public GameObject entryPanel;
+
         public GameObject loginPanel;
         public GameObject registerPanel;
         public GameObject buttonPanel;
@@ -21,17 +22,20 @@ namespace _LetsQuiz
 
         [Header("Button")]
         public GameObject toogleLoginPanelButton;
+
         public GameObject toggleRegisterPanelButton;
         public GameObject skipButton;
         public GameObject facebookButton;
 
         [Header("Login")]
         public InputField existingUsernameInput;
+
         public InputField existingPasswordInput;
         public GameObject loginButton;
 
         [Header("Register")]
         public InputField newUsernameInput;
+
         public InputField newEmailInput;
         public InputField newPasswordInput;
         public InputField confirmPasswordInput;
@@ -46,10 +50,12 @@ namespace _LetsQuiz
 
         [Header("Player")]
         private Player _player;
+
         private string _playerString = "";
 
         [Header("Components")]
         public GameObject dialogLoggedIn;
+
         public GameObject dialogLoggedOut;
         public GameObject dialogUsername;
         public GameObject dialogEmail;

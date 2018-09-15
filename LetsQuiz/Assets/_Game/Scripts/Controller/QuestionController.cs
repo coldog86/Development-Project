@@ -244,6 +244,8 @@ namespace _LetsQuiz
                 {
                     SavedGameContainer games = PlayerController.Instance.GetSavedGames();
 
+                    _connectionTimer += Time.deltaTime;
+
                     //iterate through length of saved games
                     for (int i = 0; i < games.AllSavedRounds.Count; i++)
                     {
@@ -254,8 +256,6 @@ namespace _LetsQuiz
 
                         while (!submitRequest.isDone)
                         {
-                            _connectionTimer += Time.deltaTime;
-
                             if (_connectionTimer > _connectionTimeLimit)
                             {
                                 FeedbackAlert.Show("Server time out.");

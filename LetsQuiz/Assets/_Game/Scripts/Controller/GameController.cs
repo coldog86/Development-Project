@@ -12,10 +12,12 @@ namespace _LetsQuiz
 
         [Header("Timer")]
         public Slider timerBar;
+
         public Image timerImage;
 
         [Header("Color")]
         public Color timerMin;
+
         public Color timerMid;
         public Color timerMax;
 
@@ -24,6 +26,7 @@ namespace _LetsQuiz
 
         [Header("Question")]
         public Text questionText;
+
         public GameObject questionDisplay;
         public QuestionData questionData;
         public QuestionData currentQuestion;
@@ -34,16 +37,19 @@ namespace _LetsQuiz
 
         [Header("Answers")]
         public SimpleObjectPool answerButtonObjectPool;
+
         public Transform answerButtonParent;
 
         [Header("Controllers")]
         private RoundData _currentRoundData;
+
         private SubmitScore _submitScore;
 
         [Header("Other")]
         private Upvote _upVote;
+
         private Downvote _downVote;
-		private bool ConnectionAvailable;
+        private bool ConnectionAvailable;
 
         [SerializeField] private string _token;
         private float _timeRemaining = 20;
@@ -94,19 +100,22 @@ namespace _LetsQuiz
             _questionPool = GetQuestionPool();
 
             Destroy(GameLobbyController.Instance);
-			checkForConnection ();
-			if (ConnectionAvailable) {
-
-				if (PlayerPrefs.HasKey ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ())) {
-					string numbers = PlayerPrefs.GetString ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ());
-					numbers = numbers + "," + DataController.Instance.GameNumber;
-					PlayerPrefs.SetString ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername (), numbers);
-					Debug.Log ("games in player prefs = " + PlayerPrefs.GetString ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ()) + PlayerController.Instance.GetUsername ());
-				} else {
-					PlayerPrefs.SetString (((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ()), DataController.Instance.GameNumber.ToString ());
-					Debug.Log ("games in player prefs = " + PlayerPrefs.GetString ((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername ()));
-				}
-			}
+            checkForConnection();
+            if (ConnectionAvailable)
+            {
+                if (PlayerPrefs.HasKey((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()))
+                {
+                    string numbers = PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername());
+                    numbers = numbers + "," + DataController.Instance.GameNumber;
+                    PlayerPrefs.SetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername(), numbers);
+                    Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()) + PlayerController.Instance.GetUsername());
+                }
+                else
+                {
+                    PlayerPrefs.SetString(((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()), DataController.Instance.GameNumber.ToString());
+                    Debug.Log("games in player prefs = " + PlayerPrefs.GetString((DataHelper.PlayerDataKey.GAMEKEY) + PlayerController.Instance.GetUsername()));
+                }
+            }
 
             ShowQuestion();
         }
@@ -144,7 +153,7 @@ namespace _LetsQuiz
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
                 Debug.Log("there are no open games, user set to player, starting brand new game");
                 _questionPool = GameLobbyController.Instance.QuestionsPoolFromCatagory;
-				return _questionPool;
+                return _questionPool;
             }
             if (DataController.Instance.TurnNumber == 2)
             {
@@ -152,7 +161,7 @@ namespace _LetsQuiz
                 string roundDataJSON = DataController.Instance.OngoingGameData.askedQuestions;
                 RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                 _questionPool = rd.questions;
-				return _questionPool;
+                return _questionPool;
             }
 
             if (DataController.Instance.TurnNumber == 3)
@@ -169,14 +178,14 @@ namespace _LetsQuiz
                 string roundDataJSON = DataController.Instance.OngoingGameData.askedQuestions;
                 RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                 _questionPool = rd.questions;
-				return _questionPool;
+                return _questionPool;
             }
             if (DataController.Instance.TurnNumber == 5)
             {
                 //there is no open games, the user is the 'player' they will be starting a new game which will get an opponent later
                 _questionPool = GameLobbyController.Instance.QuestionsPoolFromCatagory;
                 Destroy(GameLobbyController.Instance);
-				return _questionPool;
+                return _questionPool;
             }
 
             if (DataController.Instance.TurnNumber == 6)
@@ -184,7 +193,7 @@ namespace _LetsQuiz
                 string roundDataJSON = DataController.Instance.OngoingGameData.askedQuestions;
                 RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
                 _questionPool = rd.questions;
-				return _questionPool;
+                return _questionPool;
             }
             else
             {
@@ -248,7 +257,6 @@ namespace _LetsQuiz
                     QuestionController.Instance.AddAskedQuestionToAskedQuestions(currentQuestionData);//keep track of the questions we asked so we can repeat it for the oppoent player
                     _numberOfQuestionsAsked++;
                     ShowAnswers(currentQuestionData);
-
                 }
                 if (DataController.Instance.TurnNumber == 2 | DataController.Instance.TurnNumber == 4 | DataController.Instance.TurnNumber == 6)
                 {
@@ -258,7 +266,6 @@ namespace _LetsQuiz
                     questionText.text = currentQuestionData.questionText;  // Update questionText with the correct text
                     _numberOfQuestionsAsked++;
                     ShowAnswers(currentQuestionData);
-
                 }
             }
         }
@@ -379,12 +386,11 @@ namespace _LetsQuiz
             SubmitToOngoingGamesDB();
             SubmitHighscoreData();
 
-            
             Debug.Log("GameController : EndRound(): End of Round");
             Debug.Log(PlayerController.Instance.ScoreStatus);
 
             SceneManager.LoadScene(BuildIndex.Result, LoadSceneMode.Single);
-			SendPushNotification ();
+            //SendPushNotification();
         }
 
         public void SubmitToOngoingGamesDB()
@@ -411,59 +417,60 @@ namespace _LetsQuiz
 
         #endregion navigation specific
 
-		#region internet specific
-		public void checkForConnection()
-		{
-			//testing for network connectivity
-			switch (Application.internetReachability) {
-			case NetworkReachability.NotReachable:
-				ConnectionAvailable = false;
-				break;
+        #region internet specific
 
-			case NetworkReachability.ReachableViaCarrierDataNetwork:
-				ConnectionAvailable = true;
-				break;
+        public void checkForConnection()
+        {
+            //testing for network connectivity
+            switch (Application.internetReachability)
+            {
+                case NetworkReachability.NotReachable:
+                    ConnectionAvailable = false;
+                    break;
 
-			case NetworkReachability.ReachableViaLocalAreaNetwork:
-				ConnectionAvailable = true;
-				break;
-			}
-		}
+                case NetworkReachability.ReachableViaCarrierDataNetwork:
+                    ConnectionAvailable = true;
+                    break;
 
-		private void SendPushNotification()
-		{
+                case NetworkReachability.ReachableViaLocalAreaNetwork:
+                    ConnectionAvailable = true;
+                    break;
+            }
+        }
 
-			if (DataController.Instance.TurnNumber == 2)
-			{
-				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "You've got a new opponent!", "Take your turn now");
-			}
+        //private void SendPushNotification()
+        //{
+        //	if (DataController.Instance.TurnNumber == 2)
+        //	{
+        //		if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+        //			FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "You've got a new opponent!", "Take your turn now");
+        //	}
 
-			if (DataController.Instance.TurnNumber == 3)
-			{
-				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
-			}
+        //	if (DataController.Instance.TurnNumber == 3)
+        //	{
+        //		if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+        //			FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+        //	}
 
-			if (DataController.Instance.TurnNumber == 4)
-			{
-				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Ready?", "Last round");
-			}
-			if (DataController.Instance.TurnNumber == 5)
-			{
-				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
-			}
+        //	if (DataController.Instance.TurnNumber == 4)
+        //	{
+        //		if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+        //			FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Ready?", "Last round");
+        //	}
+        //	if (DataController.Instance.TurnNumber == 5)
+        //	{
+        //		if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+        //			FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Are you ready?", "It's your turn!");
+        //	}
 
-			if (DataController.Instance.TurnNumber == 6)
-			{
-				if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-					FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
-			}
-		}
+        //	if (DataController.Instance.TurnNumber == 6)
+        //	{
+        //		if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+        //			FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Fingers crossed!", "You've got a new opponent!");
+        //	}
+        //}
 
-		#endregion internet specific
+        #endregion internet specific
 
         #endregion methods
     }

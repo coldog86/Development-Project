@@ -13,18 +13,18 @@ namespace _LetsQuiz
 
         [Header("Components")]
         public Image backgroundEffect;
+
         public Text score;
         public Text username;
         public Text rankText;
         public Text rank;
         public Text worldText;
         public GameObject finalResultsPanel;
-		public GameObject shareButton;
+        public GameObject shareButton;
         public Text WinnerText;
 
-        [Header("Connection")]
-        public float connectionTimer = 0;
-        public const float connectionTimeLimit = 10000.0f;
+        private float _connectionTimer = 0.0f;
+        private const float _connectionTimeLimit = 1000000.0f;
 
         private int _ranking;
         private FeedbackMusic _music;
@@ -40,15 +40,16 @@ namespace _LetsQuiz
             _music = FindObjectOfType<FeedbackMusic>();
             _music.PlayBackgroundMusic();
 
-			if (!FB.IsLoggedIn) {
-				shareButton.SetActive (false);
-			}
+            if (!FB.IsLoggedIn)
+            {
+                shareButton.SetActive(false);
+            }
         }
 
         private void Start()
         {
             if (PlayerController.Instance.GetPlayerType() == PlayerStatus.LoggedIn)
-			{
+            {
                 score.enabled = true;
                 username.enabled = true;
                 rank.enabled = true;
@@ -114,11 +115,11 @@ namespace _LetsQuiz
 
             WWW download = new WWW(ServerHelper.Host + ServerHelper.GetRanking);
 
+            _downloadTimer += Time.deltaTime;
+
             while (!download.isDone)
             {
-                _downloadTimer -= Time.deltaTime;
-
-                if (_downloadTimer < 0)
+                if (_connectionTimer > _connectionTimeLimit)
                 {
                     Debug.LogErrorFormat("[{0}] FindRanking() : Error {1}", GetType().Name, download.error);
                     yield return null;
@@ -172,11 +173,11 @@ namespace _LetsQuiz
 
             WWW submitRank = new WWW(ServerHelper.Host + ServerHelper.SetRanking, form);
 
-            connectionTimer += Time.deltaTime;
+            _connectionTimer += Time.deltaTime;
 
             while (!submitRank.isDone)
             {
-                if (connectionTimer > connectionTimeLimit)
+                if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
                     Debug.LogError("ResultController : ValidSubmission() : " + submitRank.error);
@@ -185,7 +186,7 @@ namespace _LetsQuiz
                 }
 
                 // extra check just to ensure a stream error doesn't come up
-                if (connectionTimer > connectionTimeLimit || submitRank.error != null)
+                if (_connectionTimer > _connectionTimeLimit || submitRank.error != null)
                 {
                     FeedbackAlert.Show("Server time out.");
                     Debug.LogErrorFormat("[{0}] submitRanking() : Error {1} ", GetType().Name, submitRank.error);

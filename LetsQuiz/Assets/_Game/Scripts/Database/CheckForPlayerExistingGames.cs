@@ -10,10 +10,12 @@ namespace _LetsQuiz
 
         [Header("Components")]
         public GameObject gameButton;
+
         public Transform buttonContainer;
 
         [Header("Settings")]
         public Color Red;
+
         public Color Green;
 
         private float _connectionTimer = 0.0f;
@@ -51,9 +53,10 @@ namespace _LetsQuiz
 
             string address = ServerHelper.Host + ServerHelper.GetPlayersOpenGames;
             WWW submitRequest = new WWW(address, form);
+
+            _connectionTimer += Time.deltaTime;
             while (!submitRequest.isDone)
             {
-                _connectionTimer += Time.deltaTime;
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
@@ -114,7 +117,12 @@ namespace _LetsQuiz
                 var opponent = "";
 
                 if (!string.IsNullOrEmpty(gameData.opponent))
-                    opponent = gameData.opponent;
+                {
+                    if (PlayerController.Instance.GetUsername() == gameData.opponent)
+                        opponent = gameData.player;
+                    else
+                        opponent = gameData.opponent;
+                }
                 else
                     opponent = "No opponent found yet.";
 
