@@ -247,7 +247,7 @@ PlayerSettings:
   AndroidTargetDevice: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: C:/Programming/Game/Uni/Development-Project/LetsQuiz/letsquiz.keystore
+  AndroidKeystoreName: C:/Users/Michelle/Desktop/Development-Project/LetsQuiz/letsquiz.keystore
   AndroidKeyaliasName: letsquiz
   AndroidTVCompatibility: 0
   AndroidIsGame: 1
