@@ -126,6 +126,11 @@ namespace _LetsQuiz
             MasterMixer.SetFloat(DataHelper.AudioParameter.BACKGROUND_MUSIC, Settings.BackgroundMusicVolume);
         }
 
+        public void Reset()
+        {
+            PlayerPrefs.DeleteAll();
+        }
+
         #endregion load settings
 
         #endregion methods

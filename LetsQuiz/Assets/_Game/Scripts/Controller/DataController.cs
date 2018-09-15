@@ -12,15 +12,18 @@ namespace _LetsQuiz
 
         [Header("Components")]
         private GetAllQuestions _questionDownload;
+
         private GetHighScores _highscoreDownload;
         private GetPlayerQuestionSubmissions _questAndSub;
 
         [Header("Connection")]
         private const float _connectionTimeLimit = 1000000.0f;
+
         private float _connectionTimer = 0.0f;
 
         [Header("Validation Tests")]
         private string _username = "u";
+
         private string _password = "p";
         private int _status = -2;
 
@@ -234,8 +237,8 @@ namespace _LetsQuiz
         }
 
         public int getOverAllScore()
-		{
-		    if (PlayerController.Instance.UserScore > OngoingGameData.playerScore)
+        {
+            if (PlayerController.Instance.UserScore > OngoingGameData.playerScore)
             {
                 OngoingGameData.overAllScore = -1; //opponent won the round
 

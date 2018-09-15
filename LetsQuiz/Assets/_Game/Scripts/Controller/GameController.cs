@@ -99,7 +99,6 @@ namespace _LetsQuiz
 
             _questionPool = GetQuestionPool();
 
-            Destroy(GameLobbyController.Instance);
             checkForConnection();
             if (ConnectionAvailable)
             {
