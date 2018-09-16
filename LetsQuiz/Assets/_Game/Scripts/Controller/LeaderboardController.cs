@@ -121,7 +121,7 @@ namespace _LetsQuiz
 				}
 			}
 			else
-				for (int i = sorted.Length - 1; i > 0; i--) {
+				for (int i = sorted.Length - 1; i >= 0; i--) {
 					GameObject highScorerGameObject = highScorerObjectPool.GetObject (); //create new GameObejct
 					HighScoresObject currentHighScore = sorted [i]; 						//get current highscorer
 
@@ -163,7 +163,7 @@ namespace _LetsQuiz
 				}
 			}
 			else
-				for (int i = sortedQuestionsByRating.Length - 1; i > 0; i--) {
+				for (int i = sortedQuestionsByRating.Length - 1; i >= 0; i--) {
 					GameObject questionHighScoreObject = questionHighscoreObjectPool.GetObject (); //create new GameObejct
 					QuestAndSub currentQuestionHighscore = sortedQuestionsByRating [i];                      //get current highscorer
 
@@ -208,7 +208,7 @@ namespace _LetsQuiz
 				}
 			}
 			else 
-				for (int i = sorted.Length - 1; i > 0; i--) {
+				for (int i = sorted.Length - 1; i >= 0; i--) {
 					GameObject totalCorrectgameObject = TotalCorrectObjectPool.GetObject (); //create new GameObejct
 					HighScoresObject currentHighScore = sorted [i]; 						//get current highscorer
 
