@@ -333,7 +333,9 @@ namespace _LetsQuiz
 
             //Debug.Log("****current question is: " + currentQuestionData.questionText);
             //_downVote.Dvote(currentQuestionData);
+			if (!_roundDownvotes.Contains(currentQuestionData)) {
 			_roundDownvotes.Add(currentQuestionData);
+			}
         }
 
         public void LikeQuestion()
@@ -341,7 +343,9 @@ namespace _LetsQuiz
 
             //Debug.Log("****current question is: " + currentQuestionData.questionText);
             //_upVote.Uvote(currentQuestionData);
-			_roundUpvotes.Add(currentQuestionData);
+			if (!_roundUpvotes.Contains (currentQuestionData)) {
+				_roundUpvotes.Add (currentQuestionData);
+			}
         }
 
         #endregion like & dislike buttons
@@ -386,9 +390,10 @@ namespace _LetsQuiz
         {
             _music.Stop();
 
+			SubmitVotes();
             SubmitToOngoingGamesDB();
             SubmitHighscoreData();
-			SubmitVotes();
+
 
             Debug.Log("GameController : EndRound(): End of Round");
             Debug.Log(PlayerController.Instance.ScoreStatus);
@@ -418,7 +423,7 @@ namespace _LetsQuiz
 			}
 
 			for (int i = 0; i < _roundDownvotes.Count; i++) {
-				_upVote.Uvote(_roundDownvotes[i]);
+				_downVote.Dvote(_roundDownvotes[i]);
 				Debug.Log("****current question is: " + _roundDownvotes[i].questionText);
 			}
 
