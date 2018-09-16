@@ -1,18 +1,12 @@
-﻿using UnityEngine;
-
-namespace _LetsQuiz
+﻿namespace _LetsQuiz
 {
+    [System.Serializable]
     public class PlayerSettings
     {
-        [Header("Sound Effects")]
-        public float soundEffectVolume = -10.0f;
-        public int soundEffectToggled = 1;
+        public float SoundEffectVolume = -10;
+        public int SoundEffectToggle = 1;
 
-        [Header("Background Music")]
-        public float backgroundMusicVolume = -10.0f;
-        public int backgroundMusicToggled = 1;
-
-        [Header("Notifications")]
-        public int notificationsToggled = 1;
+        public float BackgroundMusicVolume = -10;
+        public int BackgroundMusicToggle = 1;
     }
 }

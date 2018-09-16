@@ -8,4 +8,3 @@
         public static int LoggedOut = 2;
     }
 }
-

@@ -8,15 +8,8 @@ namespace _LetsQuiz
         public Text usernameText;
         public Text scoreText;
 
-        private GameController _gameController;
-        private RectTransform transform;
-
-        void Start()
+        private void Start()
         {
-            _gameController = FindObjectOfType<GameController>();
-            transform = GetComponent<RectTransform>();
-
-            // in case scale goes a bit funny
             transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         }
 
@@ -24,7 +17,7 @@ namespace _LetsQuiz
         {
             usernameText.text = username;
             scoreText.text = score;
-            Debug.Log(usernameText.text);
+            Debug.Log("[LeaderboardEntry] SetUp() : User: " + usernameText.text + " Score: " + scoreText.text);
         }
     }
 }
