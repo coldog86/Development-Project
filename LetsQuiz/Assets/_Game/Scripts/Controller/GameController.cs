@@ -328,7 +328,7 @@ namespace _LetsQuiz
             //DownvoteButton();
 
             Debug.Log("****current question is: " + currentQuestionData.questionText);
-            //_downVote.Dvote(currentQuestionData);
+            _downVote.Dvote(currentQuestionData);
         }
 
         public void LikeQuestion()
@@ -337,7 +337,7 @@ namespace _LetsQuiz
             //UpvoteButton();
 
             Debug.Log("****current question is: " + currentQuestionData.questionText);
-            //_upVote.Uvote(currentQuestionData);
+            _upVote.Uvote(currentQuestionData);
         }
 
         #endregion like & dislike buttons

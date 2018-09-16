@@ -27,6 +27,7 @@ namespace _LetsQuiz
         public HighScoresContainer ExtractHighScores()
         {
             HighScoresContainer AllHighScorers = JsonUtility.FromJson<HighScoresContainer>(HighScoreData);
+			Debug.Log (HighScoreData);
 
             return AllHighScorers;
         }

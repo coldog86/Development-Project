@@ -108,17 +108,30 @@ namespace _LetsQuiz
             HighScoresObject[] sorted = allHighScorers.allHighScorers.OrderBy(c => c.getTotalScoreInt()).ToArray();
 
             //for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items.
-            for (int i = sorted.Length - 1; i > sorted.Length - 11; i--)
-            {
-                GameObject highScorerGameObject = highScorerObjectPool.GetObject(); //create new GameObejct
-                HighScoresObject currentHighScore = sorted[i]; 						//get current highscorer
+			if (sorted.Length > 10) {
+				for (int i = sorted.Length - 1; i > sorted.Length - 11; i--) {
+					GameObject highScorerGameObject = highScorerObjectPool.GetObject (); //create new GameObejct
+					HighScoresObject currentHighScore = sorted [i]; 						//get current highscorer
 
-                _highScorerGameObjects.Add(highScorerGameObject);
-                highScorerGameObject.transform.SetParent(highScorerParent);
-                LeaderboardEntry leaderBoardEntry = highScorerGameObject.GetComponent<LeaderboardEntry>();
+					_highScorerGameObjects.Add (highScorerGameObject);
+					highScorerGameObject.transform.SetParent (highScorerParent);
+					LeaderboardEntry leaderBoardEntry = highScorerGameObject.GetComponent<LeaderboardEntry> ();
 
-                leaderBoardEntry.SetUp(currentHighScore.userName, currentHighScore.totalScore); //pass in the data of current HighScorer
-            }
+					leaderBoardEntry.SetUp (currentHighScore.userName, currentHighScore.totalScore); //pass in the data of current HighScorer
+				}
+			}
+			else
+				for (int i = sorted.Length - 1; i > 0; i--) {
+					GameObject highScorerGameObject = highScorerObjectPool.GetObject (); //create new GameObejct
+					HighScoresObject currentHighScore = sorted [i]; 						//get current highscorer
+
+					_highScorerGameObjects.Add (highScorerGameObject);
+					highScorerGameObject.transform.SetParent (highScorerParent);
+					LeaderboardEntry leaderBoardEntry = highScorerGameObject.GetComponent<LeaderboardEntry> ();
+
+					leaderBoardEntry.SetUp (currentHighScore.userName, currentHighScore.totalScore); //pass in the data of current HighScorer
+				}
+				
         }
 
         //removes all Player Highscore LeaderboardEntry Objects from the scene
@@ -137,17 +150,30 @@ namespace _LetsQuiz
             QuestAndSub[] sortedQuestionsByRating = unsortedQuestions.OrderBy(c => c.getRating()).ToArray();
 
             //for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items.
-            for (int i = sortedQuestionsByRating.Length - 1; i > sortedQuestionsByRating.Length - 11; i--)
-            {
-                GameObject questionHighScoreObject = questionHighscoreObjectPool.GetObject(); //create new GameObejct
-                QuestAndSub currentQuestionHighscore = sortedQuestionsByRating[i];                      //get current highscorer
+			if (sortedQuestionsByRating.Length > 10) {
+				for (int i = sortedQuestionsByRating.Length - 1; i > sortedQuestionsByRating.Length - 11; i--) {
+					GameObject questionHighScoreObject = questionHighscoreObjectPool.GetObject (); //create new GameObejct
+					QuestAndSub currentQuestionHighscore = sortedQuestionsByRating [i];                      //get current highscorer
 
-                _questionHighscoreObjects.Add(questionHighScoreObject);
-                questionHighScoreObject.transform.SetParent(questionHighscoreParent);
-                LeaderboardEntry leaderBoardEntry = questionHighScoreObject.GetComponent<LeaderboardEntry>();
+					_questionHighscoreObjects.Add (questionHighScoreObject);
+					questionHighScoreObject.transform.SetParent (questionHighscoreParent);
+					LeaderboardEntry leaderBoardEntry = questionHighScoreObject.GetComponent<LeaderboardEntry> ();
 
-                leaderBoardEntry.SetUp(currentQuestionHighscore.QuestionText, currentQuestionHighscore.Rating.ToString()); //pass in the data of current HighScorer
-            }
+					leaderBoardEntry.SetUp (currentQuestionHighscore.QuestionText, currentQuestionHighscore.Rating.ToString ()); //pass in the data of current HighScorer
+				}
+			}
+			else
+				for (int i = sortedQuestionsByRating.Length - 1; i > 0; i--) {
+					GameObject questionHighScoreObject = questionHighscoreObjectPool.GetObject (); //create new GameObejct
+					QuestAndSub currentQuestionHighscore = sortedQuestionsByRating [i];                      //get current highscorer
+
+					_questionHighscoreObjects.Add (questionHighScoreObject);
+					questionHighScoreObject.transform.SetParent (questionHighscoreParent);
+					LeaderboardEntry leaderBoardEntry = questionHighScoreObject.GetComponent<LeaderboardEntry> ();
+
+					leaderBoardEntry.SetUp (currentQuestionHighscore.QuestionText, currentQuestionHighscore.Rating.ToString ()); //pass in the data of current HighScorer
+				}
+				
         }
 
         //removes all Question Highscore Obejcts from the scene
@@ -169,17 +195,29 @@ namespace _LetsQuiz
             HighScoresObject[] sorted = allHighScorers.allHighScorers.OrderBy(c => c.getTotalCorrect()).ToArray();
 
             //for some reason the sorted array is in reverse order, so the for loop runs from the last 10 items.
-            for (int i = sorted.Length - 1; i > sorted.Length - 11; i--)
-            {
-                GameObject totalCorrectgameObject = TotalCorrectObjectPool.GetObject(); //create new GameObejct
-                HighScoresObject currentHighScore = sorted[i]; 						//get current highscorer
+			if (sorted.Length > 10) {
+				for (int i = sorted.Length - 1; i > sorted.Length - 11; i--) {
+					GameObject totalCorrectgameObject = TotalCorrectObjectPool.GetObject (); //create new GameObejct
+					HighScoresObject currentHighScore = sorted [i]; 						//get current highscorer
 
-                _highScorerGameObjects.Add(totalCorrectgameObject);
-                totalCorrectgameObject.transform.SetParent(TotalCorrectParent);
-                LeaderboardEntry leaderBoardEntry = totalCorrectgameObject.GetComponent<LeaderboardEntry>();
+					_highScorerGameObjects.Add (totalCorrectgameObject);
+					totalCorrectgameObject.transform.SetParent (TotalCorrectParent);
+					LeaderboardEntry leaderBoardEntry = totalCorrectgameObject.GetComponent<LeaderboardEntry> ();
 
-                leaderBoardEntry.SetUp(currentHighScore.userName, currentHighScore.questionsRight); //pass in the data of current HighScorer
-            }
+					leaderBoardEntry.SetUp (currentHighScore.userName, currentHighScore.questionsRight); //pass in the data of current HighScorer
+				}
+			}
+			else 
+				for (int i = sorted.Length - 1; i > 0; i--) {
+					GameObject totalCorrectgameObject = TotalCorrectObjectPool.GetObject (); //create new GameObejct
+					HighScoresObject currentHighScore = sorted [i]; 						//get current highscorer
+
+					_highScorerGameObjects.Add (totalCorrectgameObject);
+					totalCorrectgameObject.transform.SetParent (TotalCorrectParent);
+					LeaderboardEntry leaderBoardEntry = totalCorrectgameObject.GetComponent<LeaderboardEntry> ();
+
+					leaderBoardEntry.SetUp (currentHighScore.userName, currentHighScore.questionsRight); //pass in the data of current HighScorer
+				}
         }
 
         //remove most correct answers objects
