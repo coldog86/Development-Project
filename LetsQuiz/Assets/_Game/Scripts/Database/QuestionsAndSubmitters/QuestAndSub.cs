@@ -12,7 +12,7 @@
 		public int DateCreated;
 
 		public int getRating() {
-			return Rating;
+			return Upvotes;
     }
 	}
 

@@ -159,7 +159,7 @@ namespace _LetsQuiz
 					questionHighScoreObject.transform.SetParent (questionHighscoreParent);
 					LeaderboardEntry leaderBoardEntry = questionHighScoreObject.GetComponent<LeaderboardEntry> ();
 
-					leaderBoardEntry.SetUp (currentQuestionHighscore.QuestionText, currentQuestionHighscore.Rating.ToString ()); //pass in the data of current HighScorer
+					leaderBoardEntry.SetUp (currentQuestionHighscore.QuestionText, currentQuestionHighscore.Upvotes.ToString ()); //pass in the data of current HighScorer
 				}
 			}
 			else
@@ -171,7 +171,7 @@ namespace _LetsQuiz
 					questionHighScoreObject.transform.SetParent (questionHighscoreParent);
 					LeaderboardEntry leaderBoardEntry = questionHighScoreObject.GetComponent<LeaderboardEntry> ();
 
-					leaderBoardEntry.SetUp (currentQuestionHighscore.QuestionText, currentQuestionHighscore.Rating.ToString ()); //pass in the data of current HighScorer
+					leaderBoardEntry.SetUp (currentQuestionHighscore.QuestionText, currentQuestionHighscore.Upvotes.ToString ()); //pass in the data of current HighScorer
 				}
 				
         }
