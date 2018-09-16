@@ -41,6 +41,8 @@ namespace _LetsQuiz
         {
             FirebaseMessaging.TokenReceived += OnTokenReceived;
             FirebaseMessaging.MessageReceived += OnMessageReceived;
+
+            FirebaseMessaging.SubscribeAsync("/topics/all");
         }
 
         protected override void OnDisable()
