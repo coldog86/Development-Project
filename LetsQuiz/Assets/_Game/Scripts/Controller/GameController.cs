@@ -67,6 +67,10 @@ namespace _LetsQuiz
         private List<GameObject> _answerButtonGameObjects = new List<GameObject>();
         private AnswerButton _userSelection;
 
+
+		public List<QuestionData> _roundUpvotes = new List<QuestionData>();
+		public List<QuestionData> _roundDownvotes = new List<QuestionData> ();
+
         #endregion variables
 
         #region properties
@@ -89,6 +93,8 @@ namespace _LetsQuiz
         {
             _upVote = FindObjectOfType<Upvote>();
             _downVote = FindObjectOfType<Downvote>();
+			_roundUpvotes = null;
+			_roundDownvotes = null;
 
             PlayerController.Instance.AddToGamesPlayed();
             PlayerController.Instance.UserScore = 0;
@@ -324,20 +330,18 @@ namespace _LetsQuiz
 
         public void ReportQuestion()
         {
-            FeedbackClick.Play();
-            //DownvoteButton();
 
-            Debug.Log("****current question is: " + currentQuestionData.questionText);
-            _downVote.Dvote(currentQuestionData);
+            //Debug.Log("****current question is: " + currentQuestionData.questionText);
+            //_downVote.Dvote(currentQuestionData);
+			_roundDownvotes.Add(currentQuestionData);
         }
 
         public void LikeQuestion()
         {
-            FeedbackClick.Play();
-            //UpvoteButton();
 
-            Debug.Log("****current question is: " + currentQuestionData.questionText);
-            _upVote.Uvote(currentQuestionData);
+            //Debug.Log("****current question is: " + currentQuestionData.questionText);
+            //_upVote.Uvote(currentQuestionData);
+			_roundUpvotes.Add(currentQuestionData);
         }
 
         #endregion like & dislike buttons
@@ -384,6 +388,7 @@ namespace _LetsQuiz
 
             SubmitToOngoingGamesDB();
             SubmitHighscoreData();
+			SubmitVotes();
 
             Debug.Log("GameController : EndRound(): End of Round");
             Debug.Log(PlayerController.Instance.ScoreStatus);
@@ -406,13 +411,20 @@ namespace _LetsQuiz
             Debug.Log("Highscore Submitting. Player: " + PlayerController.Instance.GetUsername() + " Round Score: " + PlayerController.Instance.UserScore);
         }
 
-        public void UpvoteButton()
-        {
-        }
+		public void SubmitVotes() {
+			for (int i = 0; i < _roundUpvotes.Count; i++) {
+				_upVote.Uvote(_roundUpvotes[i]);
+				Debug.Log("****current question is: " + _roundUpvotes[i].questionText);
+			}
 
-        public void DownvoteButton()
-        {
-        }
+			for (int i = 0; i < _roundDownvotes.Count; i++) {
+				_upVote.Uvote(_roundDownvotes[i]);
+				Debug.Log("****current question is: " + _roundDownvotes[i].questionText);
+			}
+
+
+		}
+
 
         #endregion navigation specific
 
