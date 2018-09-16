@@ -218,9 +218,10 @@ namespace _LetsQuiz
         public void BackToMenu()
         {
             FeedbackClick.Play();
+			SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
             DestroyImmediate(GameLobbyController.Instance.gameObject);
             DestroyImmediate(MenuController.Instance.gameObject);
-            SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
+            
         }
 
         #endregion user interaction
