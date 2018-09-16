@@ -93,8 +93,8 @@ namespace _LetsQuiz
         {
             _upVote = FindObjectOfType<Upvote>();
             _downVote = FindObjectOfType<Downvote>();
-			_roundUpvotes = null;
-			_roundDownvotes = null;
+			_roundUpvotes.Clear ();
+			_roundDownvotes.Clear ();
 
             PlayerController.Instance.AddToGamesPlayed();
             PlayerController.Instance.UserScore = 0;
