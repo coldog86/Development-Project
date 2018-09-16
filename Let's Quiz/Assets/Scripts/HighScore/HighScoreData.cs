@@ -3,7 +3,7 @@
     [System.Serializable]
     public class HighScoreData
     {
-        public HighScore[] highscoreData;
+        public HighScore[] HighScore;
     }
 
     [System.Serializable]

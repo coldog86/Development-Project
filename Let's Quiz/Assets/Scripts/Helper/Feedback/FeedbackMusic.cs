@@ -6,11 +6,12 @@ namespace _LetsQuiz
     {
         #region variables
 
+        [Header("Components")]
         public AudioSource source;
         public AudioClip backgroundMusicClip;
         public AudioClip gameMusicClip;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -21,7 +22,7 @@ namespace _LetsQuiz
             DontDestroyOnLoad(gameObject);
         }
 
-        #endregion
+        #endregion unity
 
         #region audio specific
 
@@ -37,14 +38,13 @@ namespace _LetsQuiz
             source.Play();
         }
 
-
         public void Stop()
         {
             source.Stop();
         }
 
-        #endregion
+        #endregion audio specific
 
-        #endregion
+        #endregion methods
     }
 }

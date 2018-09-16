@@ -2,31 +2,36 @@
 
 namespace _LetsQuiz
 {
-    public class HighscoreController : MonoBehaviour
+    public class HighscoreController : Singleton<HighscoreController>
     {
-        #region variables
+        #region properties
 
-        [Header("Components")]
-        private PlayerController _playerController;
-        private string _highScoreData;
+        public string HighScoreData { get; private set; }
 
-        #endregion
+        #endregion properties
 
         #region methods
 
         public void Load()
         {
-            Debug.Log("HighscoreController : Load()");
-            _playerController = FindObjectOfType<PlayerController>();
-            _highScoreData = _playerController.highScoreJSON;
+            DontDestroyOnLoad(gameObject);
+
+            Debug.LogFormat("[{0}] Load()", GetType().Name);
+
+            if (PlayerController.Initialised)
+                HighScoreData = PlayerController.Instance.HighScoreJSON;
+
+            Debug.LogFormat("[{0}] Load() : AllHighScore Data {1}", GetType().Name, HighScoreData);
         }
 
-        public HighScoresContainer extractHighScores()
+        public HighScoresContainer ExtractHighScores()
         {
-            HighScoresContainer allHighScorers = JsonUtility.FromJson<HighScoresContainer>(_highScoreData);
-            return allHighScorers;
+            HighScoresContainer AllHighScorers = JsonUtility.FromJson<HighScoresContainer>(HighScoreData);
+			Debug.Log (HighScoreData);
+
+            return AllHighScorers;
         }
 
-        #endregion
+        #endregion methods
     }
 }

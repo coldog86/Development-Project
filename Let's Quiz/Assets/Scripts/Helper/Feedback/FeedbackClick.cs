@@ -6,7 +6,9 @@ namespace _LetsQuiz
     {
         #region variables
 
-        public AudioSource source;
+        [Header("Component")]
+        private static GameObject _instance;
+        private static AudioSource _source;
 
         #endregion
 
@@ -14,18 +16,23 @@ namespace _LetsQuiz
 
         #region unity
 
-        private void Start()
+        private static void Create()
         {
-            DontDestroyOnLoad(gameObject);
+            _instance = Instantiate(Resources.Load<GameObject>("Feedback/Click"));
         }
 
         #endregion
 
         #region audio specific
 
-        public void Play()
-        {
-            source.Play();
+        public static void Play()
+        { 
+            Create();
+            _source = _instance.GetComponent<AudioSource>();
+            _source.Play();
+
+            if (!_source.isPlaying)
+                Destroy(_instance);
         }
 
         #endregion

@@ -3,51 +3,40 @@ using UnityEngine;
 
 namespace _LetsQuiz
 {
-    public class SubmitScore : MonoBehaviour
+    public class Downvote : MonoBehaviour
     {
         #region variables
 
         private float _connectionTimer = 0.0f;
-        private const float _connectionTimeLimit = 1000000.0f;
+        private const float _connectionTimeLimit = 100000.0f;
 
-        private PlayerController _playerController;
-
-        #endregion
+        #endregion variables
 
         #region methods
 
         #region unity
 
-        private void Start()
-        {
-            DontDestroyOnLoad(gameObject);
-        }
-
-        #endregion
+        #endregion unity
 
         #region submit specific
 
-		public void SubmitScores(string name, int rightQuestions, int playerScore)
+        public void Dvote(QuestionData currentQuestion)
         {
-			StartCoroutine(Submit(name, rightQuestions, playerScore));
+            StartCoroutine(vote(currentQuestion));
         }
 
-        private IEnumerator Submit(string username, int questionsRight, int score)
+        private IEnumerator vote(QuestionData currentQuestion)
         {
             WWWForm form = new WWWForm();
 
-            string s = score.ToString();
+            form.AddField("questionPost", currentQuestion.questionText);
 
-            form.AddField("usernamePost", username);
-            form.AddField("scorePost", score);
-			form.AddField("questionsCorrectPost", questionsRight);
+            WWW submitRequest = new WWW(ServerHelper.Host + ServerHelper.Downvote, form);
 
-            WWW submitRequest = new WWW(ServerHelper.Host + ServerHelper.SubmitHighScore, form);
+            _connectionTimer += Time.deltaTime;
 
             while (!submitRequest.isDone)
             {
-                _connectionTimer += Time.deltaTime;
-
                 if (_connectionTimer > _connectionTimeLimit)
                 {
                     FeedbackAlert.Show("Server time out.");
@@ -61,7 +50,7 @@ namespace _LetsQuiz
                     FeedbackAlert.Show("Server error.");
                     Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
                     yield return null;
-                }    
+                }
             }
 
             if (submitRequest.error != null)
@@ -73,14 +62,14 @@ namespace _LetsQuiz
 
             if (submitRequest.isDone)
             {
-                Debug.Log("Score submitted");    
+                Debug.Log("Downvote submitted");
                 yield return submitRequest;
-                DestroyObject(gameObject); 
+                DestroyObject(gameObject);
             }
         }
 
-        #endregion
+        #endregion submit specific
 
-        #endregion
+        #endregion methods
     }
 }

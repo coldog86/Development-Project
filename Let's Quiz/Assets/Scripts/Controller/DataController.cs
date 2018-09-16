@@ -1,108 +1,128 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace _LetsQuiz
 {
-    public class DataController : MonoBehaviour
+    public class DataController : Singleton<DataController>
     {
         #region variables
 
         [Header("Components")]
         private GetAllQuestions _questionDownload;
-        private GetHighScores _highscoreDownload;
-		private GetPlayerQuestionSubmissions _questandSub;
-        private PlayerController _playerController;
-        private SettingsController _settingsController;
-        private QuestionController _questionController;
-        private HighscoreController _highScoreController;
 
-        [Header("Player")]
-        private Player _player;
-        private string _playerString = "";
+        private GetHighScores _highscoreDownload;
+        private GetPlayerQuestionSubmissions _questAndSub;
 
         [Header("Connection")]
         private const float _connectionTimeLimit = 1000000.0f;
+
         private float _connectionTimer = 0.0f;
 
         [Header("Validation Tests")]
         private string _username = "u";
+
         private string _password = "p";
         private int _status = -2;
 
-
-        public OngoingGamesData ongoingGameData {get; set;}
-        public int turnNumber {get; set;}
-        public int gameNumber { get; set; }
-
-        #endregion
+        #endregion variables
 
         #region properties
 
-        public bool serverConnected { get; set; }
+        public Player Player { get; set; }
+        public OngoingGamesData OngoingGameData { get; set; }
+        public QuestionData[] TempQuestionPool { get; set; }
+        public string Catagory { get; set; }
+        public int TurnNumber { get; set; }
+        public int GameNumber { get; set; }
+        public bool ServerConnected { get; set; }
+        public string AllQuestionJSON { get; set; }
+        public string AllHighScoreJSON { get; set; }
+        public bool ConnectionAvailable;
 
-        public string allQuestionJSON { get; set; }
-
-        public string allHighScoreJSON { get; set; }
-
-        #endregion
+        #endregion properties
 
         #region methods
 
         #region unity
 
-        private void Start()
+        protected override void OnEnable()
         {
-			//PlayerPrefs.DeleteKey("col"); PlayerPrefs.DeleteKey("col2"); 
+            base.OnEnable();
             DontDestroyOnLoad(gameObject);
-			turnNumber = 0;
-            _settingsController = GetComponent<SettingsController>();
-            _settingsController.Load();
-
-            _playerController = GetComponent<PlayerController>();
-            _playerController.Load();
-
-            _questionDownload = FindObjectOfType<GetAllQuestions>();
-            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
-
-            _highscoreDownload = FindObjectOfType<GetHighScores>();
-            StartCoroutine(_highscoreDownload.PullAllHighScoresFromServer());
-
-			//add in for the Submitted Questions Highscore table. 
-			_questandSub = GetComponent<GetPlayerQuestionSubmissions>();
-			//StartCoroutine (_questandSub.PullQuestionSubmitters ());
-
-            _questionController = GetComponent<QuestionController>();
-            _questionController.Load();
-
-            _highScoreController = GetComponent<HighscoreController>();
-            _highScoreController.Load();
-
-
-
-            // retrive player username and password from PlayerPrefs if they have an id
-            if (PlayerPrefs.HasKey(_playerController.idKey)) 
-			{//TODO is any of these ever used?
-                _status = _playerController.GetPlayerType();
-                _username = _playerController.GetUsername();
-                _password = _playerController.GetPassword();
-            }
-			
-
-
+            TurnNumber = 0;
+            Player = new Player();
         }
 
-        #endregion
+        private void Start()
+        {
+            Debug.LogFormat("[{0}] Start()", GetType().Name);
+
+            if (PlayerController.Initialised)
+                PlayerController.Instance.Load();
+
+            if (HighscoreController.Initialised)
+                HighscoreController.Instance.Load();
+
+            _questionDownload = FindObjectOfType<GetAllQuestions>();
+            _highscoreDownload = FindObjectOfType<GetHighScores>();
+            _questAndSub = GetComponent<GetPlayerQuestionSubmissions>();
+
+            //check for internet connection
+            checkForConnection();
+
+            if (ConnectionAvailable)
+            {
+                StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+
+                StartCoroutine(_highscoreDownload.PullAllHighScoresFromServer());
+
+                // add in for the Submitted Questions Highscore table.
+                StartCoroutine(_questAndSub.PullQuestionSubmitters());
+
+                if (PlayerController.Initialised)
+                    PlayerController.Instance.SetSavedGames(LoadSavedJSON<SavedGameContainer>(DataHelper.File.SAVE_LOCATION));
+
+                // retrive player username and password from PlayerPrefs if they have an id
+                if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.ID))
+                {
+                    // TODO : is any of these ever used?
+                    // NOTE : used to determine if player has already logged in or not for automatic login
+                    _status = PlayerController.Instance.GetPlayerType();
+                    _username = PlayerController.Instance.GetUsername().ToString();
+                    _password = PlayerController.Instance.GetPassword().ToString();
+                }
+            }
+            else
+            {
+                Debug.LogErrorFormat("[{0}] Start() : Error {1} ", GetType().Name, "No server connection found");
+                _questionDownload.PullSavedQuestionsFromLocal();
+            }
+
+            if (QuestionController.Initialised)
+                QuestionController.Instance.Load();
+
+            if (HighscoreController.Initialised)
+                HighscoreController.Instance.Load();
+
+            List<string> categories = new List<string>();
+
+            if (!File.Exists(DataHelper.File.SAVE_LOCATION))
+                File.WriteAllText(DataHelper.File.SAVE_LOCATION, " { }");
+        }
+
+        #endregion unity
 
         #region server specific
-       
+
         public void Init()
         {
-            if (serverConnected)
+            if (ServerConnected)
             {
                 // check if username and password are stored in PlayerPrefs
-                // if it is login, otherwise load login scene
+                // if it is perform login, else load login scene
                 if (_username != "u" && _password != "p" && (_status == PlayerStatus.LoggedIn || _status == PlayerStatus.Guest))
                     StartCoroutine(Login(_username, _password));
                 else
@@ -110,69 +130,77 @@ namespace _LetsQuiz
             }
             // prompt user if they wish to retry
             else
-                DisplayErrorModal("Error connecting to the server.");
+                DisplayRetryModal("Error connecting to the server.");
         }
 
-        private IEnumerator Login (string username, string password)
-		{
-			WWWForm form = new WWWForm ();
+        private IEnumerator Login(string username, string password)
+        {
+            WWWForm form = new WWWForm();
 
-			form.AddField ("usernamePost", username);
-			form.AddField ("passwordPost", password);
+            form.AddField("usernamePost", username);
+            form.AddField("passwordPost", password);
 
-			WWW loginRequest = new WWW (ServerHelper.Host + ServerHelper.Login, form);
+            WWW loginRequest = new WWW(ServerHelper.Host + ServerHelper.Login, form);
 
-			while (!loginRequest.isDone) {
-				_connectionTimer += Time.deltaTime;
+            _connectionTimer += Time.deltaTime;
 
-				if (_connectionTimer > _connectionTimeLimit) {
-					FeedbackAlert.Show ("Server time out.");
-					Debug.LogError ("DataController : Login() : " + loginRequest.error);
-					yield return null;
-				}
+            while (!loginRequest.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                {
+                    FeedbackAlert.Show("Server time out.");
+                    Debug.LogError("[DataController] Login() :  Server time out : " + loginRequest.error);
+                    yield return null;
+                }
+                else if (loginRequest.error != null)
+                {
+                    FeedbackAlert.Show("Connection error. Please try again.");
+                    Debug.LogError("[DataController] Login() : Server error " + loginRequest.error);
+                    yield return null;
+                }
+                // extra check just to ensure a stream error doesn't come up
+                else if (_connectionTimer > _connectionTimeLimit && loginRequest.error != null)
+                {
+                    FeedbackAlert.Show("Server error.");
+                    Debug.LogError("[DataController] Login() : Server error : " + loginRequest.error);
+                    yield return null;
+                }
+            }
 
-				// extra check just to ensure a stream error doesn't come up
-				if (_connectionTimer > _connectionTimeLimit || loginRequest.error != null) {
-					FeedbackAlert.Show ("Server error.");
-					Debug.LogError ("DataController : Login() : " + loginRequest.error);
-					yield return null;
-				}    
-			}
+            if (loginRequest.isDone && loginRequest.error != null)
+            {
+                FeedbackAlert.Show("Connection error. Please try again.");
+                Debug.LogError("[DataController] Login() : Server error " + loginRequest.error);
+                yield return null;
+            }
 
-			if (loginRequest.error != null) {
-				FeedbackAlert.Show ("Connection error. Please try again.");
-				Debug.Log ("DataController : Login() : " + loginRequest.error);
-				yield return null;
-			}
+            if (loginRequest.isDone)
+            {
+                // check that the login request returned something
+                if (!string.IsNullOrEmpty(loginRequest.text))
+                {
+                    Player = JsonUtility.FromJson<Player>(loginRequest.text);
 
-			if (loginRequest.isDone) {
-				// check that the login request returned something
-				if (!String.IsNullOrEmpty (loginRequest.text)) {
-					_playerString = loginRequest.text;
-					Debug.Log (_playerString);
-					_player = new Player();  //TODO Chanes can you look at the whole player and playercontroller and get rid of what we don't need please?
-					_player = JsonUtility.FromJson<Player>(_playerString);
-					Debug.Log(_player.ID);
-
-					// if the retrieved login text doesn't have "ID" load login scene
-					if (!_playerString.Contains ("ID")) {
-						SceneManager.LoadScene (BuildIndex.Login);
-						yield return null;
-					}
+                    // if the retrieved login text doesn't have "ID" load login scene
+                    if (!loginRequest.text.Contains("ID"))
+                    {
+                        SceneManager.LoadScene(BuildIndex.Login);
+                        yield return null;
+                    }
                     // otherwise save the player information to PlayerPrefs and load menu scene
-                    else {
-						_player = PlayerJsonHelper.LoadPlayerFromServer (_playerString);
-						
+                    else
+                    {
+                        Player = JsonUtility.FromJson<Player>(loginRequest.text);
 
-						if (_player != null) {
-							_playerController.Save (_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted, 
-								_player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore, 
-								_player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
+                        if (Player != null)
+                        {
+                            PlayerController.Instance.Save(Player.ID, Player.username, Player.email, Player.password, Player.DOB, Player.questionsSubmitted,
+                                                           Player.numQuestionsSubmitted, Player.numGamesPlayed, Player.totalPointsScore,
+                                                           Player.TotalCorrectAnswers, Player.totalQuestionsAnswered);
 
-							FeedbackAlert.Show ("Welcome back " + _username);
+                            FeedbackAlert.Show("Welcome back " + _username);
+                        }
 
-
-						}
                         SceneManager.LoadScene(BuildIndex.Menu);
                         yield return loginRequest;
                     }
@@ -182,38 +210,117 @@ namespace _LetsQuiz
 
         private void RetryPullData()
         {
-            Debug.Log("DataController : RetryPullData()");
-            FeedbackAlert.Show("Retrying connection...", 1.0f);
-            StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+            Debug.Log("[DataController] RetryPullData()");
+            //FeedbackAlert.Show("Retrying connection...", 1.0f);  //alert breaking game
+            checkForConnection();
+            if (ConnectionAvailable)
+            {
+                StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
+            }
+            else
+            {
+                Debug.Log("no server connected");
+                DisplayRetryModal("Still no server connection");
+            }
         }
 
-        #endregion
+        #endregion server specific
 
         #region feedback specific
 
         // positive action - retry question download
         // negative action - quit application
-        private void DisplayErrorModal(string message)
+        private void DisplayRetryModal(string message)
         {
-            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "No", RetryPullData, Application.Quit);
+            FeedbackTwoButtonModal.Show("Error!", message + "\nDo you wish to retry?", "Yes", "Play offline", RetryPullData, offlineLoadState);
+            //No option to play offline, changing "no" answer to load an offline state
         }
 
-		public int getOverAllScore()
-		{
-			if(_playerController.userScore > ongoingGameData.playerScore)
-				ongoingGameData.overAllScore =-1; //opponent won the round
-			if(_playerController.userScore < ongoingGameData.playerScore)
-				ongoingGameData.overAllScore =+1; //player won the round
+        public int getOverAllScore()
+        {
+            if (PlayerController.Instance.UserScore > OngoingGameData.playerScore)
+            {
+                OngoingGameData.overAllScore = -1; //opponent won the round
 
-			return ongoingGameData.overAllScore;
-		}
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Uh-Oh!", "You lost your game!");
+            }
 
+            if (PlayerController.Instance.UserScore < OngoingGameData.playerScore)
+            {
+                OngoingGameData.overAllScore = +1; //player won the round
 
-        #endregion
+                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
+                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Woo-Hoo!", "You won your game!");
+            }
 
-        #endregion
+            return OngoingGameData.overAllScore;
+        }
 
-		
+        #endregion feedback specific
 
+        #region offline redun
+
+        // extract JSON and extract to array of SavedGame[]
+        // save to PlayerController.
+        public SavedGameContainer LoadSavedJSON<SavedGameContainer>(string location) where SavedGameContainer : new()
+        {
+            Debug.Log("[DataController] Load() : " + location);
+
+            if (File.Exists(location))
+            {
+                var data = File.ReadAllText(location);
+                return JsonUtility.FromJson<SavedGameContainer>(data);
+            }
+            else return new SavedGameContainer();
+        }
+
+        // SavetoJSON
+        // saves current rounds into persistent data
+        public void SaveSavedJSON<SavedGameContainer>(string location, SavedGameContainer games)
+        {
+            Debug.Log("[DataController] Save() : " + location);
+
+            if (File.Exists(location))
+            {
+                var data = JsonUtility.ToJson(games, true);
+                File.WriteAllText(location, data);
+            }
+            else
+                File.WriteAllText(location, "{ }");
+        }
+
+        public void checkForConnection()
+        {
+            //testing for network connectivity
+            switch (Application.internetReachability)
+            {
+                case NetworkReachability.NotReachable:
+                    ConnectionAvailable = false;
+                    break;
+
+                case NetworkReachability.ReachableViaCarrierDataNetwork:
+                    ConnectionAvailable = true;
+                    break;
+
+                case NetworkReachability.ReachableViaLocalAreaNetwork:
+                    ConnectionAvailable = true;
+                    break;
+            }
+        }
+
+        //create an offline state, similar to normal but with quest parameters
+        private void offlineLoadState()
+        {
+            PlayerController.Instance.PlayerType = PlayerStatus.Guest;
+            DataController.Instance.TurnNumber = 0;
+
+            //loads the menu scene
+            SceneManager.LoadScene(BuildIndex.Menu);
+        }
+
+        #endregion offline redun
+
+        #endregion methods
     }
 }

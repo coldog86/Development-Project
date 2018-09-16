@@ -9,66 +9,62 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Component")]
-        public GameObject prefab;
-        public static FeedbackAlert instance;
-        GameObject _alert;
-
+        private static FeedbackAlert _instance;
         private static Text _message;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
         // creates the alert instance
-        private void Awake()
+        private static void Create()
         {
             // create instance of alert prefab as gameobject
-            _alert = Instantiate(prefab);
+            _instance = Instantiate(Resources.Load<FeedbackAlert>("Feedback/Alert"));
 
-            // ensure everything sticks around like a bad smell
-            DontDestroyOnLoad(gameObject);
-            DontDestroyOnLoad(_alert);
-
-            // find all the required components
-            _message = _alert.GetComponentInChildren<Text>();
-
-            // set instance
-            instance = this;
+            _message = _instance.GetComponentInChildren<Text>();
 
             // deactivate alert
-            instance._alert.SetActive(false);
+            _instance.gameObject.SetActive(false);
         }
 
         // used to show the alert from external sources
         // time is optional
-        public static void Show(string message, float time = 2.5f)
+        public static void Show(string message, float time = 2.0f)
         {
-            // set the message text 
+            Create();
+
+            // set the message text
             _message.text = message;
 
             // after everything has been set, show the alert
-            instance._alert.SetActive(true);
+            _instance.gameObject.SetActive(true);
 
             // start coroutine to hide alert if time is greater than zero
             if (time > 0)
-                instance.StartCoroutine(Hide(time));
+                _instance.GetComponent<FeedbackAlert>().StartCoroutine(Hide(time));
         }
 
         // used to hide the alert from external sources if time is set to zero
         public static void Hide()
         {
-            // hide the modal
-            instance._alert.SetActive(false);
+            // hide the alert
+            _instance.gameObject.SetActive(false);
+
+            if (!_instance.gameObject.activeInHierarchy)
+                Destroy(_instance);
         }
 
         // used to hide the alert from internal source is time is set to greater than zero
         private static IEnumerator Hide(float time)
         {
+            // hide the alert
             yield return new WaitForSeconds(time);
-            instance._alert.SetActive(false);
+
+            if (!_instance.gameObject.activeInHierarchy)
+                Destroy(_instance);
         }
 
-        #endregion
+        #endregion methods
     }
 }
-

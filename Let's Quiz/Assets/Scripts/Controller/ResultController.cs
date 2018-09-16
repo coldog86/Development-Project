@@ -1,3 +1,4 @@
+using Facebook.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,24 +13,23 @@ namespace _LetsQuiz
 
         [Header("Components")]
         public Image backgroundEffect;
+
         public Text score;
         public Text username;
         public Text rankText;
         public Text rank;
         public Text worldText;
         public GameObject finalResultsPanel;
+        public GameObject shareButton;
+        public Text WinnerText;
 
-		[Header("Connection")]
-		public float connectionTimer = 0;
-		public const float connectionTimeLimit = 10000.0f;
+        private float _connectionTimer = 0.0f;
+        private const float _connectionTimeLimit = 1000000.0f;
 
-		private int _ranking;
-        private FeedbackClick _click;
+        private int _ranking;
         private FeedbackMusic _music;
-        private PlayerController _playerController;
-        private DataController _dataController;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -37,15 +37,18 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-            _click = FindObjectOfType<FeedbackClick>();
             _music = FindObjectOfType<FeedbackMusic>();
-            _playerController = FindObjectOfType<PlayerController>();      
-			_dataController = FindObjectOfType<DataController>();          
+            _music.PlayBackgroundMusic();
+
+            if (!FB.IsLoggedIn)
+            {
+                shareButton.SetActive(false);
+            }
         }
 
         private void Start()
-        { 
-            if (_playerController.GetPlayerType() == PlayerStatus.LoggedIn)
+        {
+            if (PlayerController.Instance.GetPlayerType() == PlayerStatus.LoggedIn)
             {
                 score.enabled = true;
                 username.enabled = true;
@@ -61,11 +64,19 @@ namespace _LetsQuiz
                 rankText.enabled = true;
                 worldText.enabled = false;
             }
-			if(_dataController.turnNumber == 6){
-				finalResultsPanel.SetActive(true);
-			}
+            if (DataController.Instance.TurnNumber == 6)
+            {
+                finalResultsPanel.SetActive(true);
+
+                if (DataController.Instance.OngoingGameData.overAllScore == -1)
+                    WinnerText.text = DataController.Instance.OngoingGameData.opponent + " won";
+
+                if (DataController.Instance.OngoingGameData.overAllScore == 1)
+                    WinnerText.text = DataController.Instance.OngoingGameData.player + " won";
+            }
 
             StartCoroutine(FindRanking());
+            submitRanking();
             Display();
         }
 
@@ -75,26 +86,26 @@ namespace _LetsQuiz
             backgroundEffect.transform.Rotate(Vector3.forward * Time.deltaTime * 7.0f);
         }
 
-        #endregion
+        #endregion unity
 
         #region user feedback
 
         private void Display()
         {
-            if (_playerController.GetPlayerType() == PlayerStatus.LoggedIn)
+            if (PlayerController.Instance.GetPlayerType() == PlayerStatus.LoggedIn)
             {
-                score.text = _playerController.userScore.ToString();
-                username.text = _playerController.GetUsername();
+                score.text = PlayerController.Instance.UserScore.ToString();
+                username.text = PlayerController.Instance.GetUsername();
             }
             else
             {
-                username.text = _playerController.GetUsername();
+                username.text = PlayerController.Instance.GetUsername();
                 rankText.text = "Your final score was";
-                rank.text = _playerController.userScore.ToString();
+                rank.text = PlayerController.Instance.UserScore.ToString();
             }
         }
 
-        #endregion
+        #endregion user feedback
 
         #region rank specific
 
@@ -104,33 +115,33 @@ namespace _LetsQuiz
 
             WWW download = new WWW(ServerHelper.Host + ServerHelper.GetRanking);
 
+            _downloadTimer += Time.deltaTime;
+
             while (!download.isDone)
             {
-                if (_downloadTimer < 0)
+                if (_connectionTimer > _connectionTimeLimit)
                 {
-                    Debug.LogError("ResultController : FindRanking(): " + download.error);
-                    break;
+                    Debug.LogErrorFormat("[{0}] FindRanking() : Error {1}", GetType().Name, download.error);
+                    yield return null;
                 }
-                _downloadTimer -= Time.deltaTime;
-
-                yield return null;
             }
 
             if (!download.isDone || download.error != null)
             {
-                /* if we cannot connect to the server or there is some error in the data, 
+                /* if we cannot connect to the server or there is some error in the data,
                  * check the prefs for previously saved questions */
-                Debug.LogError("ResultController : FindRanking(): " + download.error);
-                Debug.Log("Failed to hit the server.");
+                Debug.LogErrorFormat("[{0}] FindRanking() : Error {1}", GetType().Name, download.error);
+                Debug.LogErrorFormat("[{0}] FindRanking() : Error : Failed to hit the server.");
                 yield return null;
             }
-            else
-            { 
+
+            if (download.isDone)
+            {
                 // we got the string from the server, it is every question in JSON format
-                Debug.Log("ResultController: FindRanking() : " + download.text);
+                Debug.LogFormat("[{0}] FindRanking() : {1}", GetType().Name, download.text);
                 yield return download;
                 calculateRanking(download.text);
-            } 
+            }
         }
 
         private void calculateRanking(string s)
@@ -141,91 +152,80 @@ namespace _LetsQuiz
             for (int i = 0; i < lines.Count; i++)
                 list.Add(int.Parse(lines[i]));
 
-			list.Sort();
-			_ranking = 0;
-			for (int i = list.Count-1; i > 0; i--)
+            list.Sort();
+            _ranking = 0;
+            for (int i = list.Count - 1; i > 0; i--)
             {
-				if (_playerController.userScore <= list[i])
+                if (PlayerController.Instance.UserScore <= list[i])
                     _ranking = i - 1;
             }
 
-			rank.text = (list.Count- _ranking) + " out of " + list.Count;
-			submitRanking ();
+            rank.text = (list.Count - _ranking) + " out of " + list.Count;
         }
 
-		private bool submitRanking()
-		{
-			WWWForm form = new WWWForm();
+        private void submitRanking()
+        {
+            WWWForm form = new WWWForm();
 
-			form.AddField("username", _playerController.GetUsername());
-			form.AddField("score", _playerController.userScore);
+            form.AddField("username", PlayerController.Instance.GetUsername());
+            form.AddField("score", PlayerController.Instance.UserScore);
 
-			WWW submitRank = new WWW(ServerHelper.Host + ServerHelper.SetRanking, form);
+            WWW submitRank = new WWW(ServerHelper.Host + ServerHelper.SetRanking, form);
 
-			while (!submitRank.isDone)
-			{ 
-				connectionTimer += Time.deltaTime;
-				FeedbackAlert.Show("Attempting to submit ranking.");
+            _connectionTimer += Time.deltaTime;
 
-				if (connectionTimer > connectionTimeLimit)
-				{
-					FeedbackAlert.Show("Server time out.");
-					Debug.LogError("ResultController : ValidSubmission() : " + submitRank.error);
-					Debug.Log(submitRank.text);
-					return false;
-				}
+            while (!submitRank.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                {
+                    FeedbackAlert.Show("Server time out.");
+                    Debug.LogError("ResultController : ValidSubmission() : " + submitRank.error);
+                    Debug.Log(submitRank.text);
+                    return;
+                }
 
-				// extra check just to ensure a stream error doesn't come up
-				if (connectionTimer > connectionTimeLimit || submitRank.error != null)
-				{
-					FeedbackAlert.Show("Server time out.");
-					Debug.LogError("ResultController : ValidSubmission() : " + submitRank.error);
-					Debug.Log(submitRank.text);
-					return false;
-				}
-			}
+                // extra check just to ensure a stream error doesn't come up
+                if (_connectionTimer > _connectionTimeLimit || submitRank.error != null)
+                {
+                    FeedbackAlert.Show("Server time out.");
+                    Debug.LogErrorFormat("[{0}] submitRanking() : Error {1} ", GetType().Name, submitRank.error);
+                    Debug.Log(submitRank.text);
+                    return;
+                }
+            }
 
-			if (submitRank.error != null)
-			{
-				FeedbackAlert.Show("Connection error. Please try again.");
-				Debug.Log("ResultController : ValidSubmission() : " + submitRank.error);
-				return false;
-			}
+            if (submitRank.error != null)
+            {
+                FeedbackAlert.Show("Connection error. Please try again.");
+                Debug.LogErrorFormat("[{0}] submitRanking() : Error {1} ", GetType().Name, submitRank.error);
+                return;
+            }
 
-			if (submitRank.isDone)
-			{
-				if (!string.IsNullOrEmpty(submitRank.text))
-				{
-					Debug.Log(submitRank.text);
-					return true;
-				}
-				else
-					return false;
-			}
-			return false;
-		}
-			
+            if (submitRank.isDone)
+            {
+                if (!string.IsNullOrEmpty(submitRank.text))
+                {
+                    Debug.LogFormat("[{0}] submitRanking() : {1}", GetType().Name, submitRank.text);
+                    return;
+                }
+            }
+        }
 
-
-        #endregion
+        #endregion rank specific
 
         #region user interaction
 
-        public void ShareResults()
-        {
-            _click.Play();
-            FeedbackAlert.Show("Share results");
-        }
-
         public void BackToMenu()
         {
-            _click.Play();
-            _music.PlayBackgroundMusic();
-            SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
+            FeedbackClick.Play();
+			SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
+            DestroyImmediate(GameLobbyController.Instance.gameObject);
+            DestroyImmediate(MenuController.Instance.gameObject);
+            
         }
 
-        #endregion
+        #endregion user interaction
 
-        #endregion
+        #endregion methods
     }
 }

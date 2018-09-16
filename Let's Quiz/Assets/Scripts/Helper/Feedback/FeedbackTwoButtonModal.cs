@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace _LetsQuiz
 {
@@ -9,9 +9,7 @@ namespace _LetsQuiz
         #region variables
 
         [Header("Component")]
-        public GameObject prefab;
-        public static FeedbackTwoButtonModal instance;
-        private GameObject _modal;
+        private static FeedbackTwoButtonModal _instance;
 
         private static Text _heading;
         private static Text _message;
@@ -20,19 +18,15 @@ namespace _LetsQuiz
         private static Button _negativeButton;
         private static Text _negativeText;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
         // creates the modal instance
-        private void Awake()
+        private static void Create()
         {
             // create instance of modal prefab as gameobject
-            _modal = (GameObject)Instantiate(prefab);
-
-            // ensure everything sticks around like a bad smell
-            DontDestroyOnLoad(gameObject);
-            DontDestroyOnLoad(_modal);
+            _instance = Instantiate(Resources.Load<FeedbackTwoButtonModal>("Feedback/ModalTwoButton"));
 
             // find all the required components
             _heading = GameObject.FindGameObjectWithTag("Modal_Heading").GetComponent<Text>();
@@ -42,21 +36,20 @@ namespace _LetsQuiz
             _negativeButton = GameObject.FindGameObjectWithTag("Modal_Negative").GetComponentInChildren<Button>();
             _negativeText = _negativeButton.GetComponentInChildren<Text>();
 
-            // set instance
-            instance = this;
-
             // deactivate modal
-            instance._modal.SetActive(false);
+            _instance.gameObject.SetActive(false);
         }
 
         // used to show the modal from external sources
         // closeOnAction is optional - might wish to not close it on action
-        public static void Show(string heading, string message, string postive, string negative, UnityAction positiveAction, UnityAction negativeAction, bool closeOnAction = true)
+        public static void Show(string heading, string message, string positive, string negative, UnityAction positiveAction, UnityAction negativeAction, bool closeOnAction = true)
         {
-            // set the heading, message, and button text 
+            Create();
+
+            // set the heading, message, and button text
             _heading.text = heading;
             _message.text = message;
-            _positiveText.text = postive;
+            _positiveText.text = positive;
             _negativeText.text = negative;
 
             // set the actions of the buttons
@@ -71,17 +64,19 @@ namespace _LetsQuiz
             }
 
             // after everything has been set, show the modal
-            instance._modal.SetActive(true);
+            _instance.gameObject.SetActive(true);
         }
 
         // used to hide the modal from external sources
         public static void Hide()
         {
             // hide the modal
-            instance._modal.SetActive(false);
+            _instance.gameObject.SetActive(false);
+
+            if (!_instance.gameObject.activeInHierarchy)
+                Destroy(_instance);
         }
 
-        #endregion
+        #endregion methods
     }
 }
-

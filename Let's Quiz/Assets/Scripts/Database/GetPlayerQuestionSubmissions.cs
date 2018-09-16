@@ -3,83 +3,96 @@ using UnityEngine;
 
 namespace _LetsQuiz
 {
-	public class GetPlayerQuestionSubmissions : MonoBehaviour
-	{
-		#region variables
+    public class GetPlayerQuestionSubmissions : MonoBehaviour
+    {
+        #region variables
 
-		private float _downloadTimer = 5.0f;
+        private float _downloadTimer = 5.0f;
 
-		private DataController _dataController;
-		private PlayerController _playerController;
+        #endregion variables
 
-		#endregion
+        #region properties
 
-		#region methods
+        public DataController DataController
+        {
+            get
+            {
+                if (DataController.Initialised)
+                    return DataController.Instance;
+                else return null;
+            }
+        }
+        public PlayerController PlayerController
+        {
+            get
+            {
+                if (PlayerController.Initialised)
+                    return PlayerController.Instance;
+                else return null;
+            }
+        }
 
-		#region unity
+        #endregion properties
 
-		private void Start()
-		{
-			_dataController = FindObjectOfType<DataController>();
-			_playerController = FindObjectOfType<PlayerController>();
-			//StartCoroutine (PullQuesionSubmitters ());
-			Debug.Log ("Player Submissions Stuff Load()");
-		}
+        #region methods
 
-		#endregion
+        #region unity
 
-		#region download specific
+        private void Start()
+        {
+            // StartCoroutine(PullQuesionSubmitters ());
+            // Debug.Log("[GetPlayerQuestionSubmissions] Start() : Load Player Submission");
+        }
 
-		public IEnumerator PullQuestionSubmitters()
-		{
-			WWW download = new WWW(ServerHelper.Host + ServerHelper.GetQuestionSubmissionStuff);
-			while (!download.isDone)
-			{
-				if (_downloadTimer < 0)
-				{
-					Debug.LogError("Server time out.");
-					_dataController.serverConnected = false;
-					break;
-				}
-				_downloadTimer -= Time.deltaTime;
+        #endregion unity
 
-				yield return null;
-			}
+        #region download specific
 
-			if (!download.isDone || download.error != null)
-			{
-				/* if we cannot connect to the server or there is some error in the data, 
+        public IEnumerator PullQuestionSubmitters()
+        {
+            WWW download = new WWW(ServerHelper.Host + ServerHelper.GetQuestionSubmissionStuff);
+
+            while (!download.isDone)
+            {
+                if (_downloadTimer < 0)
+                {
+                    Debug.LogError("[GetPlayerQuestionSubmissions] PullQuestionsFromServer() : Server time out.");
+                    DataController.ServerConnected = false;
+                    break;
+                }
+                _downloadTimer -= Time.deltaTime;
+
+                yield return null;
+            }
+
+            if (!download.isDone || download.error != null)
+            {
+                /* if we cannot connect to the server or there is some error in the data,
                  * check the prefs for previously saved questions */
-				Debug.LogError(download.error);
-				Debug.Log("Failed to hit the server.");
-				_dataController.serverConnected = false;               
-			}
-			else
-			{ 
-				// we got the string from the server, it is every question in JSON format
-				Debug.Log("Question Subbmission stuff = ");
-				Debug.Log(download.text);
-				handleData (download.text);
-				yield return download;
+                Debug.LogError(download.error);
+                Debug.Log("[GetPlayerQuestionSubmissions] PullQuestionsFromServer() : Failed to hit the server.");
+                DataController.ServerConnected = false;
+            }
+            else
+            {
+                // we got the string from the server, it is every question in JSON format
+                Debug.Log("[GetPlayerQuestionSubmissions] PullQuestionsFromServer() : Questions: " + download.text);
+                HandleData(download.text);
+                yield return download;
+            }
+        }
 
-			} 
-		}
+        private void HandleData(string json)
+        {
+            QuestAndSubContainer qsc = new QuestAndSubContainer();
+            json = "{\"dataForQuestAndSub\":" + json + "}"; //you have to do this because you cannot serialize directly into an array, you need an object that holds the array
+            qsc = JsonUtility.FromJson<QuestAndSubContainer>(json);//now we have an object that holds our array of questAndSub objects
+            QuestAndSub[] _questAndSub = qsc.dataForQuestAndSub; //fuck off the container and there is your array of stuff
+            PlayerController.SetQuestandSubData(_questAndSub);
+        }
 
+        #endregion download specific
 
-		private void handleData(string json)
-		{
-			QuestAndSubContainer qsc = new QuestAndSubContainer ();
-			json = "{\"dataForQuestAndSub\":" + json + "}"; //you have to do this because you cannot serialize directly into an array, you need an object that holds the array
-			qsc = JsonUtility.FromJson<QuestAndSubContainer> (json);//now we have an object that holds our array of questAndSub objects
-			QuestAndSub[] _questAndSub = qsc.dataForQuestAndSub; //fuck off the container and there is your array of stuff
-			_playerController.SetQuestandSubData(_questAndSub);
-
-		}
-
-		#endregion
-
-		#endregion
-
-	}
+        #endregion methods
+    }
 }
-

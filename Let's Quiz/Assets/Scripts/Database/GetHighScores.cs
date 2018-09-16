@@ -9,24 +9,34 @@ namespace _LetsQuiz
 
         private float _downloadTimer = 5.0f;
 
-        private DataController _dataController;
-        private PlayerController _playerController;
-
-        #endregion
+        #endregion variables
 
         #region methods
 
-        #region unity
+        #region properties
 
-        private void Start()
+        public DataController DataController
         {
-            _dataController = FindObjectOfType<DataController>();
-            _playerController = FindObjectOfType<PlayerController>();
+            get
+            {
+                if (DataController.Initialised)
+                    return DataController.Instance;
+                else return null;
+            }
+        }
+        public PlayerController PlayerController
+        {
+            get
+            {
+                if (PlayerController.Initialised)
+                    return PlayerController.Instance;
+                else return null;
+            }
         }
 
-        #endregion
+        #endregion properties
 
-        #region download specific
+        #region GetHighScores specific
 
         public IEnumerator PullAllHighScoresFromServer()
         {
@@ -35,8 +45,8 @@ namespace _LetsQuiz
             {
                 if (_downloadTimer < 0)
                 {
-                    Debug.LogError("Server time out.");
-                    _dataController.serverConnected = false;
+                    Debug.LogError("[GetHighScores] PullAllHighScoresFromServer() : Server time out.");
+                    DataController.ServerConnected = false;
                     break;
                 }
                 _downloadTimer -= Time.deltaTime;
@@ -46,33 +56,28 @@ namespace _LetsQuiz
 
             if (!download.isDone || download.error != null)
             {
-                /* if we cannot connect to the server or there is some error in the data, 
+                /* if we cannot connect to the server or there is some error in the data,
                  * check the prefs for previously saved questions */
                 Debug.LogError(download.error);
-                Debug.Log("Failed to hit the server.");
-                _dataController.serverConnected = false;               
+                Debug.Log("[GetHighScores] PullAllHighScoresFromServer() : Failed to hit the server.");
+                DataController.ServerConnected = false;
             }
             else
-            { 
+            {
                 // we got the string from the server, it is every question in JSON format
-                Debug.Log("Vox transmition recieved");
-                Debug.Log(download.text);
-
-                _dataController.serverConnected = true;
-                _dataController.allHighScoreJSON = download.text;
-                //_leaderboardController.setHighScoreData(download.text);
+                Debug.Log("[GetHighScores] PullAllHighScoresFromServer() : Data recieved");
+                DataController.ServerConnected = true;
+                DataController.AllHighScoreJSON = download.text;
 
                 yield return download;
 
-                _playerController.SetHighscoreData(download.text);
-                _dataController.Init();
-            } 
+                PlayerController.SetHighscoreData(download.text);
+                DataController.Init();
+            }
         }
 
-        #endregion
+        #endregion GetHighScores specific
 
-        #endregion
-
+        #endregion methods
     }
 }
-
