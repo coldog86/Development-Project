@@ -98,6 +98,7 @@ namespace _LetsQuiz
 
             PlayerController.Instance.AddToGamesPlayed();
             PlayerController.Instance.UserScore = 0;
+			PlayerController.Instance.NumberOfCorrectQuestions = 0;
             QuestionController.Instance.Load();
 
             if (FirebaseController.Initialised)
@@ -356,8 +357,11 @@ namespace _LetsQuiz
         {
             Debug.Log("GameController : Score(): score called bool = " + answer);
 
-            if (answer)
-                PlayerController.Instance.UserScore = PlayerController.Instance.UserScore + 10;
+			if (answer) 
+			{
+				PlayerController.Instance.UserScore = PlayerController.Instance.UserScore + 10;
+				PlayerController.Instance.NumberOfCorrectQuestions++; 
+			}
 
             if (!answer)
                 PlayerController.Instance.UserScore = PlayerController.Instance.UserScore - 5;
@@ -412,7 +416,7 @@ namespace _LetsQuiz
         public void SubmitHighscoreData()
         {
             _submitScore = FindObjectOfType<SubmitScore>();
-            _submitScore.SubmitScores(PlayerController.Instance.GetUsername(), PlayerController.Instance.UserScore);
+			_submitScore.SubmitScores(PlayerController.Instance.GetUsername(), PlayerController.Instance.NumberOfCorrectQuestions, PlayerController.Instance.UserScore);
             Debug.Log("Highscore Submitting. Player: " + PlayerController.Instance.GetUsername() + " Round Score: " + PlayerController.Instance.UserScore);
         }
 

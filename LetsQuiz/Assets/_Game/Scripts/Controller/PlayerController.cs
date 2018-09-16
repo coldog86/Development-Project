@@ -19,6 +19,7 @@ namespace _LetsQuiz
         public Player Player { get; set; }
         public int PlayerType { get; set; }
         public string HighScoreJSON { get; set; }
+		public int NumberOfCorrectQuestions { get; set;}
         public int UserScore { get; set; }
         public string ScoreStatus { get; set; }
         public SavedGameContainer SavedGames { get; set; }

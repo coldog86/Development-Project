@@ -27,19 +27,20 @@ namespace _LetsQuiz
 
         #region submit specific
 
-        public void SubmitScores(string name, int playerScore)
+		public void SubmitScores(string name, int rightQuestions, int playerScore)
         {
-            StartCoroutine(Submit(name, playerScore));
+			StartCoroutine(Submit(name, rightQuestions, playerScore));
         }
 
-        private IEnumerator Submit(string username, int score)
+        private IEnumerator Submit(string username, int questionsRight, int score)
         {
             WWWForm form = new WWWForm();
 
             string s = score.ToString();
 
             form.AddField("usernamePost", username);
-            form.AddField("scorePost", s);
+            form.AddField("scorePost", score);
+			form.AddField("questionsCorrectPost", questionsRight);
 
             WWW submitRequest = new WWW(ServerHelper.Host + ServerHelper.SubmitHighScore, form);
 

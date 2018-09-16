@@ -40,10 +40,6 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("token", "/topics/all");
-                form.AddField("title", "Let's Quiz");
-                form.AddField("body", "It's Round 2");
-
                 _counter = 1;
 
                 address = ServerHelper.Host + ServerHelper.SubmitRound1Data;
@@ -66,9 +62,9 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("token", "/topics/all");
-                form.AddField("title", "Let's Quiz");
-                form.AddField("body", "It's Round 3");
+                form.AddField("notificationTo", "/topics/all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 2");
 
                 _counter = 2;
 
@@ -91,9 +87,9 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("token", "/topics/all");
-                form.AddField("title", "Let's Quiz");
-                form.AddField("body", "It's Round 4");
+                form.AddField("notificationTo", "/topics/all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 3");
 
                 _counter = 3;
 
@@ -107,9 +103,9 @@ namespace _LetsQuiz
                 form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
                 form.AddField("overAllScorePost", DataController.Instance.getOverAllScore());
 
-                form.AddField("token", "/topics/all");
-                form.AddField("title", "Let's Quiz");
-                form.AddField("body", "It's Round 5");
+                form.AddField("notificationTo", "/topics/all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 4");
 
                 _counter = 4;
 
@@ -125,9 +121,9 @@ namespace _LetsQuiz
                 form.AddField("scorePost", PlayerController.Instance.UserScore);
                 form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
 
-                form.AddField("token", "/topics/all");
-                form.AddField("title", "Let's Quiz");
-                form.AddField("body", "It's Round  6");
+                form.AddField("notificationTo", "/topics/all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 5");
 
                 _counter = 5;
 
@@ -140,12 +136,16 @@ namespace _LetsQuiz
                 address = ServerHelper.Host + ServerHelper.SubmitRound6Data;
                 DataController.Instance.OngoingGameData.opponentScore = +PlayerController.Instance.UserScore;
 
+                form.AddField("notificationTo", "/topics/all");
+                form.AddField("notificationTitle", "Let's Quiz");
+                form.AddField("notificationBody", "It's Round 6");
+
                 _counter = 6;
             }
 
-            WWW submitRequest = new WWW(address, form);
-
             _connectionTimer += Time.deltaTime;
+
+            WWW submitRequest = new WWW(address, form);
 
             while (!submitRequest.isDone)
             {
@@ -178,7 +178,6 @@ namespace _LetsQuiz
             if (submitRequest.isDone)
             {
                 Debug.Log("game data submitted, using data #" + _counter);
-                Debug.LogFormat("[{0}] SubmitRoudData() Response {1}", GetType().Name, submitRequest.text);
                 yield return submitRequest;
                 DestroyObject(gameObject);
             }
