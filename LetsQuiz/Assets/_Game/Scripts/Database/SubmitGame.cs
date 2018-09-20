@@ -24,8 +24,11 @@ namespace _LetsQuiz
         {
             string address = "";
             WWWForm form = new WWWForm();
+
             if (DataController.Instance.TurnNumber == 1)
             {
+                Debug.Log("[SubmitGame] SubmitRoundData() Submitting round 1 data");
+
                 form.AddField("gameNumberPost", DataController.Instance.GameNumber); //TODO need a better way to generate unique game numbers for the first game
                 form.AddField("playerNamePost", PlayerController.Instance.GetUsername());
                 form.AddField("askedQuestionsPost", QuestionController.Instance.GetAskedQuestions());
@@ -40,6 +43,10 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
+                form.AddField("token", "/topics/all");
+                form.AddField("title", "Let's Quiz");
+                form.AddField("body", "It's Round 2");
+
                 _counter = 1;
 
                 address = ServerHelper.Host + ServerHelper.SubmitRound1Data;
@@ -47,7 +54,7 @@ namespace _LetsQuiz
 
             if (DataController.Instance.TurnNumber == 2)
             {
-                Debug.Log("Submitting round 2 data");
+                Debug.Log("[SubmitGame] SubmitRoundData() Submitting round 2 data");
                 form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber); //TODO need a better way to generate unique game numbers for the first game
                 form.AddField("askedQuestionsPost", "nothing");
                 form.AddField("opponentNamePost", PlayerController.Instance.GetUsername());
@@ -62,9 +69,9 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("notificationTo", "/topics/all");
-                form.AddField("notificationTitle", "Let's Quiz");
-                form.AddField("notificationBody", "It's Round 2");
+                form.AddField("token", "/topics/all");
+                form.AddField("title", "Let's Quiz");
+                form.AddField("body", "It's Round 3");
 
                 _counter = 2;
 
@@ -73,7 +80,7 @@ namespace _LetsQuiz
 
             if (DataController.Instance.TurnNumber == 3)
             {
-                Debug.Log("Submitting round 3 data");
+                Debug.Log("[SubmitGame] SubmitRoundData() Submitting round 3 data");
                 form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber);
                 form.AddField("askedQuestionsPost", QuestionController.Instance.GetAskedQuestions());
                 form.AddField("Round2CatagoryPost", DataController.Instance.Catagory.ToString());
@@ -87,9 +94,9 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("notificationTo", "/topics/all");
-                form.AddField("notificationTitle", "Let's Quiz");
-                form.AddField("notificationBody", "It's Round 3");
+                form.AddField("token", "/topics/all");
+                form.AddField("title", "Let's Quiz");
+                form.AddField("body", "It's Round 4");
 
                 _counter = 3;
 
@@ -97,15 +104,15 @@ namespace _LetsQuiz
             }
             if (DataController.Instance.TurnNumber == 4)
             {
-                Debug.Log("Submitting round 4 data");
+                Debug.Log("[SubmitGame] SubmitRoundData() Submitting round 4 data");
                 form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber);
                 form.AddField("scorePost", PlayerController.Instance.UserScore);
                 form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
                 form.AddField("overAllScorePost", DataController.Instance.getOverAllScore());
 
-                form.AddField("notificationTo", "/topics/all");
-                form.AddField("notificationTitle", "Let's Quiz");
-                form.AddField("notificationBody", "It's Round 4");
+                form.AddField("token", "/topics/all");
+                form.AddField("title", "Let's Quiz");
+                form.AddField("body", "It's Round 5");
 
                 _counter = 4;
 
@@ -113,7 +120,7 @@ namespace _LetsQuiz
             }
             if (DataController.Instance.TurnNumber == 5)
             {
-                Debug.Log("Submitting round 5 data");
+                Debug.Log("[SubmitGame] SubmitRoundData() Submitting round 5 data");
                 form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber);
                 form.AddField("askedQuestionsPost", QuestionController.Instance.GetAskedQuestions());
                 form.AddField("Round3CatagoryPost", DataController.Instance.Catagory.ToString());
@@ -121,9 +128,9 @@ namespace _LetsQuiz
                 form.AddField("scorePost", PlayerController.Instance.UserScore);
                 form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
 
-                form.AddField("notificationTo", "/topics/all");
-                form.AddField("notificationTitle", "Let's Quiz");
-                form.AddField("notificationBody", "It's Round 5");
+                form.AddField("token", "/topics/all");
+                form.AddField("title", "Let's Quiz");
+                form.AddField("body", "It's Round 6");
 
                 _counter = 5;
 
@@ -132,13 +139,10 @@ namespace _LetsQuiz
 
             if (DataController.Instance.TurnNumber == 6)
             {
+                Debug.Log("[SubmitGame] SubmitRoundData() Submitting round 6 data");
                 form.AddField("gameNumberPost", DataController.Instance.OngoingGameData.gameNumber);
                 address = ServerHelper.Host + ServerHelper.SubmitRound6Data;
                 DataController.Instance.OngoingGameData.opponentScore = +PlayerController.Instance.UserScore;
-
-                form.AddField("notificationTo", "/topics/all");
-                form.AddField("notificationTitle", "Let's Quiz");
-                form.AddField("notificationBody", "It's Round 6");
 
                 _counter = 6;
             }

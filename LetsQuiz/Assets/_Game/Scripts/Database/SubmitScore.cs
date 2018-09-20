@@ -12,7 +12,7 @@ namespace _LetsQuiz
 
         private PlayerController _playerController;
 
-        #endregion
+        #endregion variables
 
         #region methods
 
@@ -23,13 +23,13 @@ namespace _LetsQuiz
             DontDestroyOnLoad(gameObject);
         }
 
-        #endregion
+        #endregion unity
 
         #region submit specific
 
-		public void SubmitScores(string name, int rightQuestions, int playerScore)
+        public void SubmitScores(string name, int rightQuestions, int playerScore)
         {
-			StartCoroutine(Submit(name, rightQuestions, playerScore));
+            StartCoroutine(Submit(name, rightQuestions, playerScore));
         }
 
         private IEnumerator Submit(string username, int questionsRight, int score)
@@ -40,7 +40,7 @@ namespace _LetsQuiz
 
             form.AddField("usernamePost", username);
             form.AddField("scorePost", score);
-			form.AddField("questionsCorrectPost", questionsRight);
+            form.AddField("questionsCorrectPost", questionsRight);
 
             WWW submitRequest = new WWW(ServerHelper.Host + ServerHelper.SubmitHighScore, form);
 
@@ -50,37 +50,37 @@ namespace _LetsQuiz
 
                 if (_connectionTimer > _connectionTimeLimit)
                 {
-                    FeedbackAlert.Show("Server time out.");
                     Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
                     yield return null;
+                    FeedbackAlert.Show("Server time out.");
                 }
 
                 // extra check just to ensure a stream error doesn't come up
                 if (_connectionTimer > _connectionTimeLimit || submitRequest.error != null)
                 {
-                    FeedbackAlert.Show("Server error.");
                     Debug.LogError("SubmitScore : Submit() : " + submitRequest.error);
                     yield return null;
-                }    
+                    FeedbackAlert.Show("Server error.");
+                }
             }
 
             if (submitRequest.error != null)
             {
-                FeedbackAlert.Show("Connection error. Please try again.");
                 Debug.Log("SubmitScore : Submit() : " + submitRequest.error);
                 yield return null;
+                FeedbackAlert.Show("Connection error. Please try again.");
             }
 
             if (submitRequest.isDone)
             {
-                Debug.Log("Score submitted");    
+                Debug.Log("Score submitted");
                 yield return submitRequest;
-                DestroyObject(gameObject); 
+                DestroyObject(gameObject);
             }
         }
 
-        #endregion
+        #endregion submit specific
 
-        #endregion
+        #endregion methods
     }
 }

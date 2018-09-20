@@ -67,9 +67,8 @@ namespace _LetsQuiz
         private List<GameObject> _answerButtonGameObjects = new List<GameObject>();
         private AnswerButton _userSelection;
 
-
-		public List<QuestionData> _roundUpvotes = new List<QuestionData>();
-		public List<QuestionData> _roundDownvotes = new List<QuestionData> ();
+        public List<QuestionData> _roundUpvotes = new List<QuestionData>();
+        public List<QuestionData> _roundDownvotes = new List<QuestionData>();
 
         #endregion variables
 
@@ -93,12 +92,12 @@ namespace _LetsQuiz
         {
             _upVote = FindObjectOfType<Upvote>();
             _downVote = FindObjectOfType<Downvote>();
-			_roundUpvotes.Clear ();
-			_roundDownvotes.Clear ();
+            _roundUpvotes.Clear();
+            _roundDownvotes.Clear();
 
             PlayerController.Instance.AddToGamesPlayed();
             PlayerController.Instance.UserScore = 0;
-			PlayerController.Instance.NumberOfCorrectQuestions = 0;
+            PlayerController.Instance.NumberOfCorrectQuestions = 0;
             QuestionController.Instance.Load();
 
             if (FirebaseController.Initialised)
@@ -331,22 +330,22 @@ namespace _LetsQuiz
 
         public void ReportQuestion()
         {
-
             //Debug.Log("****current question is: " + currentQuestionData.questionText);
             //_downVote.Dvote(currentQuestionData);
-			if (!_roundDownvotes.Contains(currentQuestionData)) {
-			_roundDownvotes.Add(currentQuestionData);
-			}
+            if (!_roundDownvotes.Contains(currentQuestionData))
+            {
+                _roundDownvotes.Add(currentQuestionData);
+            }
         }
 
         public void LikeQuestion()
         {
-
             //Debug.Log("****current question is: " + currentQuestionData.questionText);
             //_upVote.Uvote(currentQuestionData);
-			if (!_roundUpvotes.Contains (currentQuestionData)) {
-				_roundUpvotes.Add (currentQuestionData);
-			}
+            if (!_roundUpvotes.Contains(currentQuestionData))
+            {
+                _roundUpvotes.Add(currentQuestionData);
+            }
         }
 
         #endregion like & dislike buttons
@@ -357,11 +356,11 @@ namespace _LetsQuiz
         {
             Debug.Log("GameController : Score(): score called bool = " + answer);
 
-			if (answer) 
-			{
-				PlayerController.Instance.UserScore = PlayerController.Instance.UserScore + 10;
-				PlayerController.Instance.NumberOfCorrectQuestions++; 
-			}
+            if (answer)
+            {
+                PlayerController.Instance.UserScore = PlayerController.Instance.UserScore + 10;
+                PlayerController.Instance.NumberOfCorrectQuestions++;
+            }
 
             if (!answer)
                 PlayerController.Instance.UserScore = PlayerController.Instance.UserScore - 5;
@@ -394,10 +393,9 @@ namespace _LetsQuiz
         {
             _music.Stop();
 
-			SubmitVotes();
+            SubmitVotes();
             SubmitToOngoingGamesDB();
             SubmitHighscoreData();
-
 
             Debug.Log("GameController : EndRound(): End of Round");
             Debug.Log(PlayerController.Instance.ScoreStatus);
@@ -416,24 +414,24 @@ namespace _LetsQuiz
         public void SubmitHighscoreData()
         {
             _submitScore = FindObjectOfType<SubmitScore>();
-			_submitScore.SubmitScores(PlayerController.Instance.GetUsername(), PlayerController.Instance.NumberOfCorrectQuestions, PlayerController.Instance.UserScore);
+            _submitScore.SubmitScores(PlayerController.Instance.GetUsername(), PlayerController.Instance.NumberOfCorrectQuestions, PlayerController.Instance.UserScore);
             Debug.Log("Highscore Submitting. Player: " + PlayerController.Instance.GetUsername() + " Round Score: " + PlayerController.Instance.UserScore);
         }
 
-		public void SubmitVotes() {
-			for (int i = 0; i < _roundUpvotes.Count; i++) {
-				_upVote.Uvote(_roundUpvotes[i]);
-				Debug.Log("****current question is: " + _roundUpvotes[i].questionText);
-			}
+        public void SubmitVotes()
+        {
+            for (int i = 0; i < _roundUpvotes.Count; i++)
+            {
+                _upVote.Uvote(_roundUpvotes[i]);
+                Debug.Log("****current question is: " + _roundUpvotes[i].questionText);
+            }
 
-			for (int i = 0; i < _roundDownvotes.Count; i++) {
-				_downVote.Dvote(_roundDownvotes[i]);
-				Debug.Log("****current question is: " + _roundDownvotes[i].questionText);
-			}
-
-
-		}
-
+            for (int i = 0; i < _roundDownvotes.Count; i++)
+            {
+                _downVote.Dvote(_roundDownvotes[i]);
+                Debug.Log("****current question is: " + _roundDownvotes[i].questionText);
+            }
+        }
 
         #endregion navigation specific
 

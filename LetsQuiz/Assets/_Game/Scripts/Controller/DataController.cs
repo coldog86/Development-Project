@@ -148,30 +148,30 @@ namespace _LetsQuiz
             {
                 if (_connectionTimer > _connectionTimeLimit)
                 {
-                    FeedbackAlert.Show("Server time out.");
                     Debug.LogError("[DataController] Login() :  Server time out : " + loginRequest.error);
                     yield return null;
+                    FeedbackAlert.Show("Server time out.");
                 }
                 else if (loginRequest.error != null)
                 {
-                    FeedbackAlert.Show("Connection error. Please try again.");
                     Debug.LogError("[DataController] Login() : Server error " + loginRequest.error);
                     yield return null;
+                    FeedbackAlert.Show("Connection error. Please try again.");
                 }
                 // extra check just to ensure a stream error doesn't come up
                 else if (_connectionTimer > _connectionTimeLimit && loginRequest.error != null)
                 {
-                    FeedbackAlert.Show("Server error.");
                     Debug.LogError("[DataController] Login() : Server error : " + loginRequest.error);
                     yield return null;
+                    FeedbackAlert.Show("Server error.");
                 }
             }
 
             if (loginRequest.isDone && loginRequest.error != null)
             {
-                FeedbackAlert.Show("Connection error. Please try again.");
                 Debug.LogError("[DataController] Login() : Server error " + loginRequest.error);
                 yield return null;
+                FeedbackAlert.Show("Connection error. Please try again.");
             }
 
             if (loginRequest.isDone)
@@ -214,9 +214,7 @@ namespace _LetsQuiz
             //FeedbackAlert.Show("Retrying connection...", 1.0f);  //alert breaking game
             checkForConnection();
             if (ConnectionAvailable)
-            {
                 StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
-            }
             else
             {
                 Debug.Log("no server connected");
@@ -239,20 +237,10 @@ namespace _LetsQuiz
         public int getOverAllScore()
         {
             if (PlayerController.Instance.UserScore > OngoingGameData.playerScore)
-            {
                 OngoingGameData.overAllScore = -1; //opponent won the round
 
-                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Uh-Oh!", "You lost your game!");
-            }
-
             if (PlayerController.Instance.UserScore < OngoingGameData.playerScore)
-            {
                 OngoingGameData.overAllScore = +1; //player won the round
-
-                if (!string.IsNullOrEmpty(FirebaseController.Instance.Token))
-                    FirebaseController.Instance.CreateNotification(FirebaseController.Instance.Token, "Woo-Hoo!", "You won your game!");
-            }
 
             return OngoingGameData.overAllScore;
         }
