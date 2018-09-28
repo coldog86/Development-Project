@@ -103,13 +103,7 @@ namespace _LetsQuiz
 
                     categorySelection.value = 6;
                 }
-                else
-                {
-                    FeedbackAlert.Show("Submission unsuccesful", 1.0f);
-                }
             }
-
-            FeedbackAlert.Hide();
         }
 
         private bool ValidSubmission(string question, string correctAnswer, string wrong1Answer, string wrong2Answer, string wrong3Answer, string category)
@@ -133,27 +127,27 @@ namespace _LetsQuiz
             {
                 if (connectionTimer > connectionTimeLimit)
                 {
-                    FeedbackAlert.Show("Server time out.");
                     Debug.LogErrorFormat("[{0}] ValidSubmission() : {1}", GetType().Name, submitQuestion.error);
                     Debug.Log(submitQuestion.text);
                     complete = false;
+                    FeedbackAlert.Show("Server time out.");
                 }
 
                 // extra check just to ensure a stream error doesn't come up
                 if (connectionTimer > connectionTimeLimit || submitQuestion.error != null)
                 {
-                    FeedbackAlert.Show("Server time out.");
                     Debug.LogErrorFormat("[{0}] ValidSubmission() : {1}", GetType().Name, submitQuestion.error);
                     Debug.Log(submitQuestion.text);
                     complete = false;
+                    FeedbackAlert.Show("Server time out.");
                 }
             }
 
             if (submitQuestion.error != null)
             {
-                FeedbackAlert.Show("Connection error. Please try again.");
                 Debug.LogErrorFormat("[{0}] ValidSubmission() : {1}", GetType().Name, submitQuestion.error);
                 complete = false;
+                FeedbackAlert.Show("Connection error. Please try again.");
             }
 
             if (submitQuestion.isDone)
@@ -162,10 +156,13 @@ namespace _LetsQuiz
                 {
                     Debug.LogFormat("[{0}] ValidSubmission() : Submission {1}", GetType().Name, submitQuestion.text);
                     complete = true;
+                    FeedbackAlert.Show("Submission successful.");
                 }
                 else
                     complete = false;
             }
+
+            FeedbackAlert.Hide();
 
             return complete;
         }

@@ -7,7 +7,7 @@ namespace _LetsQuiz
     {
         private string _questionPool;
         private int _counter; //just used for testing, so the log can show what was submitted
-        private bool ConnectionAvailable;
+        private bool _connectionAvailable;
 
         private float _connectionTimer = 0.0f;
         private const float _connectionTimeLimit = 1000000.0f;
@@ -193,19 +193,19 @@ namespace _LetsQuiz
             switch (Application.internetReachability)
             {
                 case NetworkReachability.NotReachable:
-                    ConnectionAvailable = false;
+                    _connectionAvailable = false;
                     break;
 
                 case NetworkReachability.ReachableViaCarrierDataNetwork:
-                    ConnectionAvailable = true;
+                    _connectionAvailable = true;
                     break;
 
                 case NetworkReachability.ReachableViaLocalAreaNetwork:
-                    ConnectionAvailable = true;
+                    _connectionAvailable = true;
                     break;
             }
             //how you check if a connection is available
-            if (ConnectionAvailable)
+            if (_connectionAvailable)
             {
                 Debug.Log("Connection was succcessful");
             }
