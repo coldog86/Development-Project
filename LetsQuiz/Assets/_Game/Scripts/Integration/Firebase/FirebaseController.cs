@@ -12,6 +12,8 @@ namespace _LetsQuiz
         [Header("Components")]
         [SerializeField] private Text _tokenText;
 
+        [HideInInspector]
+        public string Token;
         private float _connectionTimer = 0.0f;
         private const float _connectionTimeLimit = 10000.0f;
 
@@ -19,10 +21,7 @@ namespace _LetsQuiz
 
         #region properties
 
-        public string Token { get; private set; }
-
         public string Header { get; private set; }
-
         public string Message { get; private set; }
 
         #endregion properties
@@ -31,13 +30,13 @@ namespace _LetsQuiz
 
         #region unity
 
-        protected override void OnEnable()
+        protected override void Awake()
         {
-            base.OnEnable();
+            base.Awake();
             DontDestroyOnLoad(gameObject);
         }
 
-        private void Awake()
+        private void OnEnable()
         {
             FirebaseMessaging.TokenReceived += OnTokenReceived;
             FirebaseMessaging.MessageReceived += OnMessageReceived;
@@ -58,10 +57,12 @@ namespace _LetsQuiz
         {
             Debug.Log("[FirebaseController] OnTokenRecieved() Token : " + e.Token);
 
+            Token = e.Token;
+
             FirebaseMessaging.SubscribeAsync(Token);
             FirebaseMessaging.SubscribeAsync("/topics/all");
 
-            Token = e.Token;
+            PlayerController.Instance.SetToken(Token);
 
             if (!string.IsNullOrEmpty(Token))
                 _tokenText.text = Token;
@@ -142,16 +143,16 @@ namespace _LetsQuiz
 
         #region notification - debug
 
-        public void CreateDebugNotification(string header, string message)
+        public void CreateDebugNotification(string token, string header, string message)
         {
             if (!string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
-                StartCoroutine(SendDebugNotification(header, message));
+                StartCoroutine(SendDebugNotification(token, header, message));
         }
 
-        private IEnumerator SendDebugNotification(string header, string message)
+        private IEnumerator SendDebugNotification(string token, string header, string message)
         {
             WWWForm form = new WWWForm();
-
+            form.AddField("token", token);
             form.AddField("title", header);
             form.AddField("body", message);
 
@@ -163,25 +164,25 @@ namespace _LetsQuiz
             {
                 if (_connectionTimer > _connectionTimeLimit)
                 {
-                    Debug.LogError("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                    Debug.LogError("[FirebaseController] SendDebugNotification() : " + notificationRequest.error);
                     yield return null;
                 }
                 else if (notificationRequest.error != null)
                 {
-                    Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                    Debug.Log("[FirebaseController] SendDebugNotification() : " + notificationRequest.error);
                     yield return null;
                 }
                 // extra check just to ensure a stream error doesn't come up
                 else if (_connectionTimer > _connectionTimeLimit && notificationRequest.error != null)
                 {
-                    Debug.LogError("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                    Debug.LogError("[FirebaseController] SendDebugNotification() : " + notificationRequest.error);
                     yield return null;
                 }
             }
 
             if (notificationRequest.isDone && notificationRequest.error != null)
             {
-                Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                Debug.Log("[FirebaseController] SendDebugNotification() : " + notificationRequest.error);
                 yield return null;
             }
 
@@ -190,13 +191,101 @@ namespace _LetsQuiz
                 // check that the notification request returned something
                 if (!string.IsNullOrEmpty(notificationRequest.text))
                 {
-                    Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.text);
+                    Debug.Log("[FirebaseController] SendDebugNotification() : " + notificationRequest.text);
                     yield return notificationRequest;
                 }
             }
         }
 
         #endregion notification - debug
+
+        #region database
+
+        public void InsertToken(int userId, string username)
+        {
+            StartCoroutine(Insert(userId, username));
+        }
+
+        private IEnumerator Insert(int userId, string username)
+        {
+            Debug.LogFormat("[{0}] Insert() Id {1} Token {2}", GetType().Name, userId, Token);
+
+            var form = new WWWForm();
+            form.AddField("userId", userId);
+            form.AddField("username", username);
+            form.AddField("token", Token);
+
+            WWW request;
+
+            if (!PlayerPrefs.HasKey(DataHelper.PlayerDataKey.TOKEN))
+                request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenInsert, form);
+            else if (Token != PlayerController.Instance.GetToken())
+                request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenUpdate, form);
+            else
+                request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenUpdate, form);
+
+            _connectionTimer += Time.deltaTime;
+
+            while (!request.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                    yield return null;
+
+                if (request.error != null)
+                    yield return null;
+
+                if (_connectionTimer > _connectionTimeLimit && request.error != null)
+                    yield return null;
+            }
+
+            if (request.isDone && request.error != null)
+                yield return null;
+
+            if (request.isDone)
+                yield return request.text;
+        }
+
+        public string SelectToken(int userId)
+        {
+            return Select(userId);
+        }
+
+        private string Select(int userId)
+        {
+            _connectionTimer = 0.0f;
+            var token = "";
+            var form = new WWWForm();
+            form.AddField("userId", userId);
+            form.AddField("username", PlayerController.Instance.GetUsername());
+
+            var request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenSelect, form);
+
+            _connectionTimer += Time.deltaTime;
+
+            while (!request.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                    token = "";
+
+                if (request.error != null)
+                    token = "";
+
+                if (_connectionTimer > _connectionTimeLimit && request.error != null)
+                    token = "";
+            }
+
+            if (request.isDone && request.error != null)
+                token = "";
+
+            if (request.isDone)
+            {
+                token = request.text;
+            }
+
+            return token;
+        }
+
+        #endregion database
 
         #endregion methods
     }
