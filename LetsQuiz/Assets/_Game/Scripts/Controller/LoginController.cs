@@ -535,6 +535,11 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 
+        public void QuitGame()
+        {
+            FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", Application.Quit, FeedbackTwoButtonModal.Hide);
+        }
+
         #endregion navigation specific
 
         #endregion methods
