@@ -16,7 +16,7 @@ namespace _LetsQuiz
 
         #region unity
 
-        protected virtual void OnEnable()
+        protected virtual void Awake()
         {
             if (Instance != null)
                 Debug.LogErrorFormat("[{0}] OnEnable() : Instance of {1} already initialised.", name, GetType().Name);

@@ -15,5 +15,6 @@
         public int totalPointsScore = 0;
         public int TotalCorrectAnswers = 0;
         public int totalQuestionsAnswered = 0;
+        public string token = "token";
     }
 }

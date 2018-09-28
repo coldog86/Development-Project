@@ -178,8 +178,7 @@ namespace _LetsQuiz
             {
                 if (_connectionTimer > _connectionTimeLimit)
                 {
-                    FeedbackAlert.Show("Server time out.");
-                    Debug.LogError("ResultController : ValidSubmission() : " + submitRank.error);
+                    Debug.LogErrorFormat("[{0}]  : submitRanking() : Error {1}", GetType().Name, submitRank.error);
                     Debug.Log(submitRank.text);
                     return;
                 }
@@ -187,7 +186,6 @@ namespace _LetsQuiz
                 // extra check just to ensure a stream error doesn't come up
                 if (_connectionTimer > _connectionTimeLimit || submitRank.error != null)
                 {
-                    FeedbackAlert.Show("Server time out.");
                     Debug.LogErrorFormat("[{0}] submitRanking() : Error {1} ", GetType().Name, submitRank.error);
                     Debug.Log(submitRank.text);
                     return;
@@ -196,7 +194,6 @@ namespace _LetsQuiz
 
             if (submitRank.error != null)
             {
-                FeedbackAlert.Show("Connection error. Please try again.");
                 Debug.LogErrorFormat("[{0}] submitRanking() : Error {1} ", GetType().Name, submitRank.error);
                 return;
             }
@@ -218,10 +215,9 @@ namespace _LetsQuiz
         public void BackToMenu()
         {
             FeedbackClick.Play();
-			SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
+            SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
             DestroyImmediate(GameLobbyController.Instance.gameObject);
             DestroyImmediate(MenuController.Instance.gameObject);
-            
         }
 
         #endregion user interaction

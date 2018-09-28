@@ -8,9 +8,14 @@ namespace _LetsQuiz
         private string _questionPool;
         private int _counter; //just used for testing, so the log can show what was submitted
         private bool _connectionAvailable;
-
+        private string _token;
         private float _connectionTimer = 0.0f;
         private const float _connectionTimeLimit = 1000000.0f;
+
+        private void GetToken()
+        {
+            _token = FirebaseController.Instance.SelectToken(PlayerController.Instance.GetId());
+        }
 
         public void SubmitGameToDB(string _questionPool)
         {
@@ -43,7 +48,7 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("token", "/topics/all");
+                form.AddField("token", _token);
                 form.AddField("title", "Let's Quiz");
                 form.AddField("body", "It's Round 2");
 
@@ -69,7 +74,7 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("token", "/topics/all");
+                form.AddField("token", _token);
                 form.AddField("title", "Let's Quiz");
                 form.AddField("body", "It's Round 3");
 
@@ -94,7 +99,7 @@ namespace _LetsQuiz
                 form.AddField("totalQuestionsPost", PlayerController.Instance.GetTotalQuestionsAnswered().ToString());
                 form.AddField("totalCorrectQuestionsPost", PlayerController.Instance.GetNumberCorrectAnswers().ToString());
 
-                form.AddField("token", "/topics/all");
+                form.AddField("token", _token);
                 form.AddField("title", "Let's Quiz");
                 form.AddField("body", "It's Round 4");
 
@@ -110,7 +115,7 @@ namespace _LetsQuiz
                 form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
                 form.AddField("overAllScorePost", DataController.Instance.getOverAllScore());
 
-                form.AddField("token", "/topics/all");
+                form.AddField("token", _token);
                 form.AddField("title", "Let's Quiz");
                 form.AddField("body", "It's Round 5");
 
@@ -128,7 +133,7 @@ namespace _LetsQuiz
                 form.AddField("scorePost", PlayerController.Instance.UserScore);
                 form.AddField("turnsCompletedPost", DataController.Instance.TurnNumber);
 
-                form.AddField("token", "/topics/all");
+                form.AddField("token", _token);
                 form.AddField("title", "Let's Quiz");
                 form.AddField("body", "It's Round 6");
 
@@ -155,7 +160,6 @@ namespace _LetsQuiz
             {
                 if (_connectionTimer > _connectionTimeLimit)
                 {
-                    FeedbackAlert.Show("Server time out.");
                     Debug.LogError("SubmitGame : Submit() : " + submitRequest.error);
                     PlayerController.Instance.AddSavedGame(new SavedGame(submitRequest));
                     yield return null;
@@ -164,7 +168,6 @@ namespace _LetsQuiz
                 // extra check just to ensure a stream error doesn't come up
                 if (_connectionTimer > _connectionTimeLimit || submitRequest.error != null)
                 {
-                    FeedbackAlert.Show("Server error.");
                     Debug.LogError("SubmitGame : Submit() : " + submitRequest.error);
                     PlayerController.Instance.AddSavedGame(new SavedGame(submitRequest));
                     yield return null;
@@ -173,7 +176,6 @@ namespace _LetsQuiz
 
             if (submitRequest.error != null)
             {
-                FeedbackAlert.Show("Connection error. Please try again.");
                 Debug.Log("SubmitGame : Submit() : " + submitRequest.error);
                 PlayerController.Instance.AddSavedGame(new SavedGame(submitRequest));
                 yield return null;

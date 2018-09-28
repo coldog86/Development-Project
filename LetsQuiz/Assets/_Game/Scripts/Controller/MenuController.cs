@@ -24,16 +24,16 @@ namespace _LetsQuiz
 
         #region unity
 
-        protected override void OnEnable()
+        protected override void Awake()
         {
             if (Initialised)
                 return;
 
-            base.OnEnable();
+            base.Awake();
             DontDestroyOnLoad(gameObject);
         }
 
-        private void Awake()
+        private void OnEnable()
         {
             _usernameText = GameObject.FindGameObjectWithTag("Username_Text").GetComponent<Text>();
 
@@ -50,7 +50,6 @@ namespace _LetsQuiz
                 accountButton.gameObject.SetActive(false);
                 leaderboardButton.gameObject.SetActive(false);
                 submitQuestionButton.gameObject.SetActive(false);
-
             }
         }
 
@@ -107,17 +106,26 @@ namespace _LetsQuiz
             SceneManager.LoadScene(BuildIndex.Settings, LoadSceneMode.Single);
         }
 
+        public void OpenNotification()
+        {
+            FeedbackClick.Play();
+            SceneManager.LoadScene(BuildIndex.NotificationHelper, LoadSceneMode.Single);
+        }
+
         public void Logout()
-		{
-			FeedbackClick.Play();
-			if (FB.IsLoggedIn) {
-				FB.LogOut ();
-				FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
-			}else{
-				FeedbackClick.Play();
-				FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
-			}
-		}
+        {
+            FeedbackClick.Play();
+            if (FB.IsLoggedIn)
+            {
+                FB.LogOut();
+                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
+            }
+            else
+            {
+                FeedbackClick.Play();
+                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
+            }
+        }
 
         private void OpenLogin()
         {

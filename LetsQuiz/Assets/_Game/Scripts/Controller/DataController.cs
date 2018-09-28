@@ -23,7 +23,6 @@ namespace _LetsQuiz
 
         [Header("Validation Tests")]
         private string _username = "u";
-
         private string _password = "p";
         private int _status = -2;
 
@@ -48,9 +47,9 @@ namespace _LetsQuiz
 
         #region unity
 
-        protected override void OnEnable()
+        protected override void Awake()
         {
-            base.OnEnable();
+            base.Awake();
             DontDestroyOnLoad(gameObject);
             TurnNumber = 0;
             Player = new Player();
@@ -91,8 +90,8 @@ namespace _LetsQuiz
                     // TODO : is any of these ever used?
                     // NOTE : used to determine if player has already logged in or not for automatic login
                     _status = PlayerController.Instance.GetPlayerType();
-                    _username = PlayerController.Instance.GetUsername().ToString();
-                    _password = PlayerController.Instance.GetPassword().ToString();
+                    _username = PlayerController.Instance.GetUsername();
+                    _password = PlayerController.Instance.GetPassword();
                 }
             }
             else
@@ -184,8 +183,8 @@ namespace _LetsQuiz
                     // if the retrieved login text doesn't have "ID" load login scene
                     if (!loginRequest.text.Contains("ID"))
                     {
-                        SceneManager.LoadScene(BuildIndex.Login);
                         yield return null;
+                        SceneManager.LoadScene(BuildIndex.Login);
                     }
                     // otherwise save the player information to PlayerPrefs and load menu scene
                     else
@@ -196,13 +195,17 @@ namespace _LetsQuiz
                         {
                             PlayerController.Instance.Save(Player.ID, Player.username, Player.email, Player.password, Player.DOB, Player.questionsSubmitted,
                                                            Player.numQuestionsSubmitted, Player.numGamesPlayed, Player.totalPointsScore,
-                                                           Player.TotalCorrectAnswers, Player.totalQuestionsAnswered);
+                                                           Player.TotalCorrectAnswers, Player.totalQuestionsAnswered, FirebaseController.Instance.Token);
 
                             FeedbackAlert.Show("Welcome back " + _username);
                         }
 
-                        SceneManager.LoadScene(BuildIndex.Menu);
                         yield return loginRequest;
+#if !UNITY_EDITOR
+                        FirebaseController.Instance.InsertToken(PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
+
+#endif
+                        SceneManager.LoadScene(BuildIndex.Menu);
                     }
                 }
             }
@@ -213,6 +216,7 @@ namespace _LetsQuiz
             Debug.Log("[DataController] RetryPullData()");
             //FeedbackAlert.Show("Retrying connection...", 1.0f);  //alert breaking game
             checkForConnection();
+
             if (ConnectionAvailable)
                 StartCoroutine(_questionDownload.PullAllQuestionsFromServer());
             else
@@ -301,7 +305,7 @@ namespace _LetsQuiz
         private void offlineLoadState()
         {
             PlayerController.Instance.PlayerType = PlayerStatus.Guest;
-            DataController.Instance.TurnNumber = 0;
+            Instance.TurnNumber = 0;
 
             //loads the menu scene
             SceneManager.LoadScene(BuildIndex.Menu);

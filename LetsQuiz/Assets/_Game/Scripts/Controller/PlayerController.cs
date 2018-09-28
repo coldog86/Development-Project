@@ -19,7 +19,7 @@ namespace _LetsQuiz
         public Player Player { get; set; }
         public int PlayerType { get; set; }
         public string HighScoreJSON { get; set; }
-		public int NumberOfCorrectQuestions { get; set;}
+        public int NumberOfCorrectQuestions { get; set; }
         public int UserScore { get; set; }
         public string ScoreStatus { get; set; }
         public SavedGameContainer SavedGames { get; set; }
@@ -30,9 +30,9 @@ namespace _LetsQuiz
 
         #region unity
 
-        protected override void OnEnable()
+        protected override void Awake()
         {
-            base.OnEnable();
+            base.Awake();
             DontDestroyOnLoad(gameObject);
         }
 
@@ -421,11 +421,11 @@ namespace _LetsQuiz
             PlayerPrefs.Save();
         }
 
-		//get saved question data
-		public string GetSavedQuestionData()
-		{
-			return PlayerPrefs.GetString (DataHelper.PlayerDataKey.QUESTION_DATA, _questionData); //retrieve saved questionData
-		}
+        //get saved question data
+        public string GetSavedQuestionData()
+        {
+            return PlayerPrefs.GetString(DataHelper.PlayerDataKey.QUESTION_DATA, _questionData); //retrieve saved questionData
+        }
 
         // set the worldwide highscore data
         public void SetHighscoreData(string highScoreData)
@@ -478,10 +478,34 @@ namespace _LetsQuiz
 
         #endregion question data
 
+        #region token
+
+        public void SetToken(string token)
+        {
+            if (token != Player.token)
+            {
+                Player.token = token;
+                SaveToken();
+            }
+        }
+
+        public string GetToken()
+        {
+            return Player.token;
+        }
+
+        private void SaveToken()
+        {
+            PlayerPrefs.SetString(DataHelper.PlayerDataKey.TOKEN, Player.token);
+            PlayerPrefs.Save();
+        }
+
+        #endregion token
+
         #region save
 
         public void Save(int id, string username, string email, string password, string dob, string questionsSubmitted,
-                         int numQuestionsSubmitted, int numGamesPlayed, int highestScore, int numCorrectAnswers, int totalQuestionsAnswered)
+                         int numQuestionsSubmitted, int numGamesPlayed, int highestScore, int numCorrectAnswers, int totalQuestionsAnswered, string token)
         {
             SetId(id);
             SetUsername(username);
@@ -494,6 +518,7 @@ namespace _LetsQuiz
             // SetHighestScore(highestScore);
             // SetNumberCorrectAnswers(numCorrectAnswers);
             SetTotalQuestionsAnswered(totalQuestionsAnswered);
+            SetToken(token);
         }
 
         #endregion save
@@ -539,6 +564,7 @@ namespace _LetsQuiz
             SetTotalQuestionsAnswered(player.totalQuestionsAnswered);
             SetTotalPointsScored(player.totalPointsScore);
             SetTotalCorrectAnswers(player.TotalCorrectAnswers);
+            SetToken(player.token);
         }
 
         #endregion load

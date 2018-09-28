@@ -2,16 +2,16 @@
 {
     public static class BuildIndex
     {
-        public static int Splash = 0;
-        public static int Login = 1;
-        public static int Menu = 2;
-        public static int Game = 3;
-        public static int Result = 4;
-        public static int Account = 5;
-        public static int Leaderboard = 6;
-        public static int SubmitQuestion = 7;
-        public static int Settings = 8;
-        public static int GameLobby = 9;
-        public static int NotificationHelper = 10;
+        public const int Splash = 0;
+        public const int Login = 1;
+        public const int Menu = 2;
+        public const int Game = 3;
+        public const int Result = 4;
+        public const int Account = 5;
+        public const int Leaderboard = 6;
+        public const int SubmitQuestion = 7;
+        public const int Settings = 8;
+        public const int GameLobby = 9;
+        public const int NotificationHelper = 10;
     }
 }

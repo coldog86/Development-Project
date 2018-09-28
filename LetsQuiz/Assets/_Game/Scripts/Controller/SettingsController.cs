@@ -22,8 +22,9 @@ namespace _LetsQuiz
 
         #region unity
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Load();
         }
 
