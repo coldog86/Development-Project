@@ -24,6 +24,7 @@ namespace _LetsQuiz
         private MenuController _menuController;
         private string _openGamesJSON;
         private bool _isInteractable = false;
+		private string opponent = "";
 
         #endregion variables
 
@@ -114,7 +115,7 @@ namespace _LetsQuiz
                 OngoingGamesData gameData = gamesPlayerHasStarted.dataForOpenGame[i];
                 go.GetComponentInChildren<Button>().onClick.AddListener(() => ContinueGameButtonPressed(gameData));
 
-                var opponent = "";
+                
 
                 if (!string.IsNullOrEmpty(gameData.opponent))
                 {
@@ -127,8 +128,9 @@ namespace _LetsQuiz
                     opponent = "No opponent found yet.";
 
                 //this is what is written on each button
-                go.GetComponentInChildren<Text>().text = "(" + gameData.gameNumber.ToString() + ") vs " + opponent;
-
+				go.GetComponentInChildren<Text>().text = go.GetComponentInChildren<Text>().text = "waiting for your opponent\n Round: " + ((gameData.turnNumber/2) + gameData.turnNumber %2).ToString() + " vs " + opponent; //set here to ensure there is alwasy text in the buttons
+				Button b = go.GetComponentInChildren<Button>();
+				b.GetComponent<Image>().color = Red; //set each button to red, to prevent some buttons appearing white
                 isInteractable(gameData, go);
 
                 // the scale on my prefab is blowing out at runtime, this fixes that problem
@@ -146,16 +148,31 @@ namespace _LetsQuiz
             GameLobbyController.Instance.PresentPopUp();
         }
 
+		private int getRoundNumber(OngoingGamesData gameData)
+		{
+			int _roundNumber = gameData.turnNumber;
+			if (gameData.turnNumber == 1 || gameData.turnNumber == 2)
+				_roundNumber = 1;
+			if (gameData.turnNumber == 3 || gameData.turnNumber == 4)
+				_roundNumber = 2;
+			if (gameData.turnNumber == 5 || gameData.turnNumber == 6)
+				_roundNumber = 3;
+
+			return _roundNumber;
+		}
+
         private void isInteractable(OngoingGamesData gameData, GameObject go)
         {
             Button b;
 
-            var colors = go.GetComponentInChildren<Button>().colors;
+            //var colors = go.GetComponentInChildren<Button>().colors;
 
             if (PlayerController.Instance.GetUsername() == gameData.player)
             {
                 if (gameData.turnNumber == 1 || gameData.turnNumber == 2 || gameData.turnNumber == 5)
                 {
+					go.GetComponentInChildren<Text>().text = "waiting for your opponent\n Round: " + ((gameData.turnNumber/2) + gameData.turnNumber %2).ToString() + " vs " + opponent;
+
                     b = go.GetComponentInChildren<Button>();
                     b.GetComponent<Image>().color = Red;
                     go.GetComponentInChildren<Button>().interactable = false;
@@ -163,6 +180,7 @@ namespace _LetsQuiz
 
                 if (gameData.turnNumber == 3 || gameData.turnNumber == 4)
                 {
+					go.GetComponentInChildren<Text>().text = "your turn\n Round: " + ((gameData.turnNumber/2) + gameData.turnNumber %2).ToString() + " vs " + opponent;
                     b = go.GetComponentInChildren<Button>();
                     b.GetComponent<Image>().color = Green;
                     go.transform.SetAsFirstSibling();

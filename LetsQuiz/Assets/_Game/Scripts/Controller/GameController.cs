@@ -238,7 +238,7 @@ namespace _LetsQuiz
                     }
 
                     string roundDataJSON = DataController.Instance.OngoingGameData.questionsLeftInCat;
-                    Debug.Log("out of asked questons, asking remaining questions: " + DataController.Instance.OngoingGameData.questionsLeftInCat);
+//                    Debug.Log("out of asked questons, asking remaining questions: " + DataController.Instance.OngoingGameData.questionsLeftInCat);
 
                     DataController.Instance.OngoingGameData.questionsLeftInCat = "";
                     RoundData rd = JsonUtility.FromJson<RoundData>(roundDataJSON);
