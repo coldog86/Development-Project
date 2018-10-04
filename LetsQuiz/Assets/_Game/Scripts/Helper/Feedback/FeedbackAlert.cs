@@ -10,6 +10,7 @@ namespace _LetsQuiz
 
         [Header("Component")]
         private static FeedbackAlert _instance;
+        private static Button _button;
         private static Text _message;
 
         #endregion variables
@@ -21,8 +22,10 @@ namespace _LetsQuiz
         {
             // create instance of alert prefab as gameobject
             _instance = Instantiate(Resources.Load<FeedbackAlert>("Feedback/Alert"));
+            _button = _instance.GetComponentInChildren<Button>();
+            _message = _button.GetComponentInChildren<Text>();
 
-            _message = _instance.GetComponentInChildren<Text>();
+            _button.onClick.AddListener(Hide);
 
             // deactivate alert
             _instance.gameObject.SetActive(false);
@@ -42,7 +45,7 @@ namespace _LetsQuiz
 
             // start coroutine to hide alert if time is greater than zero
             if (time > 0)
-                _instance.GetComponent<FeedbackAlert>().StartCoroutine(Hide(time));
+                _instance.StartCoroutine(Hide(time));
         }
 
         // used to hide the alert from external sources if time is set to zero
