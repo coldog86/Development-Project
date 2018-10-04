@@ -24,7 +24,7 @@ namespace _LetsQuiz
         private MenuController _menuController;
         private string _openGamesJSON;
         private bool _isInteractable = false;
-		private string opponent = "";
+        private string opponent = "";
 
         #endregion variables
 
@@ -60,25 +60,25 @@ namespace _LetsQuiz
             {
                 if (_connectionTimer > _connectionTimeLimit)
                 {
-                    FeedbackAlert.Show("Server time out.");
                     Debug.LogError("[CheckForPlayerExistingGames] PlayersOpenGames() : Error: " + submitRequest.error);
                     yield return null;
+                    FeedbackAlert.Show("Server time out.");
                 }
 
                 // extra check just to ensure a stream error doesn't come up
                 if (_connectionTimer > _connectionTimeLimit || submitRequest.error != null)
                 {
-                    FeedbackAlert.Show("Server error.");
                     Debug.LogError("[CheckForPlayerExistingGames] PlayersOpenGames() : Error: " + submitRequest.error);
                     yield return null;
+                    FeedbackAlert.Show("Server error.");
                 }
             }
 
             if (submitRequest.error != null)
             {
-                FeedbackAlert.Show("Connection error. Please try again.");
                 Debug.LogError("[CheckForPlayerExistingGames] PlayersOpenGames() : Error: " + submitRequest.error);
                 yield return null;
+                FeedbackAlert.Show("Connection error. Please try again.");
             }
 
             if (submitRequest.isDone)
@@ -115,8 +115,6 @@ namespace _LetsQuiz
                 OngoingGamesData gameData = gamesPlayerHasStarted.dataForOpenGame[i];
                 go.GetComponentInChildren<Button>().onClick.AddListener(() => ContinueGameButtonPressed(gameData));
 
-                
-
                 if (!string.IsNullOrEmpty(gameData.opponent))
                 {
                     if (PlayerController.Instance.GetUsername() == gameData.opponent)
@@ -128,9 +126,9 @@ namespace _LetsQuiz
                     opponent = "No opponent found yet.";
 
                 //this is what is written on each button
-				go.GetComponentInChildren<Text>().text = go.GetComponentInChildren<Text>().text = "waiting for your opponent\n Round: " + ((gameData.turnNumber/2) + gameData.turnNumber %2).ToString() + " vs " + opponent; //set here to ensure there is alwasy text in the buttons
-				Button b = go.GetComponentInChildren<Button>();
-				b.GetComponent<Image>().color = Red; //set each button to red, to prevent some buttons appearing white
+                go.GetComponentInChildren<Text>().text = go.GetComponentInChildren<Text>().text = "waiting for your opponent\n Round: " + ((gameData.turnNumber / 2) + gameData.turnNumber % 2).ToString() + " vs " + opponent; //set here to ensure there is alwasy text in the buttons
+                Button b = go.GetComponentInChildren<Button>();
+                b.GetComponent<Image>().color = Red; //set each button to red, to prevent some buttons appearing white
                 isInteractable(gameData, go);
 
                 // the scale on my prefab is blowing out at runtime, this fixes that problem
@@ -148,18 +146,18 @@ namespace _LetsQuiz
             GameLobbyController.Instance.PresentPopUp();
         }
 
-		private int getRoundNumber(OngoingGamesData gameData)
-		{
-			int _roundNumber = gameData.turnNumber;
-			if (gameData.turnNumber == 1 || gameData.turnNumber == 2)
-				_roundNumber = 1;
-			if (gameData.turnNumber == 3 || gameData.turnNumber == 4)
-				_roundNumber = 2;
-			if (gameData.turnNumber == 5 || gameData.turnNumber == 6)
-				_roundNumber = 3;
+        private int getRoundNumber(OngoingGamesData gameData)
+        {
+            int _roundNumber = gameData.turnNumber;
+            if (gameData.turnNumber == 1 || gameData.turnNumber == 2)
+                _roundNumber = 1;
+            if (gameData.turnNumber == 3 || gameData.turnNumber == 4)
+                _roundNumber = 2;
+            if (gameData.turnNumber == 5 || gameData.turnNumber == 6)
+                _roundNumber = 3;
 
-			return _roundNumber;
-		}
+            return _roundNumber;
+        }
 
         private void isInteractable(OngoingGamesData gameData, GameObject go)
         {
@@ -171,7 +169,7 @@ namespace _LetsQuiz
             {
                 if (gameData.turnNumber == 1 || gameData.turnNumber == 2 || gameData.turnNumber == 5)
                 {
-					go.GetComponentInChildren<Text>().text = "waiting for your opponent\n Round: " + ((gameData.turnNumber/2) + gameData.turnNumber %2).ToString() + " vs " + opponent;
+                    go.GetComponentInChildren<Text>().text = "waiting for your opponent\n Round: " + ((gameData.turnNumber / 2) + gameData.turnNumber % 2).ToString() + " vs " + opponent;
 
                     b = go.GetComponentInChildren<Button>();
                     b.GetComponent<Image>().color = Red;
@@ -180,7 +178,7 @@ namespace _LetsQuiz
 
                 if (gameData.turnNumber == 3 || gameData.turnNumber == 4)
                 {
-					go.GetComponentInChildren<Text>().text = "your turn\n Round: " + ((gameData.turnNumber/2) + gameData.turnNumber %2).ToString() + " vs " + opponent;
+                    go.GetComponentInChildren<Text>().text = "your turn\n Round: " + ((gameData.turnNumber / 2) + gameData.turnNumber % 2).ToString() + " vs " + opponent;
                     b = go.GetComponentInChildren<Button>();
                     b.GetComponent<Image>().color = Green;
                     go.transform.SetAsFirstSibling();

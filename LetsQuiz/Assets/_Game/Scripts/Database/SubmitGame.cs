@@ -8,13 +8,15 @@ namespace _LetsQuiz
         private string _questionPool;
         private int _counter; //just used for testing, so the log can show what was submitted
         private bool _connectionAvailable;
-        private string _token;
         private float _connectionTimer = 0.0f;
         private const float _connectionTimeLimit = 1000000.0f;
 
-        private void GetToken()
+        private string _token;
+
+        private void GetFirebaseToken()
         {
-            _token = FirebaseController.Instance.SelectToken(PlayerController.Instance.GetId());
+            _token = FirebaseController.Instance.SelectToken(PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
+            Debug.LogFormat("[{0}] GetFirebaseToken() Token: {1}", GetType().Name, _token);
         }
 
         public void SubmitGameToDB(string _questionPool)
@@ -22,6 +24,7 @@ namespace _LetsQuiz
             checkForConnection();  //test for network connectivity
             //uploadExistingGames();                      //test for existing games to be uploaded
             this._questionPool = _questionPool;
+            GetFirebaseToken();
             StartCoroutine(SubmitRoundData());
         }
 
