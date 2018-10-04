@@ -48,7 +48,7 @@ namespace _LetsQuiz
 
             Debug.LogFormat("[{0}] SendDebugNotification() \nToken {1}\nHeading {2} \nMessage {3}", GetType().Name, _token, header, message);
 
-            FirebaseController.Instance.CreateDebugNotification(_token, header, message);
+            FirebaseController.Instance.CreateNotificationDelay(_token, header, message);
         }
 
         public void SelectToken(int userId)

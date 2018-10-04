@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,8 +25,8 @@ namespace _LetsQuiz
         [SerializeField] private Text _wrongAnswer3Text;
 
         [Header("Connection")]
-        public float connectionTimer = 0;
-        public const float connectionTimeLimit = 10000.0f;
+        private float _connectionTimer = 0;
+        private const float _connectionTimeLimit = 10000.0f;
 
         #endregion variables
 
@@ -43,6 +44,7 @@ namespace _LetsQuiz
             if (QuestionController.Initialised)
                 categories = QuestionController.Instance.GetAllCategories();
 
+            categories.Insert(0, "Select a category");
             categorySelection.AddOptions(categories);
         }
 
@@ -76,38 +78,26 @@ namespace _LetsQuiz
             if (string.IsNullOrEmpty(wrong3Answer))
                 FeedbackAlert.Show("Wrong Answer 3 cannot be empty.");
 
-            if (string.IsNullOrEmpty(category))
-                FeedbackAlert.Show("Category cannot be empty.");
+            if (category == "Select a category")
+                FeedbackAlert.Show("A category must be selected.");
 
             if (!string.IsNullOrEmpty(question) && !string.IsNullOrEmpty(correctAnswer) && !string.IsNullOrEmpty(wrong1Answer) && !string.IsNullOrEmpty(wrong2Answer) && !string.IsNullOrEmpty(wrong3Answer) && !string.IsNullOrEmpty(category))
             {
                 if (ValidSubmission(question, correctAnswer, wrong1Answer, wrong2Answer, wrong3Answer, category))
                 {
-                    FeedbackAlert.Show("Submission successful", 1.0f);
-
-                    // clears input on sucessful submission
-                    questionInput.text = string.Empty;
-                    _questionText.text = string.Empty;
-
-                    correctInput.text = string.Empty;
-                    _correctAnswerText.text = string.Empty;
-
-                    wrong1Input.text = string.Empty;
-                    _wrongAnswer1Text.text = string.Empty;
-
-                    wrong2Input.text = string.Empty;
-                    _wrongAnswer2Text.text = string.Empty;
-
-                    wrong3Input.text = string.Empty;
-                    _wrongAnswer3Text.text = string.Empty;
-
-                    categorySelection.value = 6;
+                    SceneManager.LoadScene(BuildIndex.SubmitQuestion);
+                    FeedbackAlert.Show("Submission Succesful.");
+#if !UNITY_EDITOR
+                    SendNotification();
+#endif
                 }
             }
         }
 
         private bool ValidSubmission(string question, string correctAnswer, string wrong1Answer, string wrong2Answer, string wrong3Answer, string category)
         {
+            FeedbackAlert.Show("Submitting question...");
+
             WWWForm form = new WWWForm();
 
             form.AddField("questionText", question);
@@ -121,11 +111,11 @@ namespace _LetsQuiz
 
             WWW submitQuestion = new WWW(ServerHelper.Host + ServerHelper.SubmitUserQuestion, form);
 
-            connectionTimer += Time.deltaTime;
+            _connectionTimer += Time.deltaTime;
 
             while (!submitQuestion.isDone)
             {
-                if (connectionTimer > connectionTimeLimit)
+                if (_connectionTimer > _connectionTimeLimit)
                 {
                     Debug.LogErrorFormat("[{0}] ValidSubmission() : {1}", GetType().Name, submitQuestion.error);
                     Debug.Log(submitQuestion.text);
@@ -134,7 +124,7 @@ namespace _LetsQuiz
                 }
 
                 // extra check just to ensure a stream error doesn't come up
-                if (connectionTimer > connectionTimeLimit || submitQuestion.error != null)
+                if (_connectionTimer > _connectionTimeLimit || submitQuestion.error != null)
                 {
                     Debug.LogErrorFormat("[{0}] ValidSubmission() : {1}", GetType().Name, submitQuestion.error);
                     Debug.Log(submitQuestion.text);
@@ -156,7 +146,6 @@ namespace _LetsQuiz
                 {
                     Debug.LogFormat("[{0}] ValidSubmission() : Submission {1}", GetType().Name, submitQuestion.text);
                     complete = true;
-                    FeedbackAlert.Show("Submission successful.");
                 }
                 else
                     complete = false;
@@ -170,6 +159,43 @@ namespace _LetsQuiz
         public void CategorySelected()
         {
             string category = categorySelection.options[categorySelection.value].text;
+        }
+
+        private void SendNotification()
+        {
+            StartCoroutine(Send());
+        }
+
+        private IEnumerator Send()
+        {
+            _connectionTimer = 0.0f;
+
+            var form = new WWWForm();
+            form.AddField("token", PlayerController.Instance.GetToken());
+            form.AddField("title", "Let's Quiz");
+            form.AddField("body", "Thanks for the question!");
+
+            var request = new WWW(ServerHelper.Host + ServerHelper.SendNotificationDelay, form);
+
+            _connectionTimer += Time.deltaTime;
+
+            while (!request.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                    yield return null;
+
+                if (_connectionTimer > _connectionTimeLimit || request.error != null)
+                    yield return null;
+
+                if (request.error != null)
+                    yield return null;
+            }
+
+            if (request.isDone && request.error != null)
+                yield return null;
+
+            if (request.isDone)
+                yield return request.text;
         }
 
         #endregion submit specific

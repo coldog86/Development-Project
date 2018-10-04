@@ -12,19 +12,19 @@ namespace _LetsQuiz
 
         [Header("Components")]
         private GetAllQuestions _questionDownload;
-
         private GetHighScores _highscoreDownload;
         private GetPlayerQuestionSubmissions _questAndSub;
 
         [Header("Connection")]
-        private const float _connectionTimeLimit = 1000000.0f;
-
+        public bool ConnectionAvailable;
         private float _connectionTimer = 0.0f;
+        private const float _connectionTimeLimit = 1000000.0f;
 
         [Header("Validation Tests")]
         private string _username = "u";
         private string _password = "p";
         private int _status = -2;
+        private string _token;
 
         #endregion variables
 
@@ -39,7 +39,6 @@ namespace _LetsQuiz
         public bool ServerConnected { get; set; }
         public string AllQuestionJSON { get; set; }
         public string AllHighScoreJSON { get; set; }
-        public bool ConnectionAvailable;
 
         #endregion properties
 
@@ -61,6 +60,9 @@ namespace _LetsQuiz
 
             if (PlayerController.Initialised)
                 PlayerController.Instance.Load();
+
+            if (SettingsController.Initialised)
+                SettingsController.Instance.Load();
 
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
@@ -89,6 +91,7 @@ namespace _LetsQuiz
                 {
                     // TODO : is any of these ever used?
                     // NOTE : used to determine if player has already logged in or not for automatic login
+                    _token = PlayerController.Instance.GetToken();
                     _status = PlayerController.Instance.GetPlayerType();
                     _username = PlayerController.Instance.GetUsername();
                     _password = PlayerController.Instance.GetPassword();
@@ -256,8 +259,6 @@ namespace _LetsQuiz
         // save to PlayerController.
         public SavedGameContainer LoadSavedJSON<SavedGameContainer>(string location) where SavedGameContainer : new()
         {
-            Debug.Log("[DataController] Load() : " + location);
-
             if (File.Exists(location))
             {
                 var data = File.ReadAllText(location);
@@ -270,8 +271,6 @@ namespace _LetsQuiz
         // saves current rounds into persistent data
         public void SaveSavedJSON<SavedGameContainer>(string location, SavedGameContainer games)
         {
-            Debug.Log("[DataController] Save() : " + location);
-
             if (File.Exists(location))
             {
                 var data = JsonUtility.ToJson(games, true);

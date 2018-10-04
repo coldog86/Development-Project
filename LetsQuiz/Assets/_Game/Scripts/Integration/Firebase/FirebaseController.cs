@@ -74,6 +74,8 @@ namespace _LetsQuiz
 
             Header = e.Message.Notification.Title;
             Message = e.Message.Notification.Body;
+
+            FeedbackAlert.Show(Message);
         }
 
         #endregion events
@@ -82,24 +84,23 @@ namespace _LetsQuiz
 
         public void CreateNotification(string token, string header, string message)
         {
-            Debug.LogFormat("[{0}] CreateNotification() : \nToken {1}\nHeading {2}\nMessage {3}", GetType().Name, token, header, message);
-
             if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
                 StartCoroutine(SendNotification(token, header, message));
         }
 
         private IEnumerator SendNotification(string token, string header, string message)
         {
-            Debug.LogFormat("[{0}] SendNotification() : \nToken {1}\nHeading {2}\nMessage {3}", GetType().Name, token, header, message);
+            Debug.LogFormat("[{0}] SendNotification() \nToken {1}\nHeading {2}\nMessage {3}", GetType().Name, token, header, message);
 
             WWWForm form = new WWWForm();
 
-            form.AddField("recipient", token);
+            form.AddField("token", token);
             form.AddField("title", header);
             form.AddField("body", message);
 
             WWW notificationRequest = new WWW(ServerHelper.Host + ServerHelper.SendNotification, form);
 
+            _connectionTimer = 0.0f;
             _connectionTimer += Time.deltaTime;
 
             while (!notificationRequest.isDone)
@@ -143,13 +144,13 @@ namespace _LetsQuiz
 
         #region notification - debug
 
-        public void CreateDebugNotification(string token, string header, string message)
+        public void CreateNotificationDelay(string token, string header, string message)
         {
             if (!string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
-                StartCoroutine(SendDebugNotification(token, header, message));
+                StartCoroutine(SendNotificationDelay(token, header, message));
         }
 
-        private IEnumerator SendDebugNotification(string token, string header, string message)
+        private IEnumerator SendNotificationDelay(string token, string header, string message)
         {
             WWWForm form = new WWWForm();
             form.AddField("token", token);
@@ -158,6 +159,7 @@ namespace _LetsQuiz
 
             WWW notificationRequest = new WWW(ServerHelper.Host + ServerHelper.SendNotificationDelay, form);
 
+            _connectionTimer = 0.0f;
             _connectionTimer += Time.deltaTime;
 
             while (!notificationRequest.isDone)

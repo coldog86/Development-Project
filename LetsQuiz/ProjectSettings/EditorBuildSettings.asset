@@ -35,6 +35,3 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Game/Scenes/Game Lobby.unity
     guid: c65372fc13cb98b4486fcce0c5ba89b6
-  - enabled: 1
-    path: Assets/_Game/Scenes/NotificationDebug.unity
-    guid: 7e8cb7ced6646324094d1d50cb8b0200

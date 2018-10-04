@@ -22,12 +22,6 @@ namespace _LetsQuiz
 
         #region unity
 
-        protected override void Awake()
-        {
-            base.Awake();
-            Load();
-        }
-
         #endregion unity
 
         #region navigation specific

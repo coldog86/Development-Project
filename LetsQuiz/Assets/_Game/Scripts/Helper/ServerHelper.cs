@@ -24,7 +24,7 @@
         public const string Upvote = "upvote.php";
         public const string Downvote = "downvote.php";
         public const string SendNotification = "sendNotification.php";
-        public const string SendDebugNotification = "sendNotificationDebug.php ";
+        public const string SendNotificationDelay = "SendNotificationDelay.php ";
         public const string FirebaseTokenInsert = "FirebaseTokenInsert.php";
         public const string FirebaseTokenSelect = "FirebaseTokenSelect.php";
         public const string FirebaseTokenUpdate = "FirebaseTokenUpdate.php";
