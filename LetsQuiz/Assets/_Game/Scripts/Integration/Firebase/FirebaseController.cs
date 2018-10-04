@@ -55,7 +55,7 @@ namespace _LetsQuiz
 
         private void OnTokenReceived(object sender, TokenReceivedEventArgs e)
         {
-            Debug.Log("[FirebaseController] OnTokenRecieved() Token : " + e.Token);
+            Debug.LogFormat("[{0}] OnTokenRecieved() Token : {1}", GetType().Name, e.Token);
 
             Token = e.Token;
 
@@ -70,7 +70,7 @@ namespace _LetsQuiz
 
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            Debug.Log("[FirebaseController] OnMessageReceived() Notification received from : " + e.Message.From + " with title : " + e.Message.Notification.Title + " with messgae : " + e.Message.Notification.Body);
+            Debug.LogFormat("[{0}] OnMessageReceived() Title : {1} Message : {2}", GetType().Name, e.Message.Notification.Title, e.Message.Notification.Body);
 
             Header = e.Message.Notification.Title;
             Message = e.Message.Notification.Body;
@@ -156,7 +156,7 @@ namespace _LetsQuiz
             form.AddField("title", header);
             form.AddField("body", message);
 
-            WWW notificationRequest = new WWW(ServerHelper.Host + ServerHelper.SendDebugNotification, form);
+            WWW notificationRequest = new WWW(ServerHelper.Host + ServerHelper.SendNotificationDelay, form);
 
             _connectionTimer += Time.deltaTime;
 
@@ -203,11 +203,14 @@ namespace _LetsQuiz
 
         public void InsertToken(int userId, string username)
         {
+            _connectionTimer = 0.0f;
             StartCoroutine(Insert(userId, username));
         }
 
         private IEnumerator Insert(int userId, string username)
         {
+            var method = "";
+
             Debug.LogFormat("[{0}] Insert() Id {1} Token {2}", GetType().Name, userId, Token);
 
             var form = new WWWForm();
@@ -218,11 +221,20 @@ namespace _LetsQuiz
             WWW request;
 
             if (!PlayerPrefs.HasKey(DataHelper.PlayerDataKey.TOKEN))
+            {
+                method = "Insert";
                 request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenInsert, form);
+            }
             else if (Token != PlayerController.Instance.GetToken())
+            {
+                method = "Update";
                 request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenUpdate, form);
+            }
             else
+            {
+                method = "Update";
                 request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenUpdate, form);
+            }
 
             _connectionTimer += Time.deltaTime;
 
@@ -243,20 +255,22 @@ namespace _LetsQuiz
 
             if (request.isDone)
                 yield return request.text;
+
+            Debug.LogFormat("[{0}] {1}() Token {2}", GetType().Name, method, request.text);
         }
 
-        public string SelectToken(int userId)
-        {
-            return Select(userId);
-        }
-
-        private string Select(int userId)
+        public string SelectToken(int userId, string username)
         {
             _connectionTimer = 0.0f;
+            return Select(userId, username);
+        }
+
+        private string Select(int userId, string username)
+        {
             var token = "";
             var form = new WWWForm();
             form.AddField("userId", userId);
-            form.AddField("username", PlayerController.Instance.GetUsername());
+            form.AddField("username", username);
 
             var request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenSelect, form);
 
@@ -278,9 +292,7 @@ namespace _LetsQuiz
                 token = "";
 
             if (request.isDone)
-            {
                 token = request.text;
-            }
 
             return token;
         }

@@ -17,7 +17,7 @@ namespace _LetsQuiz
 
         public void SendNotification()
         {
-            _token = FirebaseController.Instance.SelectToken(PlayerController.Instance.GetId());
+            _token = FirebaseController.Instance.SelectToken(PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
 
             var header = notifcationTitleInput.text;
             var message = notifcationBodyInput.text;
@@ -35,7 +35,7 @@ namespace _LetsQuiz
 
         public void SendDebugNotification()
         {
-            _token = FirebaseController.Instance.SelectToken(PlayerController.Instance.GetId());
+            _token = FirebaseController.Instance.SelectToken(PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
 
             var header = notifcationTitleInput.text;
             var message = notifcationBodyInput.text;

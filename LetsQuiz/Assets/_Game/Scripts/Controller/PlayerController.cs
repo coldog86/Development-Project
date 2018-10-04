@@ -505,7 +505,7 @@ namespace _LetsQuiz
         #region save
 
         public void Save(int id, string username, string email, string password, string dob, string questionsSubmitted,
-                         int numQuestionsSubmitted, int numGamesPlayed, int highestScore, int numCorrectAnswers, int totalQuestionsAnswered, string token)
+                         int numQuestionsSubmitted, int numGamesPlayed, int highestScore, int numCorrectAnswers, int totalQuestionsAnswered)
         {
             SetId(id);
             SetUsername(username);
@@ -518,7 +518,6 @@ namespace _LetsQuiz
             // SetHighestScore(highestScore);
             // SetNumberCorrectAnswers(numCorrectAnswers);
             SetTotalQuestionsAnswered(totalQuestionsAnswered);
-            SetToken(token);
         }
 
         #endregion save
@@ -532,6 +531,10 @@ namespace _LetsQuiz
             // load player type
             if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.TYPE))
                 PlayerType = PlayerPrefs.GetInt(DataHelper.PlayerDataKey.TYPE);
+
+            // load player id
+            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.ID))
+                Player.ID = PlayerPrefs.GetInt(DataHelper.PlayerDataKey.ID);
 
             // load player username
             if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.USERNAME))

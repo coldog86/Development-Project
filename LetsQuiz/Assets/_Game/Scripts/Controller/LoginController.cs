@@ -197,7 +197,7 @@ namespace _LetsQuiz
                         if (_player != null)
                             PlayerController.Instance.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
                                 _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
-                                _player.TotalCorrectAnswers, _player.totalQuestionsAnswered, _player.token);
+                                _player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
                         FeedbackAlert.Show("Welcome, " + username + "!");
                         return true;
@@ -326,7 +326,7 @@ namespace _LetsQuiz
                         if (_player != null)
                             PlayerController.Instance.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
                                 _player.numQuestionsSubmitted, _player.numGamesPlayed, _player.totalPointsScore,
-                                _player.TotalCorrectAnswers, _player.totalQuestionsAnswered, _player.token);
+                                _player.TotalCorrectAnswers, _player.totalQuestionsAnswered);
 
                         FeedbackAlert.Show("Welcome back, " + username + "!");
                         return true;
@@ -544,10 +544,6 @@ namespace _LetsQuiz
         }
 
         #endregion navigation specific
-
-        #region firebase
-
-        #endregion firebase
 
         #endregion methods
     }

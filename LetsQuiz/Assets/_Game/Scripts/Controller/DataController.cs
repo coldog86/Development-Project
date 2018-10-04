@@ -195,12 +195,11 @@ namespace _LetsQuiz
                         {
                             PlayerController.Instance.Save(Player.ID, Player.username, Player.email, Player.password, Player.DOB, Player.questionsSubmitted,
                                                            Player.numQuestionsSubmitted, Player.numGamesPlayed, Player.totalPointsScore,
-                                                           Player.TotalCorrectAnswers, Player.totalQuestionsAnswered, FirebaseController.Instance.Token);
-
-                            FeedbackAlert.Show("Welcome back " + _username);
+                                                           Player.TotalCorrectAnswers, Player.totalQuestionsAnswered);
                         }
 
                         yield return loginRequest;
+                        FeedbackAlert.Show("Welcome back " + _username);
 #if !UNITY_EDITOR
                         FirebaseController.Instance.InsertToken(PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
 
