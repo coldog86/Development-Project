@@ -11,6 +11,7 @@ namespace _LetsQuiz
 
         [Header("Component")]
         public Button accountButton;
+
         public Button leaderboardButton;
         public Button submitQuestionButton;
 
@@ -58,6 +59,7 @@ namespace _LetsQuiz
         private void Start()
         {
             _music = FindObjectOfType<FeedbackMusic>();
+            _music.PlayBackgroundMusic();
             _questionDownload = FindObjectOfType<GetAllQuestions>();
             Destroy(_questionDownload);
         }
@@ -85,24 +87,28 @@ namespace _LetsQuiz
         public void OpenAccount()
         {
             FeedbackClick.Play();
+            Destroy(gameObject);
             SceneManager.LoadScene(BuildIndex.Account, LoadSceneMode.Single);
         }
 
         public void OpenLeaderboard()
         {
             FeedbackClick.Play();
+            Destroy(gameObject);
             SceneManager.LoadScene(BuildIndex.Leaderboard, LoadSceneMode.Single);
         }
 
         public void OpenSubmitQuestion()
         {
             FeedbackClick.Play();
+            Destroy(gameObject);
             SceneManager.LoadScene(BuildIndex.SubmitQuestion, LoadSceneMode.Single);
         }
 
         public void OpenSetting()
         {
             FeedbackClick.Play();
+            Destroy(gameObject);
             SceneManager.LoadScene(BuildIndex.Settings, LoadSceneMode.Single);
         }
 
@@ -115,28 +121,33 @@ namespace _LetsQuiz
         public void Logout()
         {
             FeedbackClick.Play();
-            if (FB.IsLoggedIn)
-            {
-                FB.LogOut();
-                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
-            }
-            else
-            {
-                FeedbackClick.Play();
-                FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
-            }
+            FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to log out?", "Log out", "Cancel", OpenLogin, FeedbackTwoButtonModal.Hide);
         }
 
         private void OpenLogin()
         {
-            FeedbackClick.Play();
-            PlayerController.Instance.SetPlayerType(PlayerStatus.LoggedOut);
+            if (FB.IsLoggedIn)
+                FB.LogOut();
+
+            PlayerPrefs.DeleteAll();
             SceneManager.LoadScene(BuildIndex.Login, LoadSceneMode.Single);
         }
 
         public void Quit()
         {
             FeedbackClick.Play();
+
+            if (FirebaseController.Initialised)
+            {
+                if (DataController.Instance.NewPlayer)
+                    FirebaseController.Instance.CreateNotificationDelay(PlayerController.Instance.GetToken(), "Let's Quiz", "Thanks for playing!");
+
+                if (DataController.Instance.SubmittedQuestion)
+                    FirebaseController.Instance.CreateNotificationDelay(PlayerController.Instance.GetToken(), "Let's Quiz", "Thanks for the question!");
+            }
+
+            DataController.Instance.NewPlayer = false;
+            DataController.Instance.SubmittedQuestion = false;
             FeedbackTwoButtonModal.Show("Are you sure?", "Are you sure you want to quit?", "Yes", "No", Application.Quit, FeedbackTwoButtonModal.Hide);
         }
 

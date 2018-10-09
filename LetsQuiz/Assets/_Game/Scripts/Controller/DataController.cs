@@ -12,15 +12,19 @@ namespace _LetsQuiz
 
         [Header("Components")]
         private GetAllQuestions _questionDownload;
+
         private GetHighScores _highscoreDownload;
         private GetPlayerQuestionSubmissions _questAndSub;
 
         [Header("Connection")]
         public bool ConnectionAvailable;
+
         private float _connectionTimer = 0.0f;
         private const float _connectionTimeLimit = 1000000.0f;
 
         [Header("Validation Tests")]
+        private int _id;
+
         private string _username = "u";
         private string _password = "p";
         private int _status = -2;
@@ -39,6 +43,9 @@ namespace _LetsQuiz
         public bool ServerConnected { get; set; }
         public string AllQuestionJSON { get; set; }
         public string AllHighScoreJSON { get; set; }
+
+        public bool NewPlayer { get; set; }
+        public bool SubmittedQuestion { get; set; }
 
         #endregion properties
 
@@ -60,9 +67,6 @@ namespace _LetsQuiz
 
             if (PlayerController.Initialised)
                 PlayerController.Instance.Load();
-
-            if (SettingsController.Initialised)
-                SettingsController.Instance.Load();
 
             if (HighscoreController.Initialised)
                 HighscoreController.Instance.Load();
@@ -92,6 +96,7 @@ namespace _LetsQuiz
                     // TODO : is any of these ever used?
                     // NOTE : used to determine if player has already logged in or not for automatic login
                     _token = PlayerController.Instance.GetToken();
+                    _id = PlayerController.Instance.GetId();
                     _status = PlayerController.Instance.GetPlayerType();
                     _username = PlayerController.Instance.GetUsername();
                     _password = PlayerController.Instance.GetPassword();
@@ -195,18 +200,13 @@ namespace _LetsQuiz
                         Player = JsonUtility.FromJson<Player>(loginRequest.text);
 
                         if (Player != null)
-                        {
                             PlayerController.Instance.Save(Player.ID, Player.username, Player.email, Player.password, Player.DOB, Player.questionsSubmitted,
                                                            Player.numQuestionsSubmitted, Player.numGamesPlayed, Player.totalPointsScore,
                                                            Player.TotalCorrectAnswers, Player.totalQuestionsAnswered);
-                        }
-
                         yield return loginRequest;
                         FeedbackAlert.Show("Welcome back " + _username);
-#if !UNITY_EDITOR
-                        FirebaseController.Instance.InsertToken(PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
-
-#endif
+                        Debug.LogFormat("[{0}] Login() \nToken : {1} \nId : {2} \nUsername : {3}", GetType().Name, _token, _id, _username);
+                        FirebaseController.Instance.UpdateToken(PlayerController.Instance.GetToken(), PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
                         SceneManager.LoadScene(BuildIndex.Menu);
                     }
                 }

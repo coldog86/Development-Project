@@ -42,16 +42,15 @@ namespace _LetsQuiz
         public GameObject registerButton;
 
         [Header("Connection")]
-        [SerializeField]
         private const float _connectionTimeLimit = 10000.0f;
 
-        [SerializeField]
         private float _connectionTimer = 0.0f;
 
         [Header("Player")]
-        private Player _player;
+        [SerializeField] private Player _player;
 
         private string _playerString = "";
+        private string _token;
 
         [Header("Components")]
         public GameObject dialogLoggedIn;
@@ -126,6 +125,9 @@ namespace _LetsQuiz
                     PlayerController.Instance.SetUsername(username);
                     PlayerController.Instance.SetPassword(password);
                     PlayerController.Instance.SetPlayerType(PlayerStatus.LoggedIn);
+                    PlayerController.Instance.SetToken(FirebaseController.Instance.Token);
+                    FirebaseController.Instance.InsertToken(PlayerController.Instance.GetToken(), PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
+                    DataController.Instance.NewPlayer = true;
                     LoadMenu();
                 }
             }
@@ -181,7 +183,6 @@ namespace _LetsQuiz
                 if (!string.IsNullOrEmpty(registerRequest.text))
                 {
                     _playerString = registerRequest.text;
-                    Debug.Log(_playerString);
 
                     // if the retrieved register text doesn't have "ID" load login scene
                     if (!_playerString.Contains("ID"))
@@ -256,6 +257,8 @@ namespace _LetsQuiz
                     PlayerController.Instance.SetUsername(username);
                     PlayerController.Instance.SetPassword(password);
                     PlayerController.Instance.SetPlayerType(PlayerStatus.LoggedIn);
+                    PlayerController.Instance.SetToken(FirebaseController.Instance.Token);
+                    FirebaseController.Instance.UpdateToken(PlayerController.Instance.GetToken(), PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
                     LoadMenu();
                 }
             }
@@ -310,7 +313,6 @@ namespace _LetsQuiz
                 if (!string.IsNullOrEmpty(loginRequest.text))
                 {
                     _playerString = loginRequest.text;
-                    Debug.Log("[LoginController] ValidLogin() : " + _playerString);
 
                     // if the retrieved login text doesn't have "ID" load login scene
                     if (!_playerString.Contains("ID"))
@@ -321,7 +323,7 @@ namespace _LetsQuiz
                     // otherwise save the player information to PlayerPrefs and load menu scene
                     else
                     {
-                        _player = _player = JsonUtility.FromJson<Player>(_playerString);
+                        _player = JsonUtility.FromJson<Player>(_playerString);
 
                         if (_player != null)
                             PlayerController.Instance.Save(_player.ID, _player.username, _player.email, _player.password, _player.DOB, _player.questionsSubmitted,
@@ -532,9 +534,6 @@ namespace _LetsQuiz
 
         public void LoadMenu()
         {
-#if !UNITY_EDITOR
-            FirebaseController.Instance.InsertToken(PlayerController.Instance.GetId(), PlayerController.Instance.GetUsername());
-#endif
             SceneManager.LoadScene(BuildIndex.Menu, LoadSceneMode.Single);
         }
 

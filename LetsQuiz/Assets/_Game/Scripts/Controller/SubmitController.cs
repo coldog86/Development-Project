@@ -12,6 +12,7 @@ namespace _LetsQuiz
 
         [Header("Components")]
         public InputField questionInput;
+
         public InputField correctInput;
         public InputField wrong1Input;
         public InputField wrong2Input;
@@ -26,6 +27,7 @@ namespace _LetsQuiz
 
         [Header("Connection")]
         private float _connectionTimer = 0;
+
         private const float _connectionTimeLimit = 10000.0f;
 
         #endregion variables
@@ -85,11 +87,9 @@ namespace _LetsQuiz
             {
                 if (ValidSubmission(question, correctAnswer, wrong1Answer, wrong2Answer, wrong3Answer, category))
                 {
+                    FeedbackAlert.Show("Submission succesful!");
+                    DataController.Instance.SubmittedQuestion = true;
                     SceneManager.LoadScene(BuildIndex.SubmitQuestion);
-                    FeedbackAlert.Show("Submission Succesful.");
-#if !UNITY_EDITOR
-                    SendNotification();
-#endif
                 }
             }
         }
@@ -159,43 +159,6 @@ namespace _LetsQuiz
         public void CategorySelected()
         {
             string category = categorySelection.options[categorySelection.value].text;
-        }
-
-        private void SendNotification()
-        {
-            StartCoroutine(Send());
-        }
-
-        private IEnumerator Send()
-        {
-            _connectionTimer = 0.0f;
-
-            var form = new WWWForm();
-            form.AddField("token", PlayerController.Instance.GetToken());
-            form.AddField("title", "Let's Quiz");
-            form.AddField("body", "Thanks for the question!");
-
-            var request = new WWW(ServerHelper.Host + ServerHelper.SendNotificationDelay, form);
-
-            _connectionTimer += Time.deltaTime;
-
-            while (!request.isDone)
-            {
-                if (_connectionTimer > _connectionTimeLimit)
-                    yield return null;
-
-                if (_connectionTimer > _connectionTimeLimit || request.error != null)
-                    yield return null;
-
-                if (request.error != null)
-                    yield return null;
-            }
-
-            if (request.isDone && request.error != null)
-                yield return null;
-
-            if (request.isDone)
-                yield return request.text;
         }
 
         #endregion submit specific

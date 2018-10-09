@@ -8,6 +8,7 @@ namespace _LetsQuiz
 
         [Header("Player Content")]
         [SerializeField] private string _questionData = "";
+
         [SerializeField] private string _highScoreData = "";
 
         private QuestAndSub[] _questandSub;
@@ -38,7 +39,7 @@ namespace _LetsQuiz
 
         private void Start()
         {
-            Debug.Log("[PlayerController] Start() : Current saved games: " + SavedGames);
+            Debug.Log("[PlayerController] Start() : Current saved games: " + SavedGames.AllSavedRounds.ToString());
         }
 
         #endregion unity
@@ -515,8 +516,8 @@ namespace _LetsQuiz
             SetQuestionsSubmitted(questionsSubmitted);
             SetNumberQuestionsSubmitted(numQuestionsSubmitted);
             SetGamesPlayed(numGamesPlayed);
-            // SetHighestScore(highestScore);
-            // SetNumberCorrectAnswers(numCorrectAnswers);
+            SetHighestScore(highestScore);
+            SetTotalCorrectAnswers(numCorrectAnswers);
             SetTotalQuestionsAnswered(totalQuestionsAnswered);
         }
 
@@ -551,6 +552,10 @@ namespace _LetsQuiz
             // load player question data
             if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.QUESTION_DATA))
                 _questionData = PlayerPrefs.GetString(DataHelper.PlayerDataKey.QUESTION_DATA);
+
+            // load player token
+            if (PlayerPrefs.HasKey(DataHelper.PlayerDataKey.TOKEN))
+                Player.token = PlayerPrefs.GetString(DataHelper.PlayerDataKey.TOKEN);
         }
 
         public void Load(Player player)

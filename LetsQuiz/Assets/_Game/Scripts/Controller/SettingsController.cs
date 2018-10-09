@@ -13,14 +13,25 @@ namespace _LetsQuiz
         public AudioMixer MasterMixer;
 
         public PlayerSettings Settings;
+
         private Toggle _soundEffectSwitch;
         private Toggle _backgroundMusicSwitch;
+
+        private string _soundEffectToggle = "SoundEffectToggle";
+        private string _backgroundMusicToggle = "BackgroundMusicToggle";
 
         #endregion variables
 
         #region methods
 
         #region unity
+
+        protected override void Awake()
+        {
+            base.Awake();
+            Load();
+            Settings = new PlayerSettings();
+        }
 
         #endregion unity
 
@@ -100,8 +111,6 @@ namespace _LetsQuiz
             }
             else
             {
-                Settings = new PlayerSettings();
-
                 PlayerPrefs.SetInt(DataHelper.PlayerSettingsKey.MUSIC_TOGGLE, Settings.BackgroundMusicToggle);
                 PlayerPrefs.SetFloat(DataHelper.PlayerSettingsKey.MUSIC_VOLUME, Settings.BackgroundMusicVolume);
                 PlayerPrefs.SetInt(DataHelper.PlayerSettingsKey.MUSIC_TOGGLE, Settings.BackgroundMusicToggle);
@@ -110,10 +119,10 @@ namespace _LetsQuiz
 
             if (SceneManager.GetActiveScene().buildIndex == BuildIndex.Settings)
             {
-                _soundEffectSwitch = GameObject.Find("SoundEffectToggle").GetComponent<Toggle>();
+                _soundEffectSwitch = GameObject.Find(_soundEffectToggle).GetComponent<Toggle>();
                 _soundEffectSwitch.isOn = Settings.SoundEffectToggle == 1 ? true : false;
 
-                _backgroundMusicSwitch = GameObject.Find("BackgroundMusicToggle").GetComponent<Toggle>();
+                _backgroundMusicSwitch = GameObject.Find(_backgroundMusicToggle).GetComponent<Toggle>();
                 _backgroundMusicSwitch.isOn = Settings.BackgroundMusicToggle == 1 ? true : false;
             }
 
