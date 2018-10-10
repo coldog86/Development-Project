@@ -81,7 +81,7 @@ namespace _LetsQuiz
             skipButton.SetActive(false);
             registerButton.SetActive(false);
             buttonPanel.SetActive(false);
-            facebookButton.SetActive(false);
+            facebookButton.SetActive(true);
         }
 
         private void Start()

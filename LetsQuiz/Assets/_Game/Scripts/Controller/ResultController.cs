@@ -37,7 +37,6 @@ namespace _LetsQuiz
 
         private void Awake()
         {
-			 shareButton.SetActive(false);
             _music = FindObjectOfType<FeedbackMusic>();
             _music.PlayBackgroundMusic();
 
