@@ -239,6 +239,7 @@ namespace _LetsQuiz
 
         public void Login()
         {
+			
             FeedbackClick.Play();
 
             string username = existingUsernameInput.text;
@@ -509,7 +510,7 @@ namespace _LetsQuiz
             loginButton.SetActive(true);
             skipButton.SetActive(true);
             registerButton.SetActive(false);
-            //facebookButton.SetActive(true);
+            facebookButton.SetActive(false);
             toogleLoginPanelButton.SetActive(false);
             toggleRegisterPanelButton.SetActive(false);
 
@@ -525,7 +526,7 @@ namespace _LetsQuiz
             loginButton.SetActive(false);
             skipButton.SetActive(true);
             registerButton.SetActive(true);
-            //facebookButton.SetActive(true);
+            facebookButton.SetActive(false);
             toogleLoginPanelButton.SetActive(false);
             toggleRegisterPanelButton.SetActive(false);
 
