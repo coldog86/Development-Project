@@ -68,7 +68,20 @@ MonoBehaviour:
   newPasswordInput: {fileID: 0}
   confirmPasswordInput: {fileID: 0}
   registerButton: {fileID: 0}
-  _connectionTimer: 0
+  _player:
+    ID: 0
+    username: username
+    email: email
+    password: password
+    DOB: dob
+    questionsSubmitted: questions
+    numQuestionsSubmitted: 0
+    numGamesPlayed: 0
+    HighestScore: 0
+    totalPointsScore: 0
+    TotalCorrectAnswers: 0
+    totalQuestionsAnswered: 0
+    token: token
   dialogLoggedIn: {fileID: 0}
   dialogLoggedOut: {fileID: 0}
   dialogUsername: {fileID: 0}
