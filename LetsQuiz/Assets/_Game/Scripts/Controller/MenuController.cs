@@ -129,7 +129,6 @@ namespace _LetsQuiz
             if (FB.IsLoggedIn)
                 FB.LogOut();
 
-            PlayerPrefs.DeleteAll();
             SceneManager.LoadScene(BuildIndex.Login, LoadSceneMode.Single);
         }
 
