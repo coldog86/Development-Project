@@ -1,0 +1,319 @@
+﻿using Firebase.Messaging;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace _LetsQuiz
+{
+    public class FirebaseController : Singleton<FirebaseController>
+    {
+        #region variables
+
+        [Header("Components")]
+        [SerializeField] private Text _tokenText;
+
+        [SerializeField] private string _token;
+
+        private float _connectionTimer = 0.0f;
+        private const float _connectionTimeLimit = 10000.0f;
+
+        #endregion variables
+
+        #region properties
+
+        public string Header { get; private set; }
+        public string Message { get; private set; }
+        public string Token { get { return _token; } private set { _token = value; } }
+
+        #endregion properties
+
+        #region methods
+
+        #region unity
+
+        protected override void Awake()
+        {
+            base.Awake();
+            DontDestroyOnLoad(gameObject);
+            FirebaseMessaging.TokenReceived += OnTokenReceived;
+            FirebaseMessaging.MessageReceived += OnMessageReceived;
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            FirebaseMessaging.TokenReceived -= OnTokenReceived;
+            FirebaseMessaging.MessageReceived -= OnMessageReceived;
+        }
+
+        #endregion unity
+
+        #region events
+
+        private void OnTokenReceived(object sender, TokenReceivedEventArgs e)
+        {
+            Debug.LogFormat("[{0}] OnTokenRecieved() Token : {1}", GetType().Name, e.Token);
+
+            _token = e.Token;
+
+            FirebaseMessaging.SubscribeAsync(_token);
+            FirebaseMessaging.SubscribeAsync("/topics/all");
+
+            if (!string.IsNullOrEmpty(_token))
+                _tokenText.text = _token;
+        }
+
+        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+        {
+            Debug.LogFormat("[{0}] OnMessageReceived() \nTitle : {1} \nMessage : {2}", GetType().Name, e.Message.Notification.Title, e.Message.Notification.Body);
+
+            Header = e.Message.Notification.Title;
+            Message = e.Message.Notification.Body;
+        }
+
+        #endregion events
+
+        #region notification
+
+        public void CreateNotification(string token, string header, string message)
+        {
+            if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
+                StartCoroutine(SendNotification(token, header, message));
+        }
+
+        private IEnumerator SendNotification(string token, string header, string message)
+        {
+            Debug.LogFormat("[{0}] SendNotification() \nToken {1}\nHeading {2}\nMessage {3}", GetType().Name, token, header, message);
+
+            WWWForm form = new WWWForm();
+
+            form.AddField("token", token);
+            form.AddField("title", header);
+            form.AddField("body", message);
+
+            WWW notificationRequest = new WWW(ServerHelper.Host + ServerHelper.SendNotification, form);
+
+            _connectionTimer = 0.0f;
+            _connectionTimer += Time.deltaTime;
+
+            while (!notificationRequest.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                {
+                    Debug.LogError("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                    yield return null;
+                }
+                else if (notificationRequest.error != null)
+                {
+                    Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                    yield return null;
+                }
+                // extra check just to ensure a stream error doesn't come up
+                else if (_connectionTimer > _connectionTimeLimit && notificationRequest.error != null)
+                {
+                    Debug.LogError("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                    yield return null;
+                }
+            }
+
+            if (notificationRequest.isDone && notificationRequest.error != null)
+            {
+                Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.error);
+                yield return null;
+            }
+
+            if (notificationRequest.isDone)
+            {
+                // check that the notification request returned something
+                if (!string.IsNullOrEmpty(notificationRequest.text))
+                {
+                    Debug.Log("[FirebaseController] SendNotification() : " + notificationRequest.text);
+                    yield return notificationRequest;
+                }
+            }
+        }
+
+        #endregion notification
+
+        #region notification - delay
+
+        public void CreateNotificationDelay(string token, string header, string message)
+        {
+            _connectionTimer = 0.0f;
+
+            if (!string.IsNullOrEmpty(header) && !string.IsNullOrEmpty(message))
+                StartCoroutine(SendNotificationDelay(token, header, message));
+        }
+
+        private IEnumerator SendNotificationDelay(string token, string header, string message)
+        {
+            Debug.LogFormat("[{0}] SendNotificationDelay() \nToken : {1} \nHeader : {2} \nMessage : {3}", GetType().Name, token, header, message);
+
+            var form = new WWWForm();
+            form.AddField("token", token);
+            form.AddField("title", header);
+            form.AddField("body", message);
+
+            var notificationRequest = new WWW(ServerHelper.Host + ServerHelper.SendNotificationDelay, form);
+
+            _connectionTimer += Time.deltaTime;
+
+            while (!notificationRequest.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                {
+                    Debug.LogError("[FirebaseController] SendDebugNotification() : " + notificationRequest.error);
+                    yield return null;
+                }
+                else if (notificationRequest.error != null)
+                {
+                    Debug.LogError("[FirebaseController] SendDebugNotification() : " + notificationRequest.error);
+                    yield return null;
+                }
+                // extra check just to ensure a stream error doesn't come up
+                else if (_connectionTimer > _connectionTimeLimit && notificationRequest.error != null)
+                {
+                    Debug.LogError("[FirebaseController] SendDebugNotification() : " + notificationRequest.error);
+                    yield return null;
+                }
+            }
+
+            if (notificationRequest.isDone && notificationRequest.error != null)
+            {
+                Debug.LogError("[FirebaseController] SendDebugNotification() : " + notificationRequest.error);
+                yield return null;
+            }
+
+            if (notificationRequest.isDone)
+            {
+                // check that the notification request returned something
+                if (!string.IsNullOrEmpty(notificationRequest.text))
+                    yield return notificationRequest;
+            }
+        }
+
+        #endregion notification - delay
+
+        #region database
+
+        public void InsertToken(string token, int userId, string username)
+        {
+            _connectionTimer = 0.0f;
+            StartCoroutine(Insert(token, userId, username));
+        }
+
+        private IEnumerator Insert(string token, int userId, string username)
+        {
+            var form = new WWWForm();
+            form.AddField("userId", userId);
+            form.AddField("username", username);
+            form.AddField("token", token);
+
+            var request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenInsert, form);
+
+            _connectionTimer += Time.deltaTime;
+
+            while (!request.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                    yield return null;
+
+                if (request.error != null)
+                    yield return null;
+
+                if (_connectionTimer > _connectionTimeLimit && request.error != null)
+                    yield return null;
+            }
+
+            if (request.isDone && request.error != null)
+                yield return null;
+
+            if (request.isDone)
+                yield return request.text;
+
+            Debug.LogFormat("[{0}] Insert() Token : {1}", GetType().Name, request.text);
+        }
+
+        public void UpdateToken(string token, int userId, string username)
+        {
+            _connectionTimer = 0.0f;
+            StartCoroutine(UpdateDatabaseToken(token, userId, username));
+        }
+
+        private IEnumerator UpdateDatabaseToken(string token, int userId, string username)
+        {
+            var form = new WWWForm();
+            form.AddField("userId", userId);
+            form.AddField("username", username);
+            form.AddField("token", token);
+
+            var request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenUpdate, form);
+
+            _connectionTimer += Time.deltaTime;
+
+            while (!request.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                    yield return null;
+
+                if (request.error != null)
+                    yield return null;
+
+                if (_connectionTimer > _connectionTimeLimit && request.error != null)
+                    yield return null;
+            }
+
+            if (request.isDone && request.error != null)
+                yield return null;
+
+            if (request.isDone)
+                yield return request.text;
+
+            Debug.LogFormat("[{0}] Update() Token : {1}", GetType().Name, request.text);
+        }
+
+        public string SelectToken(int userId, string username)
+        {
+            _connectionTimer = 0.0f;
+            return Select(userId, username);
+        }
+
+        private string Select(int userId, string username)
+        {
+            var token = "";
+            var form = new WWWForm();
+            form.AddField("userId", userId);
+            form.AddField("username", username);
+
+            var request = new WWW(ServerHelper.Host + ServerHelper.FirebaseTokenSelect, form);
+
+            _connectionTimer += Time.deltaTime;
+
+            while (!request.isDone)
+            {
+                if (_connectionTimer > _connectionTimeLimit)
+                    token = "";
+
+                if (request.error != null)
+                    token = "";
+
+                if (_connectionTimer > _connectionTimeLimit && request.error != null)
+                    token = "";
+            }
+
+            if (request.isDone && request.error != null)
+                token = "";
+
+            if (request.isDone)
+                token = request.text;
+
+            Debug.LogFormat("[{0}] Select() Token : {1}", GetType().Name, request.text);
+
+            return token;
+        }
+
+        #endregion database
+
+        #endregion methods
+    }
+}
